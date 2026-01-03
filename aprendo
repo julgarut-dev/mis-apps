@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>🦋 Leo y Aprendo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{--pink:#ff6b9d;--purple:#c56cf0;--blue:#54a0ff;--yellow:#ffd32a;--orange:#ff9f43;--mint:#00d2d3;--text:#2d3436}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#fff5f8 0%,#f0e6ff 100%);min-height:100vh}
+        .app{max-width:500px;margin:0 auto;padding:16px 16px 100px}
+        .header{text-align:center;padding:20px 0;position:relative}
+        .settings-btn{position:absolute;top:20px;right:0;width:44px;height:44px;border-radius:50%;border:none;background:#fff;font-size:1.3rem;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:10}
+        .mascot{font-size:3rem;animation:bounce 2s ease infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .logo{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .welcome{font-size:1rem;color:#666;margin-top:8px}
+        .child-name{color:var(--purple);font-weight:800}
+        .daily-reward{background:linear-gradient(135deg,var(--yellow),var(--orange));border-radius:16px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;cursor:pointer;color:#fff}
+        .daily-reward.claimed{opacity:0.5;pointer-events:none}
+        .daily-title{font-weight:800}
+        .daily-sub{font-size:0.8rem;opacity:0.9}
+        .stars-bar{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;padding:12px 20px;border-radius:50px;box-shadow:0 4px 15px rgba(0,0,0,0.1);margin-bottom:20px}
+        .stars-count{font-size:1.5rem;font-weight:800;color:var(--orange)}
+        .level-badge{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:700;margin-left:8px}
+        .section-title{font-size:0.8rem;font-weight:700;color:#888;margin:20px 0 12px;text-transform:uppercase}
+        .games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+        .game-card{background:#fff;border-radius:20px;padding:20px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.08);cursor:pointer;border:3px solid transparent}
+        .game-card:active{transform:scale(0.95)}
+        .game-card.pink{border-color:var(--pink)}.game-card.purple{border-color:var(--purple)}.game-card.blue{border-color:var(--blue)}.game-card.orange{border-color:var(--orange)}.game-card.mint{border-color:var(--mint)}.game-card.yellow{border-color:var(--yellow)}.game-card.wide{grid-column:span 2}
+        .game-icon{font-size:3rem;margin-bottom:8px}
+        .game-name{font-weight:800;font-size:1rem}
+        .game-desc{font-size:0.7rem;color:#888;margin-top:4px}
+        .achievements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+        .achievement{background:#fff;border-radius:16px;padding:12px;text-align:center}
+        .achievement.locked{opacity:0.4}
+        .achievement-icon{font-size:2rem}
+        .achievement-name{font-size:0.7rem;font-weight:700;margin-top:4px}
+        .game-screen{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#fff5f8 0%,#f0e6ff 100%);z-index:100;overflow-y:auto}
+        .game-screen.active{display:block}
+        .game-header{display:flex;align-items:center;padding:16px;gap:12px}
+        .back-btn{width:44px;height:44px;border-radius:50%;border:none;background:#fff;font-size:1.5rem;cursor:pointer}
+        .game-title{flex:1;font-size:1.3rem;font-weight:800}
+        .game-stars{background:#fff;padding:8px 14px;border-radius:20px;font-weight:700;color:var(--orange)}
+        .game-content{padding:16px;max-width:500px;margin:0 auto}
+        .big-letter{font-size:10rem;font-weight:900;text-align:center;color:var(--purple);text-shadow:4px 4px 0 #e0d0ff;cursor:pointer;line-height:1}
+        .letter-word{text-align:center;margin-top:20px}
+        .letter-word-img{font-size:4rem}
+        .letter-word-text{font-size:1.5rem;font-weight:700;margin-top:8px}
+        .letter-word-text .highlight{color:var(--pink);font-size:2rem}
+        .letter-nav{display:flex;justify-content:center;gap:16px;margin-top:30px}
+        .letter-nav-btn{width:60px;height:60px;border-radius:50%;border:none;background:#fff;font-size:1.5rem;cursor:pointer}
+        .letter-nav-btn.play{width:80px;height:80px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:2rem}
+        .progress-dots{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+        .progress-dot{width:12px;height:12px;border-radius:50%;background:#ddd}
+        .progress-dot.done{background:var(--mint)}
+        .progress-dot.current{background:var(--pink)}
+        .word-image{text-align:center;font-size:6rem;margin-bottom:20px}
+        .word-slots{display:flex;justify-content:center;gap:8px;margin-bottom:30px}
+        .word-slot{width:50px;height:60px;background:#fff;border:3px dashed #ddd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:var(--purple)}
+        .word-slot.filled{border-style:solid;border-color:var(--mint);background:#f0fff0}
+        .word-slot.wrong{border-color:#ee5a5a;background:#fff0f0;animation:shake 0.5s}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+        .letter-options{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+        .letter-option{width:55px;height:55px;border-radius:12px;border:none;background:#fff;font-size:1.8rem;font-weight:800;cursor:pointer}
+        .letter-option.used{opacity:0.3;pointer-events:none}
+        .syllable-word{text-align:center;margin-bottom:30px}
+        .syllable-word-text{font-size:2.5rem;font-weight:800}
+        .syllable-word-text .syl{padding:8px 12px;border-radius:10px;margin:0 4px;cursor:pointer;display:inline-block}
+        .syllable-word-text .syl:nth-child(1){background:#ffebee;color:#e91e63}
+        .syllable-word-text .syl:nth-child(2){background:#e3f2fd;color:#2196f3}
+        .syllable-word-text .syl:nth-child(3){background:#e8f5e9;color:#4caf50}
+        .clap-counter{text-align:center;margin-bottom:30px}
+        .clap-hands{font-size:3rem;cursor:pointer}
+        .clap-count{font-size:2rem;font-weight:800;color:var(--purple);margin-top:10px}
+        .clap-options{display:flex;justify-content:center;gap:12px}
+        .clap-option{width:70px;height:70px;border-radius:50%;border:3px solid #ddd;background:#fff;font-size:2rem;font-weight:800;cursor:pointer}
+        .reading-card{background:#fff;border-radius:20px;padding:24px;text-align:center;margin-bottom:20px}
+        .reading-word{font-size:2.5rem;font-weight:800;letter-spacing:4px;cursor:pointer;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#fff5f8,#f0e6ff);display:inline-block}
+        .reading-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        .reading-option{padding:16px;border-radius:16px;border:3px solid #eee;background:#fff;font-size:3rem;cursor:pointer}
+        .reading-option.correct{border-color:var(--mint);background:#e0ffff}
+        .reading-option.wrong{border-color:#ee5a5a;background:#ffeeee}
+        .memory-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+        .memory-card{aspect-ratio:1;border-radius:16px;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:800;color:#fff;cursor:pointer}
+        .memory-card.flipped{background:#fff;color:var(--text)}
+        .memory-card.matched{background:var(--mint)}
+        .abc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+        .abc-letter{aspect-ratio:1;border-radius:12px;border:none;background:#fff;font-size:1.5rem;font-weight:800;cursor:pointer}
+        .abc-letter.learned{border:2px solid var(--mint)}
+        .story-select{display:grid;gap:12px}
+        .story-card{background:#fff;border-radius:16px;padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;border:3px solid transparent}
+        .story-card.fairy{border-color:#ff6b9d}.story-card.space{border-color:#54a0ff}.story-card.forest{border-color:#2ecc71}
+        .story-card-icon{font-size:2.5rem}
+        .story-card-title{font-weight:800}
+        .story-card-desc{font-size:0.75rem;color:#888}
+        .story-container{background:#fff;border-radius:24px;padding:24px;margin-bottom:20px}
+        .story-illustration{font-size:5rem;text-align:center;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .story-text{font-size:1.2rem;line-height:2;text-align:center}
+        .story-text .highlight-word{background:linear-gradient(135deg,#fff0f5,#f0e6ff);padding:4px 10px;border-radius:8px;font-weight:700;color:var(--purple);cursor:pointer;display:inline-block;margin:2px}
+        .story-text .child-name-story{color:var(--pink);font-weight:800}
+        .story-nav{display:flex;justify-content:center;gap:12px;margin-top:20px;flex-wrap:wrap}
+        .story-nav-btn{padding:14px 24px;border-radius:50px;border:none;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+        .story-nav-btn.prev{background:#f0f0f0;color:#666}
+        .story-nav-btn.next{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+        .story-nav-btn.sound{background:var(--mint);color:#fff}
+        .story-progress{text-align:center;margin-bottom:16px;color:#888}
+        .story-complete{text-align:center;padding:30px}
+        .story-complete-icon{font-size:4rem;margin-bottom:16px}
+        .story-complete-title{font-size:1.5rem;font-weight:800;color:var(--purple);margin-bottom:8px}
+        .story-complete-msg{color:#666;margin-bottom:20px;line-height:1.6}
+        
+        /* MODAL - IMPORTANTE */
+        .modal-overlay{
+            display:none;
+            position:fixed;
+            top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.6);
+            z-index:9999;
+            justify-content:center;
+            align-items:center;
+            padding:20px;
+        }
+        .modal-overlay.show{display:flex}
+        .modal-box{
+            background:#fff;
+            border-radius:24px;
+            padding:24px;
+            width:100%;
+            max-width:380px;
+            max-height:85vh;
+            overflow-y:auto;
+            position:relative;
+        }
+        .modal-close{
+            position:absolute;
+            top:16px;right:16px;
+            width:36px;height:36px;
+            border-radius:50%;
+            border:none;
+            background:#f0f0f0;
+            font-size:1.2rem;
+            cursor:pointer;
+        }
+        .modal-title{font-size:1.4rem;font-weight:800;margin-bottom:20px;padding-right:40px}
+        .form-group{margin-bottom:20px}
+        .form-label{display:block;font-size:0.85rem;font-weight:700;color:#888;margin-bottom:8px}
+        .form-input{
+            width:100%;
+            padding:14px;
+            border:2px solid #eee;
+            border-radius:12px;
+            font-family:'Nunito',sans-serif;
+            font-size:1rem;
+        }
+        .form-input:focus{outline:none;border-color:var(--purple)}
+        .form-select{
+            width:100%;
+            padding:14px;
+            border:2px solid #eee;
+            border-radius:12px;
+            font-family:'Nunito',sans-serif;
+            font-size:1rem;
+            background:#fff;
+            cursor:pointer;
+        }
+        .form-range{width:100%;margin:8px 0}
+        .range-labels{display:flex;justify-content:space-between;font-size:0.75rem;color:#999}
+        .btn{
+            width:100%;
+            padding:16px;
+            border:none;
+            border-radius:12px;
+            font-family:'Nunito',sans-serif;
+            font-size:1rem;
+            font-weight:700;
+            cursor:pointer;
+            margin-top:10px;
+        }
+        .btn-primary{background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff}
+        .btn-test{background:#f0f0f0;color:#333}
+        .btn-danger{background:#ee5a5a;color:#fff}
+        .debug-info{background:#f5f5f5;padding:10px;border-radius:8px;font-size:0.75rem;color:#666;margin-top:15px}
+        
+        .celebration{position:fixed;inset:0;background:rgba(255,255,255,0.95);z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column}
+        .celebration.active{display:flex}
+        .celeb-stars{font-size:4rem}
+        .celeb-text{font-size:2rem;font-weight:900;color:var(--purple);margin:20px 0;text-align:center}
+        .celeb-sub{color:#888;margin-bottom:24px;text-align:center}
+        .celeb-btn{padding:16px 40px;border-radius:50px;border:none;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;font-size:1.2rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+        .confetti-container{position:fixed;inset:0;pointer-events:none;z-index:201}
+        .confetti{position:absolute;width:12px;height:12px;border-radius:3px;animation:confettiFall 3s ease-out forwards}
+        @keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <header class="header">
+        <button class="settings-btn" id="btnSettings">⚙️</button>
+        <div class="mascot">🦋</div>
+        <div class="logo">Leo y Aprendo</div>
+        <div class="welcome">¡Hola <span class="child-name" id="childNameDisplay">pequeñ@</span>!</div>
+    </header>
+    
+    <div class="daily-reward" id="dailyReward">
+        <div style="font-size:2rem">🎁</div>
+        <div style="flex:1"><div class="daily-title">¡Regalo diario!</div><div class="daily-sub">Toca para abrir</div></div>
+        <div style="font-size:1.5rem">→</div>
+    </div>
+    
+    <div class="stars-bar">
+        <span style="font-size:1.5rem">⭐</span>
+        <span class="stars-count" id="totalStars">0</span>
+        <span style="color:#888;font-size:0.8rem">estrellas</span>
+        <span class="level-badge" id="levelBadge">Nivel 1</span>
+    </div>
+    
+    <div class="section-title">🎮 Juegos de Letras</div>
+    <div class="games-grid">
+        <div class="game-card pink" onclick="openGame('letters')"><div class="game-icon">🔤</div><div class="game-name">Las Letras</div><div class="game-desc">Aprende la A-Z</div></div>
+        <div class="game-card purple" onclick="openGame('syllables')"><div class="game-icon">👏</div><div class="game-name">Sílabas</div><div class="game-desc">Divide palabras</div></div>
+        <div class="game-card blue" onclick="openGame('words')"><div class="game-icon">🧩</div><div class="game-name">Formar Palabras</div><div class="game-desc">Une las letras</div></div>
+        <div class="game-card orange" onclick="openGame('reading')"><div class="game-icon">📖</div><div class="game-name">Leer</div><div class="game-desc">Lee y encuentra</div></div>
+    </div>
+    
+    <div class="section-title">🧠 Más Juegos</div>
+    <div class="games-grid">
+        <div class="game-card mint" onclick="openGame('memory')"><div class="game-icon">🎴</div><div class="game-name">Memoria</div><div class="game-desc">Encuentra parejas</div></div>
+        <div class="game-card yellow" onclick="openGame('abc')"><div class="game-icon">🎹</div><div class="game-name">Piano ABC</div><div class="game-desc">Toca las letras</div></div>
+        <div class="game-card pink wide" onclick="openGame('stories')"><div class="game-icon">📚✨</div><div class="game-name">Cuentos Mágicos</div><div class="game-desc">¡Historias donde TÚ eres la heroína!</div></div>
+    </div>
+    
+    <div class="section-title">🏆 Logros</div>
+    <div class="achievements-grid" id="achievements"></div>
+</div>
+
+<!-- MODAL DE AJUSTES -->
+<div class="modal-overlay" id="modalSettings">
+    <div class="modal-box">
+        <button class="modal-close" id="btnCloseSettings">✕</button>
+        <div class="modal-title">⚙️ Ajustes</div>
+        
+        <div class="form-group">
+            <label class="form-label">👶 Nombre del niño/a</label>
+            <input type="text" class="form-input" id="inputName" placeholder="Escribe el nombre...">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">🔊 Voz (<span id="voiceCount">0</span> disponibles)</label>
+            <select class="form-select" id="selectVoice">
+                <option value="">Cargando voces...</option>
+            </select>
+            <button class="btn btn-test" id="btnTestVoice" style="margin-top:8px">🔊 Probar voz</button>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">🐢 Velocidad: <span id="speedValue">0.8</span></label>
+            <input type="range" class="form-range" id="inputSpeed" min="0.5" max="1.2" step="0.1" value="0.8">
+            <div class="range-labels"><span>Lento</span><span>Normal</span><span>Rápido</span></div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">🔈 Tono: <span id="pitchValue">1.0</span></label>
+            <input type="range" class="form-range" id="inputPitch" min="0.5" max="1.5" step="0.1" value="1.0">
+            <div class="range-labels"><span>Grave</span><span>Normal</span><span>Agudo</span></div>
+        </div>
+        
+        <button class="btn btn-primary" id="btnSave">💾 Guardar cambios</button>
+        <button class="btn btn-danger" id="btnReset">🗑️ Borrar todo</button>
+        
+        <div class="debug-info" id="debugInfo">Info: cargando...</div>
+    </div>
+</div>
+
+<!-- PANTALLAS DE JUEGOS -->
+<div class="game-screen" id="game-letters">
+    <div class="game-header"><button class="back-btn" onclick="closeGame()">←</button><div class="game-title">Las Letras</div><div class="game-stars">⭐ <span id="letters-stars">0</span></div></div>
+    <div class="game-content">
+        <div class="big-letter" id="current-letter" onclick="speakLetter()">A</div>
+        <div class="letter-word"><div class="letter-word-img" id="letter-img">🐝</div><div class="letter-word-text" id="letter-word"><span class="highlight">A</span>beja</div></div>
+        <div class="letter-nav"><button class="letter-nav-btn" onclick="prevLetter()">◀</button><button class="letter-nav-btn play" onclick="speakLetter()">🔊</button><button class="letter-nav-btn" onclick="nextLetter()">▶</button></div>
+    </div>
+</div>
+
+<div class="game-screen" id="game-syllables">
+    <div class="game-header"><button class="back-btn" onclick="closeGame()">←</button><div class="game-title">Sílabas</div><div class="game-stars">⭐ <span id="syllables-stars">0</span></div></div>
+    <div class="game-content">
+        <div class="progress-dots" id="syl-progress"></div>
+        <div class="syllable-word"><div style="font-size:4rem;margin-bottom:16px" id="syl-img">🏠</div><div class="syllable-word-text" id="syl-word"></div></div>
+        <div class="clap-counter"><div class="clap-hands" onclick="doClap()">👏</div><div class="clap-count"><span id="clap-num">0</span> palmadas</div></div>
+        <p style="text-align:center;color:#888;margin-bottom:16px">¿Cuántas sílabas tiene?</p>
+        <div class="clap-options" id="syl-options"></div>
+    </div>
+</div>
+
+<div class="game-screen" id="game-words">
+    <div class="game-header"><button class="back-btn" onclick="closeGame()">←</button><div class="game-title">Formar Palabras</div><div class="game-stars">⭐ <span id="words-stars">0</span></div></div>
+    <div class="game-content">
+        <div class="progress-dots" id="words-progress"></div>
+        <div class="word-image" id="word-img">🌟</div>
+        <div class="word-slots" id="word-slots"></div>
+        <div class="letter-options" id="word-letters"></div>
+    </div>
+</div>
+
+<div class="game-screen" id="game-reading">
+    <div class="game-header"><button class="back-btn" onclick="closeGame()">←</button><div class="game-title">Leer</div><div class="game-stars">⭐ <span id="reading-stars">0</span></div></div>
+    <div class="game-content">
+        <div class="progress-dots" id="reading-progress"></div>
+        <div class="reading-card"><div class="reading-word" id="reading-word" onclick="speakReadingWord()">SOL</div><p style="color:#888;margin-top:8px;font-size:0.8rem">👆 Toca para escuchar</p></div>
+        <p style="text-align:center;color:#888;margin-bottom:16px">¿Qué imagen es?</p>
+        <div class="reading-options" id="reading-options"></div>
+    </div>
+</div>
+
+<div class="game-screen" id="game-memory">
+    <div class="game-header"><button class="back-btn" onclick="closeGame()">←</button><div class="game-title">Memoria</div><div class="game-stars">⭐ <span id="memory-stars">0</span></div></div>
+    <div class="game-content"><p style="text-align:center;color:#888;margin-bottom:16px">Encuentra las parejas</p><div class="memory-grid" id="memory-grid"></div></div>
+</div>
+
+<div class="game-screen" id="game-abc">
+    <div class="game-header"><button class="back-btn" onclick="closeGame()">←</button><div class="game-title">Piano ABC</div><div class="game-stars">⭐ <span id="abc-stars">0</span></div></div>
+    <div class="game-content"><p style="text-align:center;color:#888;margin-bottom:16px">¡Toca las letras!</p><div class="abc-grid" id="abc-grid"></div></div>
+</div>
+
+<div class="game-screen" id="game-stories">
+    <div class="game-header"><button class="back-btn" onclick="closeStories()">←</button><div class="game-title">Cuentos Mágicos</div><div class="game-stars">⭐ <span id="stories-stars">0</span></div></div>
+    <div class="game-content" id="stories-content"></div>
+</div>
+
+<!-- CELEBRACION -->
+<div class="celebration" id="celebration">
+    <div class="confetti-container" id="confetti"></div>
+    <div class="celeb-stars" id="celeb-icon">🌟</div>
+    <div class="celeb-text" id="celeb-text">¡MUY BIEN!</div>
+    <div class="celeb-sub" id="celeb-sub">Has ganado una estrella</div>
+    <button class="celeb-btn" onclick="closeCelebration()">¡Seguir!</button>
+</div>
+
+<script>
+// ========== DATOS ==========
+var DATA = {
+    stars: 0,
+    lettersLearned: [],
+    childName: '',
+    voiceName: '',
+    voiceSpeed: 0.8,
+    voicePitch: 1.0,
+    lastDaily: null
+};
+
+// Cargar datos guardados
+try {
+    var saved = localStorage.getItem('leo_data');
+    if (saved) {
+        var parsed = JSON.parse(saved);
+        for (var key in parsed) {
+            DATA[key] = parsed[key];
+        }
+    }
+} catch(e) {
+    console.log('Error cargando datos:', e);
+}
+
+function saveData() {
+    try {
+        localStorage.setItem('leo_data', JSON.stringify(DATA));
+    } catch(e) {
+        console.log('Error guardando:', e);
+    }
+    updateDisplay();
+}
+
+function updateDisplay() {
+    document.getElementById('totalStars').textContent = DATA.stars;
+    document.getElementById('childNameDisplay').textContent = DATA.childName || 'pequeñ@';
+    document.getElementById('levelBadge').textContent = 'Nivel ' + (Math.floor(DATA.stars / 20) + 1);
+    
+    var today = new Date().toDateString();
+    if (DATA.lastDaily === today) {
+        document.getElementById('dailyReward').classList.add('claimed');
+    } else {
+        document.getElementById('dailyReward').classList.remove('claimed');
+    }
+    
+    renderAchievements();
+}
+
+// ========== VOCES ==========
+var voicesList = [];
+
+function loadVoices() {
+    if (!window.speechSynthesis) {
+        document.getElementById('debugInfo').textContent = 'Error: Tu navegador no soporta voces';
+        return;
+    }
+    
+    voicesList = window.speechSynthesis.getVoices();
+    
+    var select = document.getElementById('selectVoice');
+    var debug = document.getElementById('debugInfo');
+    var countSpan = document.getElementById('voiceCount');
+    
+    if (voicesList.length === 0) {
+        debug.textContent = 'Esperando voces... (toca "Probar voz" si no cargan)';
+        return;
+    }
+    
+    // Filtrar español
+    var spanish = voicesList.filter(function(v) {
+        return v.lang.indexOf('es') > -1;
+    });
+    
+    var toShow = spanish.length > 0 ? spanish : voicesList;
+    countSpan.textContent = toShow.length;
+    
+    select.innerHTML = toShow.map(function(v) {
+        var name = v.name.replace(/Microsoft |Google |Apple /gi, '');
+        var sel = (v.name === DATA.voiceName) ? ' selected' : '';
+        return '<option value="' + v.name + '"' + sel + '>' + name + '</option>';
+    }).join('');
+    
+    debug.textContent = 'Voces cargadas: ' + toShow.length + ' | Voz actual: ' + (DATA.voiceName || 'default');
+}
+
+// Intentar cargar voces varias veces
+if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+    setTimeout(loadVoices, 100);
+    setTimeout(loadVoices, 500);
+    setTimeout(loadVoices, 1000);
+}
+
+function speak(text, rate) {
+    if (!window.speechSynthesis) return;
+    
+    window.speechSynthesis.cancel();
+    
+    var msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'es-ES';
+    msg.rate = (rate !== undefined) ? rate : DATA.voiceSpeed;
+    msg.pitch = DATA.voicePitch;
+    
+    // Buscar la voz por nombre
+    if (DATA.voiceName && voicesList.length > 0) {
+        var found = voicesList.find(function(v) { return v.name === DATA.voiceName; });
+        if (found) msg.voice = found;
+    }
+    
+    window.speechSynthesis.speak(msg);
+}
+
+// ========== MODAL DE AJUSTES ==========
+var modal = document.getElementById('modalSettings');
+var btnSettings = document.getElementById('btnSettings');
+var btnClose = document.getElementById('btnCloseSettings');
+var btnSave = document.getElementById('btnSave');
+var btnTest = document.getElementById('btnTestVoice');
+var btnReset = document.getElementById('btnReset');
+var inputName = document.getElementById('inputName');
+var selectVoice = document.getElementById('selectVoice');
+var inputSpeed = document.getElementById('inputSpeed');
+var inputPitch = document.getElementById('inputPitch');
+
+// Abrir modal
+btnSettings.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    loadVoices(); // Recargar voces
+    
+    // Poner valores actuales
+    inputName.value = DATA.childName || '';
+    inputSpeed.value = DATA.voiceSpeed;
+    inputPitch.value = DATA.voicePitch;
+    document.getElementById('speedValue').textContent = DATA.voiceSpeed;
+    document.getElementById('pitchValue').textContent = DATA.voicePitch;
+    
+    // Seleccionar voz guardada
+    if (DATA.voiceName) {
+        selectVoice.value = DATA.voiceName;
+    }
+    
+    modal.classList.add('show');
+});
+
+// Cerrar modal
+btnClose.addEventListener('click', function() {
+    modal.classList.remove('show');
+});
+
+modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+        modal.classList.remove('show');
+    }
+});
+
+// Actualizar valores de sliders
+inputSpeed.addEventListener('input', function() {
+    document.getElementById('speedValue').textContent = this.value;
+});
+
+inputPitch.addEventListener('input', function() {
+    document.getElementById('pitchValue').textContent = this.value;
+});
+
+// Probar voz
+btnTest.addEventListener('click', function() {
+    // Guardar temporalmente
+    DATA.voiceName = selectVoice.value;
+    DATA.voiceSpeed = parseFloat(inputSpeed.value);
+    DATA.voicePitch = parseFloat(inputPitch.value);
+    
+    var name = inputName.value.trim() || 'pequeña';
+    speak('¡Hola ' + name + '! ¿Te gusta mi voz? Vamos a aprender las letras juntos.');
+});
+
+// Guardar
+btnSave.addEventListener('click', function() {
+    DATA.childName = inputName.value.trim();
+    DATA.voiceName = selectVoice.value;
+    DATA.voiceSpeed = parseFloat(inputSpeed.value);
+    DATA.voicePitch = parseFloat(inputPitch.value);
+    
+    saveData();
+    modal.classList.remove('show');
+    
+    speak('¡Guardado! Hola ' + (DATA.childName || 'pequeña'));
+});
+
+// Borrar todo
+btnReset.addEventListener('click', function() {
+    if (confirm('¿Borrar todo el progreso?')) {
+        localStorage.removeItem('leo_data');
+        location.reload();
+    }
+});
+
+// ========== REGALO DIARIO ==========
+document.getElementById('dailyReward').addEventListener('click', function() {
+    var today = new Date().toDateString();
+    if (DATA.lastDaily === today) return;
+    
+    DATA.lastDaily = today;
+    DATA.stars += 5;
+    saveData();
+    celebrate('🎁 ¡Regalo!', '¡Has ganado 5 estrellas!');
+});
+
+// ========== LOGROS ==========
+var ACHIEVEMENTS = [
+    {name: 'Primera ⭐', icon: '⭐', check: function() { return DATA.stars >= 1; }},
+    {name: '10 ⭐', icon: '🌟', check: function() { return DATA.stars >= 10; }},
+    {name: '5 letras', icon: '🔤', check: function() { return DATA.lettersLearned.length >= 5; }}
+];
+
+function renderAchievements() {
+    document.getElementById('achievements').innerHTML = ACHIEVEMENTS.map(function(a) {
+        return '<div class="achievement' + (a.check() ? '' : ' locked') + '"><div class="achievement-icon">' + a.icon + '</div><div class="achievement-name">' + a.name + '</div></div>';
+    }).join('');
+}
+
+// ========== DATOS DE JUEGOS ==========
+var LETTERS = [
+    {l:'A',w:'Abeja',i:'🐝'},{l:'B',w:'Balón',i:'⚽'},{l:'C',w:'Casa',i:'🏠'},
+    {l:'D',w:'Dado',i:'🎲'},{l:'E',w:'Elefante',i:'🐘'},{l:'F',w:'Flor',i:'🌸'},
+    {l:'G',w:'Gato',i:'🐱'},{l:'H',w:'Helado',i:'🍦'},{l:'I',w:'Iglú',i:'🏔️'},
+    {l:'J',w:'Jirafa',i:'🦒'},{l:'K',w:'Koala',i:'🐨'},{l:'L',w:'Luna',i:'🌙'},
+    {l:'M',w:'Manzana',i:'🍎'},{l:'N',w:'Nube',i:'☁️'},{l:'Ñ',w:'Ñu',i:'🦬'},
+    {l:'O',w:'Oso',i:'🐻'},{l:'P',w:'Perro',i:'🐕'},{l:'Q',w:'Queso',i:'🧀'},
+    {l:'R',w:'Rana',i:'🐸'},{l:'S',w:'Sol',i:'☀️'},{l:'T',w:'Tortuga',i:'🐢'},
+    {l:'U',w:'Uva',i:'🍇'},{l:'V',w:'Vaca',i:'🐄'},{l:'W',w:'Wifi',i:'📶'},
+    {l:'X',w:'Xilófono',i:'🎵'},{l:'Y',w:'Yogur',i:'🥛'},{l:'Z',w:'Zapato',i:'👟'}
+];
+
+var WORDS = [{w:'SOL',i:'☀️'},{w:'OJO',i:'👁️'},{w:'OSO',i:'🐻'},{w:'UVA',i:'🍇'},{w:'PAN',i:'🍞'},{w:'PEZ',i:'🐟'}];
+var SYLLABLES = [{w:'CASA',s:['CA','SA'],i:'🏠'},{w:'MESA',s:['ME','SA'],i:'🪑'},{w:'GATO',s:['GA','TO'],i:'🐱'},{w:'LUNA',s:['LU','NA'],i:'🌙'},{w:'PATO',s:['PA','TO'],i:'🦆'}];
+var READING = [{w:'SOL',c:'☀️',o:['☀️','🌙','⭐','☁️']},{w:'GATO',c:'🐱',o:['🐕','🐱','🐰','🐻']},{w:'CASA',c:'🏠',o:['🏠','🏰','⛺','🏢']},{w:'LUNA',c:'🌙',o:['☀️','⭐','🌙','🌈']}];
+
+var STORIES = [
+    {id:'fairy',title:'El Hada de las Letras',desc:'Un hada mágica',icon:'🧚',cls:'fairy',
+     pages:[{img:'🧚✨',text:'Había una vez una niña muy especial llamada {name}. Un día apareció un hada brillante llamada {LUNA}.'},{img:'🌟📖',text:'¡Hola {name}! - dijo el hada - He visto que te esfuerzas mucho y eso me hace muy {FELIZ}.'},{img:'🏰🌈',text:'En mi reino, cada letra tiene {MAGIA}. La letra A vive en un {ARBOL} gigante.'},{img:'⭐👑',text:'{name}, cada vez que aprendes una letra, una {ESTRELLA} brilla en el cielo.'},{img:'💪🦋',text:'Los más {VALIENTES} son los que siguen intentando. Y tú eres muy valiente, {name}.'},{img:'🎁💖',text:'Las letras son tus {AMIGAS}. ¡Te quieren, {name}!'}],
+     end:'¡Las letras son tus amigas!'},
+    {id:'space',title:'Viaje a las Estrellas',desc:'Aventura espacial',icon:'🚀',cls:'space',
+     pages:[{img:'🚀🌙',text:'Una noche, {name} vio una nave espacial. De ella bajó un pequeño {ROBOT} amigable.'},{img:'🤖💙',text:'¡Hola! Me llamo {BOPI}. ¿Quieres venir al Planeta de los Libros?'},{img:'🌍✨',text:'{name} vio la {TIERRA} desde arriba. ¡Qué bonita es!'},{img:'📚🌟',text:'En el Planeta de los Libros, las palabras {FLOTAN} en el aire.'},{img:'💡👧',text:'Tú puedes hacer que las palabras cobren {VIDA}. ¡Yo creo en ti, {name}!'},{img:'🌠🏠',text:'{name} volvió a casa muy {FELIZ}. Cada letra la acerca a las estrellas.'}],
+     end:'¡Cada letra te acerca a las estrellas!'},
+    {id:'forest',title:'El Bosque Encantado',desc:'Animales mágicos',icon:'🦊',cls:'forest',
+     pages:[{img:'🌳🍄',text:'{name} entró en un bosque mágico donde los árboles tenían {OJOS}.'},{img:'🦊💚',text:'Un zorrito dijo: ¡Hola! Soy {FOXY}. Te estaba esperando.'},{img:'🦉📚',text:'La lechuza {SABIA} dijo: Cada libro es una {PUERTA} a un mundo nuevo.'},{img:'🐻🍯',text:'El oso compartió su {MIEL} y dijo: Aprender es dulce como la miel.'},{img:'🦋🌸',text:'Las mariposas escribieron el nombre de {name} en el cielo. ¡Eres muy {ESPECIAL}!'},{img:'🌟🏡',text:'{name} aprendió un secreto: puede hacer cualquier cosa si no se {RINDE}.'}],
+     end:'¡Nunca te rindas!'}
+];
+
+// ========== ESTADO DE JUEGOS ==========
+var curLetter=0, curWord=0, wordSlots=[], curSyl=0, clapCount=0, curReading=0;
+var memCards=[], flipped=[], matched=0;
+var curStory=null, curPage=0;
+
+// ========== FUNCIONES DE JUEGOS ==========
+function openGame(g) {
+    document.getElementById('game-'+g).classList.add('active');
+    if(g==='letters') showLetter();
+    if(g==='syllables') { curSyl=0; showSyllable(); }
+    if(g==='words') { curWord=0; showWord(); }
+    if(g==='reading') { curReading=0; showReading(); }
+    if(g==='memory') initMemory();
+    if(g==='abc') initABC();
+    if(g==='stories') showStorySelect();
+}
+
+function closeGame() {
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+    document.querySelectorAll('.game-screen').forEach(function(g) { g.classList.remove('active'); });
+}
+
+// LETRAS
+function showLetter() {
+    var l = LETTERS[curLetter];
+    document.getElementById('current-letter').textContent = l.l;
+    document.getElementById('letter-img').textContent = l.i;
+    document.getElementById('letter-word').innerHTML = '<span class="highlight">' + l.l + '</span>' + l.w.substring(1);
+}
+
+function speakLetter() {
+    var l = LETTERS[curLetter];
+    speak(l.l + '. ' + l.w);
+    if (DATA.lettersLearned.indexOf(l.l) === -1) {
+        DATA.lettersLearned.push(l.l);
+        DATA.stars++;
+        saveData();
+    }
+    document.getElementById('letters-stars').textContent = DATA.stars;
+}
+
+function prevLetter() { curLetter = (curLetter - 1 + LETTERS.length) % LETTERS.length; showLetter(); }
+function nextLetter() { curLetter = (curLetter + 1) % LETTERS.length; showLetter(); }
+
+// SILABAS
+function showSyllable() {
+    var s = SYLLABLES[curSyl];
+    clapCount = 0;
+    document.getElementById('syl-progress').innerHTML = SYLLABLES.map(function(_,i) {
+        return '<div class="progress-dot ' + (i<curSyl?'done':i===curSyl?'current':'') + '"></div>';
+    }).join('');
+    document.getElementById('syl-img').textContent = s.i;
+    document.getElementById('syl-word').innerHTML = s.s.map(function(syl) {
+        return '<span class="syl" onclick="speak(\'' + syl + '\')">' + syl + '</span>';
+    }).join('');
+    document.getElementById('clap-num').textContent = '0';
+    document.getElementById('syl-options').innerHTML = [1,2,3].map(function(n) {
+        return '<button class="clap-option" onclick="checkSyl(' + n + ')">' + n + '</button>';
+    }).join('');
+    speak(s.w, 0.7);
+}
+
+function doClap() { clapCount++; document.getElementById('clap-num').textContent = clapCount; }
+
+function checkSyl(n) {
+    var s = SYLLABLES[curSyl];
+    if (n === s.s.length) {
+        DATA.stars++; saveData();
+        document.getElementById('syllables-stars').textContent = DATA.stars;
+        if (curSyl < SYLLABLES.length-1) {
+            curSyl++;
+            celebrate('¡Bien!', '👏 ' + s.w + ' tiene ' + s.s.length + ' sílabas', showSyllable);
+        } else {
+            celebrate('¡Genial!', '¡Completado!', closeGame);
+        }
+    } else {
+        speak('Inténtalo de nuevo');
+    }
+}
+
+// PALABRAS
+function showWord() {
+    var w = WORDS[curWord];
+    wordSlots = [];
+    document.getElementById('words-progress').innerHTML = WORDS.map(function(_,i) {
+        return '<div class="progress-dot ' + (i<curWord?'done':i===curWord?'current':'') + '"></div>';
+    }).join('');
+    document.getElementById('word-img').textContent = w.i;
+    document.getElementById('word-slots').innerHTML = w.w.split('').map(function(_,i) {
+        return '<div class="word-slot" id="slot-' + i + '"></div>';
+    }).join('');
+    var letters = w.w.split('');
+    var extras = 'AEIOU'.split('').filter(function(l) { return letters.indexOf(l) === -1; }).slice(0,2);
+    var all = letters.concat(extras).sort(function() { return Math.random() - 0.5; });
+    document.getElementById('word-letters').innerHTML = all.map(function(l,i) {
+        return '<button class="letter-option" id="opt-' + i + '" onclick="selectLetter(\'' + l + '\',' + i + ')">' + l + '</button>';
+    }).join('');
+    speak(w.w, 0.6);
+}
+
+function selectLetter(l, idx) {
+    var w = WORDS[curWord];
+    var si = wordSlots.length;
+    if (si >= w.w.length) return;
+    var slot = document.getElementById('slot-' + si);
+    if (l === w.w[si]) {
+        slot.textContent = l;
+        slot.classList.add('filled');
+        wordSlots.push(l);
+        document.getElementById('opt-' + idx).classList.add('used');
+        speak(l, 0.9);
+        if (wordSlots.length === w.w.length) {
+            DATA.stars += 2; saveData();
+            document.getElementById('words-stars').textContent = DATA.stars;
+            setTimeout(function() { speak('¡' + w.w + '!'); }, 300);
+            setTimeout(function() {
+                if (curWord < WORDS.length-1) {
+                    curWord++;
+                    celebrate('¡Excelente!', '✨ ' + w.w, showWord);
+                } else {
+                    celebrate('🏆 ¡Campeón!', '¡Completado!', closeGame);
+                }
+            }, 600);
+        }
+    } else {
+        slot.classList.add('wrong');
+        setTimeout(function() { slot.classList.remove('wrong'); }, 500);
+    }
+}
+
+// LEER
+function showReading() {
+    var r = READING[curReading];
+    document.getElementById('reading-progress').innerHTML = READING.map(function(_,i) {
+        return '<div class="progress-dot ' + (i<curReading?'done':i===curReading?'current':'') + '"></div>';
+    }).join('');
+    document.getElementById('reading-word').textContent = r.w;
+    document.getElementById('reading-options').innerHTML = r.o.slice().sort(function() { return Math.random() - 0.5; }).map(function(o) {
+        return '<div class="reading-option" onclick="checkReading(\'' + o + '\')">' + o + '</div>';
+    }).join('');
+    speak(r.w, 0.6);
+}
+
+function speakReadingWord() { speak(READING[curReading].w, 0.6); }
+
+function checkReading(sel) {
+    var r = READING[curReading];
+    document.querySelectorAll('.reading-option').forEach(function(o) {
+        if (o.textContent === sel) {
+            if (sel === r.c) {
+                o.classList.add('correct');
+                DATA.stars += 2; saveData();
+                document.getElementById('reading-stars').textContent = DATA.stars;
+                setTimeout(function() {
+                    if (curReading < READING.length-1) {
+                        curReading++;
+                        celebrate('¡Correcto!', '📖 ' + r.w, showReading);
+                    } else {
+                        celebrate('🎉 ¡Increíble!', '¡Sabes leer!', closeGame);
+                    }
+                }, 500);
+            } else {
+                o.classList.add('wrong');
+                speak('Prueba otra');
+                setTimeout(function() { o.classList.remove('wrong'); }, 500);
+            }
+        }
+    });
+}
+
+// MEMORIA
+function initMemory() {
+    matched = 0; flipped = [];
+    var pairs = LETTERS.slice(0, 6);
+    memCards = [];
+    pairs.forEach(function(l, i) {
+        memCards.push({type:'l', val:l.l, pair:i});
+        memCards.push({type:'i', val:l.i, pair:i});
+    });
+    memCards.sort(function() { return Math.random() - 0.5; });
+    document.getElementById('memory-grid').innerHTML = memCards.map(function(_, i) {
+        return '<div class="memory-card" id="mem-' + i + '" onclick="flipCard(' + i + ')">?</div>';
+    }).join('');
+}
+
+function flipCard(i) {
+    if (flipped.length >= 2) return;
+    var el = document.getElementById('mem-' + i);
+    if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+    el.classList.add('flipped');
+    el.textContent = memCards[i].val;
+    flipped.push(i);
+    if (memCards[i].type === 'l') speak(memCards[i].val);
+    if (flipped.length === 2) {
+        var c1 = memCards[flipped[0]], c2 = memCards[flipped[1]];
+        if (c1.pair === c2.pair) {
+            setTimeout(function() {
+                document.getElementById('mem-' + flipped[0]).classList.add('matched');
+                document.getElementById('mem-' + flipped[1]).classList.add('matched');
+                flipped = [];
+                matched++;
+                DATA.stars++; saveData();
+                document.getElementById('memory-stars').textContent = DATA.stars;
+                if (matched === 6) {
+                    setTimeout(function() { celebrate('🧠 ¡Memoria!', '¡Todas las parejas!', closeGame); }, 500);
+                }
+            }, 300);
+        } else {
+            setTimeout(function() {
+                var e1 = document.getElementById('mem-' + flipped[0]);
+                var e2 = document.getElementById('mem-' + flipped[1]);
+                e1.classList.remove('flipped'); e1.textContent = '?';
+                e2.classList.remove('flipped'); e2.textContent = '?';
+                flipped = [];
+            }, 800);
+        }
+    }
+}
+
+// ABC
+function initABC() {
+    document.getElementById('abc-grid').innerHTML = LETTERS.map(function(l) {
+        var learned = DATA.lettersLearned.indexOf(l.l) > -1 ? ' learned' : '';
+        return '<button class="abc-letter' + learned + '" onclick="playABC(\'' + l.l + '\',\'' + l.w + '\')">' + l.l + '</button>';
+    }).join('');
+}
+
+function playABC(l, w) {
+    speak(l + '. ' + w);
+    if (DATA.lettersLearned.indexOf(l) === -1) {
+        DATA.lettersLearned.push(l);
+        DATA.stars++; saveData();
+    }
+    document.getElementById('abc-stars').textContent = DATA.stars;
+    initABC();
+}
+
+// CUENTOS
+function showStorySelect() {
+    var html = '<h3 style="text-align:center;color:#888;margin-bottom:16px">Elige tu aventura</h3><div class="story-select">';
+    STORIES.forEach(function(s) {
+        html += '<div class="story-card ' + s.cls + '" onclick="startStory(\'' + s.id + '\')"><div class="story-card-icon">' + s.icon + '</div><div style="flex:1"><div class="story-card-title">' + s.title + '</div><div class="story-card-desc">' + s.desc + '</div></div><div style="color:#ddd;font-size:1.5rem">→</div></div>';
+    });
+    html += '</div>';
+    document.getElementById('stories-content').innerHTML = html;
+}
+
+function startStory(id) {
+    curStory = STORIES.find(function(s) { return s.id === id; });
+    curPage = 0;
+    showStoryPage();
+}
+
+function showStoryPage() {
+    if (!curStory) return;
+    var p = curStory.pages[curPage];
+    var name = DATA.childName || 'pequeña';
+    var txt = p.text.replace(/\{name\}/g, '<span class="child-name-story">' + name + '</span>');
+    txt = txt.replace(/\{([A-ZÁÉÍÓÚÑÜ]+)\}/g, '<span class="highlight-word" onclick="speakStoryWord(\'$1\')">$1</span>');
+    
+    var h = '<div class="story-progress">Página ' + (curPage+1) + ' de ' + curStory.pages.length + '</div>';
+    h += '<div class="story-container"><div class="story-illustration">' + p.img + '</div><div class="story-text">' + txt + '</div></div>';
+    h += '<div class="story-nav">';
+    if (curPage > 0) h += '<button class="story-nav-btn prev" onclick="prevPage()">← Atrás</button>';
+    h += '<button class="story-nav-btn sound" onclick="readPage()">🔊 Leer</button>';
+    if (curPage < curStory.pages.length-1) {
+        h += '<button class="story-nav-btn next" onclick="nextPage()">Siguiente →</button>';
+    } else {
+        h += '<button class="story-nav-btn next" onclick="finishStory()">✨ Fin</button>';
+    }
+    h += '</div>';
+    document.getElementById('stories-content').innerHTML = h;
+    setTimeout(readPage, 500);
+}
+
+function readPage() {
+    if (!curStory) return;
+    var p = curStory.pages[curPage];
+    var name = DATA.childName || 'pequeña';
+    var txt = p.text.replace(/\{name\}/g, name).replace(/\{([A-ZÁÉÍÓÚÑÜ]+)\}/g, '$1');
+    speak(txt, 0.85);
+}
+
+function speakStoryWord(w) {
+    speak(w, 0.7);
+    DATA.stars++; saveData();
+    document.getElementById('stories-stars').textContent = DATA.stars;
+}
+
+function prevPage() { if (curPage > 0) { curPage--; showStoryPage(); } }
+
+function nextPage() {
+    if (curPage < curStory.pages.length-1) {
+        curPage++;
+        DATA.stars++; saveData();
+        document.getElementById('stories-stars').textContent = DATA.stars;
+        showStoryPage();
+    }
+}
+
+function finishStory() {
+    var name = DATA.childName || 'pequeña';
+    var html = '<div class="story-complete"><div class="story-complete-icon">🎉📚</div>';
+    html += '<div class="story-complete-title">¡Cuento completado!</div>';
+    html += '<div class="story-complete-msg">' + curStory.end + '<br><br>¡Muy bien, ' + name + '! Has ganado <strong>5 estrellas</strong>.</div>';
+    html += '<button class="btn btn-primary" onclick="showStorySelect()">📚 Elegir otro</button></div>';
+    document.getElementById('stories-content').innerHTML = html;
+    DATA.stars += 5; saveData();
+    createConfetti();
+    speak('¡Felicidades ' + name + '!');
+}
+
+function closeStories() {
+    if(window.speechSynthesis) window.speechSynthesis.cancel();
+    curStory = null;
+    closeGame();
+}
+
+// ========== CELEBRACIÓN ==========
+var celebCallback = null;
+
+function celebrate(t, s, cb) {
+    celebCallback = cb;
+    document.getElementById('celeb-text').textContent = t;
+    document.getElementById('celeb-sub').textContent = s;
+    var icons = ['🌟','⭐','🎉','🏆','💫','✨'];
+    document.getElementById('celeb-icon').textContent = icons[Math.floor(Math.random()*6)];
+    createConfetti();
+    document.getElementById('celebration').classList.add('active');
+}
+
+function closeCelebration() {
+    document.getElementById('celebration').classList.remove('active');
+    document.getElementById('confetti').innerHTML = '';
+    if (celebCallback) { celebCallback(); celebCallback = null; }
+}
+
+function createConfetti() {
+    var c = document.getElementById('confetti');
+    c.innerHTML = '';
+    var colors = ['#ff6b9d','#c56cf0','#54a0ff','#ffd32a','#ff9f43','#00d2d3'];
+    for (var i = 0; i < 50; i++) {
+        var d = document.createElement('div');
+        d.className = 'confetti';
+        d.style.left = Math.random() * 100 + '%';
+        d.style.background = colors[Math.floor(Math.random() * 6)];
+        d.style.animationDelay = Math.random() * 2 + 's';
+        c.appendChild(d);
+    }
+}
+
+// ========== INICIAR ==========
+updateDisplay();
+</script>
+</body>
+</html>
