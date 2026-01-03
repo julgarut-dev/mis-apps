@@ -227,7 +227,6 @@
     <div class="sync-indicator" id="sync-indicator"></div>
     <header class="header">
         <div class="logo">🏠 Listado de <span>Tareas</span></div>
-        <div class="subtitle">Tu hogar, organizado</div>
     </header>
     
     <nav class="nav">
@@ -1043,8 +1042,16 @@ var CLOUD = {
 function updateSyncIndicator(status) {
     var el = document.getElementById('sync-indicator');
     el.className = 'sync-indicator';
-    if (status === 'online') el.classList.add('online');
-    else if (status === 'syncing') el.classList.add('syncing');
+    if (status === 'online') {
+        el.classList.add('online');
+        el.title = 'Conectado ✓';
+    } else if (status === 'syncing') {
+        el.classList.add('syncing');
+        el.title = 'Sincronizando...';
+    } else {
+        el.title = 'Desconectado';
+    }
+    console.log('Sync status:', status, 'URL:', CLOUD.url);
 }
 
 function cloudSave() {
@@ -1064,22 +1071,36 @@ function cloudSave() {
 }
 
 function cloudLoad() {
-    if (!CLOUD.url) return Promise.resolve(false);
+    if (!CLOUD.url) {
+        console.log('No hay URL configurada');
+        return Promise.resolve(false);
+    }
     updateSyncIndicator('syncing');
+    console.log('Cargando datos de:', CLOUD.url);
     
     return fetch(CLOUD.url + '?action=load')
-        .then(function(r) { return r.json(); })
+        .then(function(r) { 
+            console.log('Respuesta recibida:', r.status);
+            return r.json(); 
+        })
         .then(function(res) {
+            console.log('Datos recibidos:', res);
             if (res.success && res.data && res.data.homedata) {
                 DATA = res.data.homedata;
                 localStorage.setItem('home_data', JSON.stringify(DATA));
                 updateSyncIndicator('online');
+                console.log('Datos cargados correctamente');
                 return true;
             }
             updateSyncIndicator('online');
+            console.log('Sin datos en la nube (normal si es primera vez)');
             return false;
         })
-        .catch(function() { updateSyncIndicator(''); return false; });
+        .catch(function(err) { 
+            console.error('Error de conexión:', err);
+            updateSyncIndicator(''); 
+            return false; 
+        });
 }
 
 function connectCloud() {
@@ -1228,10 +1249,18 @@ renderToday();
 updateStreak();
 
 if (CLOUD.url) {
-    updateSyncIndicator('online');
+    console.log('Iniciando conexión con:', CLOUD.url);
+    updateSyncIndicator('syncing');
     cloudLoad().then(function(loaded) {
-        if (loaded) renderToday();
+        if (loaded) {
+            renderToday();
+            showToast('☁️', 'Datos sincronizados');
+        } else {
+            showToast('✓', 'Conectado a la nube');
+        }
     });
+} else {
+    console.log('Sin URL de cloud configurada');
 }
 </script>
 </body>
