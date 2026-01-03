@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>📦 Casa - Control Familiar</title>
+  <link rel="stylesheet" href="../css/app.css" />
+  <link rel="stylesheet" href="../css/shell.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="top">
+        <div>
+          <div class="hello">📦 Casa</div>
+          <div class="sub">Lista de compra + inventario</div>
+        </div>
+        <div class="pill" id="btnAdd" style="cursor:pointer">➕</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div style="font-weight:950">🛒 Lista de compra</div>
+        <span class="badge" id="pendBadge">0 pendientes</span>
+      </div>
+      <div class="sep"></div>
+      <div class="row">
+        <input class="input" id="inp" placeholder="Añadir… (ej: leche, papel, fruta)" />
+        <button class="btn" style="width:auto;padding:12px 14px;border-radius:16px" id="add">➕</button>
+      </div>
+      <div class="sep"></div>
+      <div id="list"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:950">🧺 Categorías (inventario)</div>
+      <div class="small" style="margin-top:6px">Base lista. En la siguiente iteración activamos stock (+/−) y auto-añadir a compra.</div>
+      <div class="sep"></div>
+      <div class="grid2">
+        <div class="kpi"><div class="l">Nevera</div><div class="v">🥬</div></div>
+        <div class="kpi"><div class="l">Despensa</div><div class="v">🥫</div></div>
+        <div class="kpi"><div class="l">Congelador</div><div class="v">🧊</div></div>
+        <div class="kpi"><div class="l">Limpieza</div><div class="v">🧽</div></div>
+        <div class="kpi"><div class="l">Baño</div><div class="v">🧻</div></div>
+        <div class="kpi"><div class="l">Otros</div><div class="v">📦</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/cloud_store.js"></script>
+  <script src="../js/family_sync_kv.js"></script>
+  <script src="../js/casa.js"></script>
+  <script src="../js/shell.js"></script>
+</body>
+</html>
