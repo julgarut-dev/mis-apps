@@ -1433,8 +1433,16 @@ var CLOUD = {
 function updateSyncIndicator(status) {
     var indicator = document.getElementById('sync-indicator');
     indicator.className = 'sync-indicator';
-    if (status === 'online') indicator.classList.add('online');
-    else if (status === 'syncing') indicator.classList.add('syncing');
+    if (status === 'online') {
+        indicator.classList.add('online');
+        indicator.title = 'Conectado ✓';
+    } else if (status === 'syncing') {
+        indicator.classList.add('syncing');
+        indicator.title = 'Sincronizando...';
+    } else {
+        indicator.title = 'Desconectado';
+    }
+    console.log('Sync status:', status);
 }
 
 function cloudSave() {
@@ -2293,15 +2301,19 @@ checkAllBadges();
 
 // Inicializar Cloud Sync
 if (CLOUD.url) {
-    updateSyncIndicator('online');
-    // Auto-cargar datos de la nube al iniciar
+    console.log('Iniciando conexión con:', CLOUD.url);
+    updateSyncIndicator('syncing');
     cloudLoad().then(function(loaded) {
         if (loaded) {
             renderToday();
-            console.log('Datos cargados de la nube');
+            showToast('☁️', 'Datos sincronizados');
+        } else {
+            updateSyncIndicator('online');
+            showToast('✓', 'Conectado a la nube');
         }
     });
 } else {
+    console.log('Sin URL de cloud configurada');
     updateSyncIndicator('');
 }
 </script>
