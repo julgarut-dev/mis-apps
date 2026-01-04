@@ -1184,7 +1184,11 @@ function applyFixed() {
                 name: f.name,
                 category: f.category,
                 date: today,
-                user: DATA.currentUser
+
+                // 🔑 CLAVE
+                user: 'shared', 
+                isFixed: true,
+                fixedName: f.name
             });
             applied.push(f.name);
         }
@@ -1398,8 +1402,18 @@ function renderHistory(filter) {
         var cls = t.type === 'expense' ? 'negative' : 'positive';
         html += '<div class="expense-item"><div class="expense-icon" style="background:' + (t.type==='income'?'#10b981':t.type==='saving'?'#0ea5e9':cat.color) + '20">' + icon + '</div>' +
             '<div class="expense-info"><div class="expense-name">' + t.name + '</div>' +
-            '<div class="expense-meta"><span class="expense-user ' + t.user + '">' + (t.user==='jessica'?'Jessica':'Julia') + '</span>' +
-            '<span>' + t.date + '</span></div></div>' +
+            '<div class="expense-meta">' +
+                (
+                    t.user === 'shared'
+                    ? '<span class="expense-user" style="background:#f1f5f9;color:#334155">👥 Ambas</span>'
+                    : '<span class="expense-user ' + t.user + '">' + (t.user==='jessica'?'Jessica':'Julia') + '</span>'
+                ) +
+                (
+                    t.isFixed
+                    ? '<span class="expense-user" style="background:#ecfdf5;color:#065f46">📌 Fijo</span>'
+                    : ''
+                ) +
+                '<span>' + t.date + '</span></div>' +
             '<div class="expense-amount ' + cls + '">' + sign + t.amount.toFixed(2) + ' €</div>' +
             '<button class="delete-btn" onclick="deleteTrans(' + t.id + ')">🗑️</button></div>';
     });
