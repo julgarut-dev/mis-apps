@@ -413,27 +413,9 @@
             <label class="form-label">Presupuesto mensual</label>
             <input type="number" class="form-input" id="configBudget" placeholder="3000">
         </div>
-        <div class="form-group">
-            <label class="form-label">🔗 URL de Google Apps Script</label>
-            <input type="text" class="form-input" id="configScriptUrl" placeholder="https://script.google.com/...">
-            <p style="font-size:0.65rem;color:var(--text-light);margin-top:6px">Esta URL se usa para TODAS las secciones (Gastos, Casa, Tareas, Agenda)</p>
-        </div>
         <button class="btn btn-primary" onclick="saveConfig()">💾 Guardar</button>
-        <button class="btn btn-secondary" onclick="loadFromCloud()">🔄 Cargar datos de la nube</button>
-        <button class="btn btn-secondary" onclick="showScriptCode()">📄 Ver código del Script</button>
+        <button class="btn btn-secondary" onclick="forceSync()">🔄 Forzar sincronización</button>
         <button class="btn btn-secondary" onclick="closeModal('config')">Cerrar</button>
-    </div>
-</div>
-
-<!-- Modal Script Code -->
-<div class="modal" id="modalScriptCode">
-    <div class="modal-content">
-        <div class="modal-handle"></div>
-        <div class="modal-title">📄 Código para Google Apps Script</div>
-        <p style="font-size:0.7rem;color:var(--text-light);margin-bottom:10px">1. Crea una hoja de Google Sheets<br>2. Ve a Extensiones → Apps Script<br>3. Pega este código y guarda<br>4. Implementar → Nueva implementación → App web<br>5. Acceso: "Cualquier persona"<br>6. Copia la URL aquí</p>
-        <textarea id="scriptCodeArea" readonly style="width:100%;height:200px;font-family:monospace;font-size:0.6rem;padding:8px;border:1px solid var(--border);border-radius:8px"></textarea>
-        <button class="btn btn-primary" onclick="copyScriptCode()">📋 Copiar código</button>
-        <button class="btn btn-secondary" onclick="closeModal('scriptCode')">Cerrar</button>
     </div>
 </div>
 
@@ -917,113 +899,22 @@ function deleteTrans(id) {
 
 function saveConfig() {
     DATA.budgets.total = parseFloat(document.getElementById('configBudget').value) || 3000;
-    var scriptUrl = document.getElementById('configScriptUrl').value.trim();
-    if (scriptUrl) {
-        CloudStore.setUrl(scriptUrl);
-    }
     saveData();
     closeModal('config');
     updateAll();
 }
 
-function showScriptCode() {
-    var code = `// Google Apps Script para Control Familiar
-// Sincroniza Gastos, Casa, Tareas y Agenda
-
-function doPost(e) {
-  try {
-    var params = e.parameter;
-    var action = params.action;
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Datos') 
-                || SpreadsheetApp.getActiveSpreadsheet().insertSheet('Datos');
-    
-    if (action === 'save') {
-      var key = params.key;
-      var data = params.data;
-      
-      // Buscar si ya existe la clave
-      var range = sheet.getDataRange();
-      var values = range.getValues();
-      var found = false;
-      
-      for (var i = 0; i < values.length; i++) {
-        if (values[i][0] === key) {
-          sheet.getRange(i + 1, 2).setValue(data);
-          found = true;
-          break;
-        }
-      }
-      
-      if (!found) {
-        sheet.appendRow([key, data]);
-      }
-      
-      return ContentService.createTextOutput(JSON.stringify({success: true}))
-        .setMimeType(ContentService.MimeType.JSON);
+function forceSync() {
+    document.querySelector('.sync-status').textContent = '🔄 Sincronizando...';
+    if (window.CloudStore) {
+        CloudStore.syncGastos().then(function(ok) {
+            if (ok) {
+                document.querySelector('.sync-status').textContent = '✅ Sincronizado';
+            } else {
+                document.querySelector('.sync-status').textContent = '❌ Error';
+            }
+        });
     }
-    
-    if (action === 'saveAll') {
-      var allData = JSON.parse(params.data);
-      sheet.clear();
-      for (var k in allData) {
-        sheet.appendRow([k, JSON.stringify(allData[k])]);
-      }
-      return ContentService.createTextOutput(JSON.stringify({success: true}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({error: 'Unknown action'}))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({error: err.message}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function doGet(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Datos');
-    if (!sheet) {
-      return ContentService.createTextOutput(JSON.stringify({data: {}}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    
-    var range = sheet.getDataRange();
-    var values = range.getValues();
-    var data = {};
-    
-    for (var i = 0; i < values.length; i++) {
-      var key = values[i][0];
-      var val = values[i][1];
-      if (key) {
-        try {
-          data[key] = JSON.parse(val);
-        } catch(e) {
-          data[key] = val;
-        }
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({data: data}))
-      .setMimeType(ContentService.MimeType.JSON);
-      
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({error: err.message}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}`;
-    
-    document.getElementById('scriptCodeArea').value = code;
-    closeModal('config');
-    document.getElementById('modalScriptCode').classList.add('active');
-}
-
-function copyScriptCode() {
-    var ta = document.getElementById('scriptCodeArea');
-    ta.select();
-    document.execCommand('copy');
-    alert('✅ Código copiado! Pégalo en Apps Script');
 }
 
 document.querySelectorAll('.modal').forEach(function(m) {
