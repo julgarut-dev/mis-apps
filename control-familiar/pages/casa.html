@@ -1,56 +1,632 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <title>📦 Casa - Control Familiar</title>
-  <link rel="stylesheet" href="../css/app.css" />
-  <link rel="stylesheet" href="../css/shell.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>🏠 Casa - Control Familiar</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --primary:#6366f1;--primary2:#8b5cf6;--pink:#ec4899;
+            --bg:#f1f5f9;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+            --green:#10b981;--red:#ef4444;--orange:#f59e0b;--blue:#0ea5e9;
+        }
+        body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px}
+        .container{max-width:520px;margin:0 auto;padding:16px}
+        .hero{border-radius:26px;padding:18px;color:#fff;background:linear-gradient(135deg,var(--primary) 0%,var(--primary2) 45%,var(--pink) 100%);box-shadow:0 20px 50px rgba(0,0,0,.18);margin-bottom:16px}
+        .hero .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+        .hero .hello{font-weight:900;font-size:1.25rem}
+        .hero .sub{opacity:.92;margin-top:6px;font-size:.85rem}
+        .pill{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem;cursor:pointer}
+        .tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--card);padding:6px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+        .tab{flex:1;padding:12px 8px;border:none;background:transparent;border-radius:12px;font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer;color:var(--muted);transition:all .2s}
+        .tab.active{background:var(--primary);color:#fff}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:16px;margin-bottom:12px;box-shadow:0 12px 30px rgba(2,6,23,.06)}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .card-title{font-weight:900;font-size:.95rem}
+        .badge{font-size:.7rem;font-weight:800;color:var(--muted);background:#f8fafc;border:1px solid var(--border);padding:5px 10px;border-radius:999px}
+        .badge.alert{background:#fef2f2;color:var(--red);border-color:#fecaca}
+        .sep{height:1px;background:var(--border);margin:12px 0}
+        .small{color:var(--muted);font-size:.82rem}
+        .input-row{display:flex;gap:8px;margin-bottom:12px}
+        .input{flex:1;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-family:inherit;font-size:.9rem;outline:none;background:#fff}
+        .input:focus{border-color:var(--primary)}
+        .btn{border:none;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:.9rem}
+        .btn.secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+        .btn.small{padding:8px 12px;font-size:.75rem}
+        .btn.danger{background:var(--red)}
+        .shop-item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+        .shop-item:last-child{border-bottom:none}
+        .shop-check{width:32px;height:32px;border-radius:10px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:900;font-size:.9rem;transition:all .2s}
+        .shop-check:hover{border-color:var(--primary)}
+        .shop-item.done .shop-check{background:var(--green);border-color:var(--green);color:#fff}
+        .shop-item.done .shop-name{text-decoration:line-through;opacity:.6}
+        .shop-info{flex:1;min-width:0}
+        .shop-name{font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .shop-meta{font-size:.7rem;color:var(--muted);display:flex;gap:6px;align-items:center;margin-top:2px}
+        .shop-cat{background:var(--bg);padding:2px 6px;border-radius:4px;font-weight:600}
+        .shop-qty{font-weight:800;color:var(--primary);min-width:24px;text-align:center}
+        .shop-actions{display:flex;gap:4px}
+        .shop-btn{width:28px;height:28px;border:none;border-radius:8px;background:var(--bg);cursor:pointer;font-size:.8rem}
+        .shop-btn:hover{background:var(--border)}
+        .inv-categories{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+        .inv-cat{background:var(--card);border:2px solid var(--border);border-radius:16px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s}
+        .inv-cat:hover{border-color:var(--primary)}
+        .inv-cat.active{border-color:var(--primary);background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(139,92,246,.1))}
+        .inv-cat-icon{font-size:1.8rem;margin-bottom:4px}
+        .inv-cat-name{font-weight:700;font-size:.75rem;color:var(--text)}
+        .inv-cat-count{font-size:.65rem;color:var(--muted);margin-top:2px}
+        .inv-cat-alert{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;margin-left:4px}
+        .inv-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:14px;margin-bottom:8px}
+        .inv-item.low{border-left:3px solid var(--orange)}
+        .inv-item.out{border-left:3px solid var(--red);background:#fef2f2}
+        .inv-icon{font-size:1.5rem;width:40px;text-align:center}
+        .inv-info{flex:1;min-width:0}
+        .inv-name{font-weight:700;font-size:.85rem}
+        .inv-stock{font-size:.7rem;color:var(--muted);margin-top:2px}
+        .inv-stock .low{color:var(--orange);font-weight:700}
+        .inv-stock .out{color:var(--red);font-weight:700}
+        .inv-controls{display:flex;align-items:center;gap:6px}
+        .inv-qty{font-weight:900;font-size:1.1rem;min-width:30px;text-align:center}
+        .inv-btn{width:32px;height:32px;border:none;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;font-size:1rem;font-weight:700}
+        .inv-btn:hover{background:var(--border)}
+        .inv-btn.add{background:var(--green);color:#fff;border:none}
+        .inv-btn.remove{background:var(--red);color:#fff;border:none}
+        .alerts-section{background:linear-gradient(135deg,var(--orange),var(--red));border-radius:20px;padding:16px;margin-bottom:16px;color:#fff}
+        .alerts-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .alerts-title{font-weight:700;font-size:.9rem}
+        .alerts-badge{background:rgba(255,255,255,.2);padding:4px 10px;border-radius:20px;font-size:.7rem}
+        .alert-item{background:rgba(255,255,255,.15);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;font-size:.8rem}
+        .alert-item:last-child{margin-bottom:0}
+        .alert-item-icon{font-size:1.2rem}
+        .alert-item-text{flex:1}
+        .alert-item-btn{background:rgba(255,255,255,.3);border:none;color:#fff;padding:6px 10px;border-radius:8px;font-size:.7rem;font-weight:700;cursor:pointer}
+        .modal{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:flex-end;justify-content:center;z-index:9998}
+        .modal.active{display:flex}
+        .sheet{width:100%;max-width:520px;background:#fff;border-radius:26px 26px 0 0;padding:20px;border:1px solid var(--border);max-height:90vh;overflow-y:auto}
+        .sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .sheet-title{font-size:1.1rem;font-weight:900}
+        .sheet-close{width:36px;height:36px;border:none;background:var(--bg);border-radius:12px;cursor:pointer;font-size:1rem}
+        .form-group{margin-bottom:14px}
+        .form-label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+        .form-input{width:100%;padding:14px;border:2px solid var(--border);border-radius:14px;font-family:inherit;font-size:1rem}
+        .form-input:focus{outline:none;border-color:var(--primary)}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+        .cat-opt{padding:12px 8px;border:2px solid var(--border);border-radius:12px;text-align:center;cursor:pointer;transition:all .2s}
+        .cat-opt:hover{border-color:var(--primary)}
+        .cat-opt.selected{border-color:var(--primary);background:var(--primary);color:#fff}
+        .cat-opt-icon{font-size:1.3rem;margin-bottom:2px}
+        .cat-opt-name{font-size:.65rem;font-weight:700}
+        .empty{text-align:center;padding:30px;color:var(--muted)}
+        .empty-icon{font-size:2.5rem;margin-bottom:8px}
+        .empty-text{font-size:.85rem}
+        .stats-bar{display:flex;gap:8px;margin-bottom:16px}
+        .stat-box{flex:1;background:var(--card);border-radius:14px;padding:12px;text-align:center;border:1px solid var(--border)}
+        .stat-val{font-size:1.3rem;font-weight:900;color:var(--primary)}
+        .stat-label{font-size:.65rem;color:var(--muted);margin-top:2px}
+        .quick-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+        .quick-cat{padding:6px 12px;background:var(--bg);border-radius:20px;font-size:.75rem;font-weight:600;cursor:pointer;border:1px solid var(--border)}
+        .quick-cat:hover{background:var(--border)}
+        .quick-cat.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <div class="top">
-        <div>
-          <div class="hello">📦 Casa</div>
-          <div class="sub">Lista de compra + inventario</div>
+    <div class="container">
+        <div class="hero">
+            <div class="top">
+                <div>
+                    <div class="hello">🏠 Casa</div>
+                    <div class="sub">Lista de compra e inventario del hogar</div>
+                </div>
+                <div class="pill" onclick="openModal('addProduct')">➕ Añadir</div>
+            </div>
         </div>
-        <div class="pill" id="btnAdd" style="cursor:pointer">➕</div>
-      </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('shopping')">🛒 Compra</button>
+            <button class="tab" onclick="showTab('inventory')">📦 Inventario</button>
+            <button class="tab" onclick="showTab('alerts')">⚠️ Alertas</button>
+        </div>
+        
+        <div class="alerts-section" id="alertsBanner" style="display:none">
+            <div class="alerts-header">
+                <span class="alerts-title">⚠️ Productos que necesitas</span>
+                <span class="alerts-badge" id="alertsCount">0 items</span>
+            </div>
+            <div id="alertsList"></div>
+        </div>
+        
+        <div class="tab-content" id="tabShopping">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🛒 Lista de compra</div>
+                    <span class="badge" id="shopPendBadge">0 pendientes</span>
+                </div>
+                <div class="input-row">
+                    <input class="input" id="shopInput" placeholder="Añadir producto... (ej: leche, pan)">
+                    <button class="btn" onclick="addToShoppingList()">➕</button>
+                </div>
+                <div class="quick-cats" id="shopFilterCats"></div>
+                <div class="sep"></div>
+                <div id="shopList"></div>
+                <div class="sep"></div>
+                <div style="display:flex;gap:8px">
+                    <button class="btn secondary small" style="flex:1" onclick="clearCompleted()">🗑️ Limpiar</button>
+                    <button class="btn small" style="flex:1" onclick="addAllLowStock()">📦 Añadir bajo stock</button>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat-box"><div class="stat-val" id="statPending">0</div><div class="stat-label">Pendientes</div></div>
+                <div class="stat-box"><div class="stat-val" id="statCompleted">0</div><div class="stat-label">Comprados</div></div>
+                <div class="stat-box"><div class="stat-val" id="statInventory">0</div><div class="stat-label">Inventario</div></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="tabInventory" style="display:none">
+            <div class="inv-categories" id="invCategories"></div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title" id="invCatTitle">📦 Todo el inventario</div>
+                    <span class="badge" id="invCatCount">0 productos</span>
+                </div>
+                <div class="input-row">
+                    <input class="input" id="invSearch" placeholder="Buscar producto..." oninput="filterInventory()">
+                    <button class="btn" onclick="openModal('addProduct')">➕</button>
+                </div>
+                <div class="sep"></div>
+                <div id="invList"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="tabAlerts" style="display:none">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">⚠️ Bajo mínimo</div>
+                    <span class="badge alert" id="lowStockBadge">0</span>
+                </div>
+                <div id="lowStockList"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🚫 Agotados</div>
+                    <span class="badge alert" id="outStockBadge">0</span>
+                </div>
+                <div id="outStockList"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📅 Por caducar</div>
+                    <span class="badge" id="expiringBadge">0</span>
+                </div>
+                <div class="small" style="margin-bottom:12px">Próximos 7 días</div>
+                <div id="expiringList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="modalAddProduct">
+        <div class="sheet">
+            <div class="sheet-header">
+                <div class="sheet-title" id="modalProductTitle">➕ Añadir producto</div>
+                <button class="sheet-close" onclick="closeModal('addProduct')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre del producto</label>
+                <input class="form-input" id="prodName" placeholder="Ej: Leche, Papel higiénico...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Categoría</label>
+                <div class="cat-grid" id="prodCatSelector"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Stock actual</label>
+                    <input type="number" class="form-input" id="prodStock" placeholder="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Stock mínimo</label>
+                    <input type="number" class="form-input" id="prodMin" placeholder="1" min="0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Unidad</label>
+                    <select class="form-input" id="prodUnit">
+                        <option value="uds">Unidades</option>
+                        <option value="kg">Kilogramos</option>
+                        <option value="L">Litros</option>
+                        <option value="g">Gramos</option>
+                        <option value="packs">Packs</option>
+                        <option value="rollos">Rollos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Caducidad</label>
+                    <input type="date" class="form-input" id="prodExpiry">
+                </div>
+            </div>
+            <div class="form-group">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                    <input type="checkbox" id="prodAutoAdd" checked>
+                    <span class="small">Auto-añadir a compra cuando baje del mínimo</span>
+                </label>
+            </div>
+            <button class="btn" style="width:100%;margin-top:10px" onclick="saveProduct()">💾 Guardar</button>
+            <button class="btn secondary" style="width:100%;margin-top:8px" onclick="closeModal('addProduct')">Cancelar</button>
+            <input type="hidden" id="prodEditId">
+        </div>
     </div>
 
-    <div class="card">
-      <div class="row" style="justify-content:space-between">
-        <div style="font-weight:950">🛒 Lista de compra</div>
-        <span class="badge" id="pendBadge">0 pendientes</span>
-      </div>
-      <div class="sep"></div>
-      <div class="row">
-        <input class="input" id="inp" placeholder="Añadir… (ej: leche, papel, fruta)" />
-        <button class="btn" style="width:auto;padding:12px 14px;border-radius:16px" id="add">➕</button>
-      </div>
-      <div class="sep"></div>
-      <div id="list"></div>
-    </div>
+<script>
+var CATEGORIES = [
+    {id:'fridge', name:'Nevera', icon:'🥬'},
+    {id:'pantry', name:'Despensa', icon:'🥫'},
+    {id:'freezer', name:'Congelador', icon:'🧊'},
+    {id:'cleaning', name:'Limpieza', icon:'🧽'},
+    {id:'bathroom', name:'Baño', icon:'🧻'},
+    {id:'other', name:'Otros', icon:'📦'}
+];
 
-    <div class="card">
-      <div style="font-weight:950">🧺 Categorías (inventario)</div>
-      <div class="small" style="margin-top:6px">Base lista. En la siguiente iteración activamos stock (+/−) y auto-añadir a compra.</div>
-      <div class="sep"></div>
-      <div class="grid2">
-        <div class="kpi"><div class="l">Nevera</div><div class="v">🥬</div></div>
-        <div class="kpi"><div class="l">Despensa</div><div class="v">🥫</div></div>
-        <div class="kpi"><div class="l">Congelador</div><div class="v">🧊</div></div>
-        <div class="kpi"><div class="l">Limpieza</div><div class="v">🧽</div></div>
-        <div class="kpi"><div class="l">Baño</div><div class="v">🧻</div></div>
-        <div class="kpi"><div class="l">Otros</div><div class="v">📦</div></div>
-      </div>
-    </div>
-  </div>
+var DATA = {inventory: [], shoppingList: []};
 
-  <script src="../js/cloud_store.js"></script>
-  <script src="../js/family_sync_kv.js"></script>
-  <script src="../js/casa.js"></script>
-  <script src="../js/shell.js"></script>
+var DEFAULT_INVENTORY = [
+    {id:1, name:'Leche', category:'fridge', stock:2, minStock:2, unit:'L', autoAdd:true},
+    {id:2, name:'Huevos', category:'fridge', stock:6, minStock:6, unit:'uds', autoAdd:true},
+    {id:3, name:'Yogures', category:'fridge', stock:4, minStock:4, unit:'uds', autoAdd:true},
+    {id:4, name:'Queso', category:'fridge', stock:1, minStock:1, unit:'uds', autoAdd:true},
+    {id:5, name:'Arroz', category:'pantry', stock:1, minStock:1, unit:'kg', autoAdd:true},
+    {id:6, name:'Pasta', category:'pantry', stock:3, minStock:2, unit:'packs', autoAdd:true},
+    {id:7, name:'Aceite oliva', category:'pantry', stock:1, minStock:1, unit:'L', autoAdd:true},
+    {id:8, name:'Tomate frito', category:'pantry', stock:2, minStock:2, unit:'uds', autoAdd:true},
+    {id:9, name:'Atún latas', category:'pantry', stock:4, minStock:3, unit:'uds', autoAdd:true},
+    {id:10, name:'Pan molde', category:'pantry', stock:1, minStock:1, unit:'uds', autoAdd:true},
+    {id:11, name:'Pollo', category:'freezer', stock:2, minStock:1, unit:'uds', autoAdd:true},
+    {id:12, name:'Verduras congeladas', category:'freezer', stock:2, minStock:1, unit:'uds', autoAdd:true},
+    {id:13, name:'Lavavajillas', category:'cleaning', stock:1, minStock:1, unit:'uds', autoAdd:true},
+    {id:14, name:'Fregasuelos', category:'cleaning', stock:1, minStock:1, unit:'uds', autoAdd:true},
+    {id:15, name:'Papel higiénico', category:'bathroom', stock:8, minStock:4, unit:'rollos', autoAdd:true},
+    {id:16, name:'Jabón manos', category:'bathroom', stock:2, minStock:1, unit:'uds', autoAdd:true},
+    {id:17, name:'Champú', category:'bathroom', stock:1, minStock:1, unit:'uds', autoAdd:true},
+    {id:18, name:'Pasta dientes', category:'bathroom', stock:2, minStock:1, unit:'uds', autoAdd:true},
+    {id:19, name:'Pilas', category:'other', stock:4, minStock:2, unit:'uds', autoAdd:true}
+];
+
+try {
+    var saved = localStorage.getItem('home_data');
+    if (saved) {
+        var parsed = JSON.parse(saved);
+        DATA.shoppingList = parsed.shoppingList || [];
+        DATA.inventory = parsed.inventory || DEFAULT_INVENTORY;
+    } else {
+        DATA.inventory = DEFAULT_INVENTORY;
+    }
+} catch(e) { DATA.inventory = DEFAULT_INVENTORY; }
+
+function saveData() {
+    var homeData = {};
+    try { homeData = JSON.parse(localStorage.getItem('home_data') || '{}'); } catch(e) {}
+    homeData.shoppingList = DATA.shoppingList;
+    homeData.inventory = DATA.inventory;
+    localStorage.setItem('home_data', JSON.stringify(homeData));
+}
+
+var currentTab = 'shopping';
+var currentInvCategory = 'all';
+var currentShopFilter = 'all';
+
+function showTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(function(t, i) {
+        t.classList.toggle('active', (tab === 'shopping' && i === 0) || (tab === 'inventory' && i === 1) || (tab === 'alerts' && i === 2));
+    });
+    document.getElementById('tabShopping').style.display = tab === 'shopping' ? 'block' : 'none';
+    document.getElementById('tabInventory').style.display = tab === 'inventory' ? 'block' : 'none';
+    document.getElementById('tabAlerts').style.display = tab === 'alerts' ? 'block' : 'none';
+    if (tab === 'inventory') renderInventory();
+    if (tab === 'alerts') renderAlerts();
+}
+
+function renderShoppingList() {
+    var pending = DATA.shoppingList.filter(function(i) { return !i.done; });
+    var completed = DATA.shoppingList.filter(function(i) { return i.done; });
+    
+    if (currentShopFilter !== 'all') {
+        pending = pending.filter(function(i) { return i.category === currentShopFilter; });
+        completed = completed.filter(function(i) { return i.category === currentShopFilter; });
+    }
+    
+    document.getElementById('shopPendBadge').textContent = pending.length + ' pendientes';
+    document.getElementById('statPending').textContent = DATA.shoppingList.filter(function(i){return !i.done;}).length;
+    document.getElementById('statCompleted').textContent = DATA.shoppingList.filter(function(i){return i.done;}).length;
+    document.getElementById('statInventory').textContent = DATA.inventory.length;
+    
+    var html = '';
+    if (pending.length === 0 && completed.length === 0) {
+        html = '<div class="empty"><div class="empty-icon">🛒</div><div class="empty-text">Lista vacía</div></div>';
+    } else {
+        pending.forEach(function(item) {
+            var cat = CATEGORIES.find(function(c){return c.id === item.category;}) || CATEGORIES[5];
+            html += '<div class="shop-item" data-id="' + item.id + '"><div class="shop-check" onclick="toggleShopItem(' + item.id + ')">○</div><div class="shop-info"><div class="shop-name">' + esc(item.name) + '</div><div class="shop-meta"><span class="shop-cat">' + cat.icon + ' ' + cat.name + '</span></div></div><div class="shop-qty">' + item.qty + '</div><div class="shop-actions"><button class="shop-btn" onclick="changeShopQty(' + item.id + ',-1)">−</button><button class="shop-btn" onclick="changeShopQty(' + item.id + ',1)">+</button><button class="shop-btn" onclick="removeShopItem(' + item.id + ')">🗑️</button></div></div>';
+        });
+        if (completed.length > 0) {
+            html += '<div class="sep"></div><div class="small" style="margin-bottom:8px">✅ Comprados</div>';
+            completed.forEach(function(item) {
+                var cat = CATEGORIES.find(function(c){return c.id === item.category;}) || CATEGORIES[5];
+                html += '<div class="shop-item done" data-id="' + item.id + '"><div class="shop-check" onclick="toggleShopItem(' + item.id + ')">✓</div><div class="shop-info"><div class="shop-name">' + esc(item.name) + '</div><div class="shop-meta"><span class="shop-cat">' + cat.icon + '</span></div></div><div class="shop-qty">' + item.qty + '</div><div class="shop-actions"><button class="shop-btn" onclick="removeShopItem(' + item.id + ')">🗑️</button></div></div>';
+            });
+        }
+    }
+    document.getElementById('shopList').innerHTML = html;
+    
+    var catCounts = {};
+    DATA.shoppingList.forEach(function(item) { catCounts[item.category] = (catCounts[item.category] || 0) + 1; });
+    var filterHtml = '<span class="quick-cat ' + (currentShopFilter === 'all' ? 'active' : '') + '" onclick="filterShop(\'all\')">Todos (' + DATA.shoppingList.length + ')</span>';
+    CATEGORIES.forEach(function(cat) {
+        if (catCounts[cat.id]) filterHtml += '<span class="quick-cat ' + (currentShopFilter === cat.id ? 'active' : '') + '" onclick="filterShop(\'' + cat.id + '\')">' + cat.icon + ' ' + catCounts[cat.id] + '</span>';
+    });
+    document.getElementById('shopFilterCats').innerHTML = filterHtml;
+}
+
+function addToShoppingList() {
+    var input = document.getElementById('shopInput');
+    var name = input.value.trim();
+    if (!name) return;
+    var existing = DATA.shoppingList.find(function(i) { return i.name.toLowerCase() === name.toLowerCase() && !i.done; });
+    if (existing) { existing.qty++; }
+    else {
+        var invItem = DATA.inventory.find(function(i) { return i.name.toLowerCase() === name.toLowerCase(); });
+        DATA.shoppingList.push({ id: Date.now(), name: name, qty: 1, category: invItem ? invItem.category : 'other', done: false });
+    }
+    input.value = '';
+    saveData();
+    renderShoppingList();
+    checkAndShowAlerts();
+}
+
+function toggleShopItem(id) {
+    var item = DATA.shoppingList.find(function(i) { return i.id === id; });
+    if (item) {
+        item.done = !item.done;
+        if (item.done) {
+            var invItem = DATA.inventory.find(function(i) { return i.name.toLowerCase() === item.name.toLowerCase(); });
+            if (invItem) invItem.stock += item.qty;
+        }
+        saveData();
+        renderShoppingList();
+        checkAndShowAlerts();
+    }
+}
+
+function changeShopQty(id, delta) {
+    var item = DATA.shoppingList.find(function(i) { return i.id === id; });
+    if (item) { item.qty = Math.max(1, item.qty + delta); saveData(); renderShoppingList(); }
+}
+
+function removeShopItem(id) {
+    DATA.shoppingList = DATA.shoppingList.filter(function(i) { return i.id !== id; });
+    saveData();
+    renderShoppingList();
+    checkAndShowAlerts();
+}
+
+function clearCompleted() {
+    DATA.shoppingList = DATA.shoppingList.filter(function(i) { return !i.done; });
+    saveData();
+    renderShoppingList();
+}
+
+function filterShop(cat) { currentShopFilter = cat; renderShoppingList(); }
+
+function addAllLowStock() {
+    var lowItems = DATA.inventory.filter(function(i) { return i.stock <= i.minStock && i.autoAdd; });
+    var added = 0;
+    lowItems.forEach(function(inv) {
+        var existing = DATA.shoppingList.find(function(s) { return s.name.toLowerCase() === inv.name.toLowerCase() && !s.done; });
+        if (!existing) {
+            DATA.shoppingList.push({ id: Date.now() + Math.random(), name: inv.name, qty: Math.max(1, inv.minStock - inv.stock + 1), category: inv.category, done: false });
+            added++;
+        }
+    });
+    if (added > 0) { saveData(); renderShoppingList(); alert('✅ ' + added + ' productos añadidos'); }
+    else alert('ℹ️ No hay productos por debajo del mínimo');
+}
+
+function renderInventory() {
+    var catHtml = '<div class="inv-cat ' + (currentInvCategory === 'all' ? 'active' : '') + '" onclick="selectInvCategory(\'all\')"><div class="inv-cat-icon">📦</div><div class="inv-cat-name">Todo</div><div class="inv-cat-count">' + DATA.inventory.length + '</div></div>';
+    CATEGORIES.forEach(function(cat) {
+        var items = DATA.inventory.filter(function(i) { return i.category === cat.id; });
+        var hasAlert = items.some(function(i) { return i.stock <= i.minStock; });
+        catHtml += '<div class="inv-cat ' + (currentInvCategory === cat.id ? 'active' : '') + '" onclick="selectInvCategory(\'' + cat.id + '\')"><div class="inv-cat-icon">' + cat.icon + '</div><div class="inv-cat-name">' + cat.name + (hasAlert ? '<span class="inv-cat-alert"></span>' : '') + '</div><div class="inv-cat-count">' + items.length + '</div></div>';
+    });
+    document.getElementById('invCategories').innerHTML = catHtml;
+    
+    var items = DATA.inventory;
+    if (currentInvCategory !== 'all') items = items.filter(function(i) { return i.category === currentInvCategory; });
+    var search = document.getElementById('invSearch').value.toLowerCase();
+    if (search) items = items.filter(function(i) { return i.name.toLowerCase().includes(search); });
+    
+    var cat = CATEGORIES.find(function(c) { return c.id === currentInvCategory; });
+    document.getElementById('invCatTitle').textContent = currentInvCategory === 'all' ? '📦 Todo' : cat.icon + ' ' + cat.name;
+    document.getElementById('invCatCount').textContent = items.length + ' productos';
+    
+    var html = '';
+    if (items.length === 0) html = '<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No hay productos</div></div>';
+    else {
+        items.forEach(function(item) {
+            var isLow = item.stock > 0 && item.stock <= item.minStock;
+            var isOut = item.stock === 0;
+            var statusClass = isOut ? 'out' : (isLow ? 'low' : '');
+            var statusText = isOut ? '<span class="out">Agotado</span>' : (isLow ? '<span class="low">Bajo</span>' : 'OK');
+            var catIcon = CATEGORIES.find(function(c){return c.id === item.category;})?.icon || '📦';
+            html += '<div class="inv-item ' + statusClass + '"><div class="inv-icon">' + catIcon + '</div><div class="inv-info"><div class="inv-name">' + esc(item.name) + '</div><div class="inv-stock">' + statusText + ' · Mín: ' + item.minStock + '</div></div><div class="inv-controls"><button class="inv-btn remove" onclick="changeStock(' + item.id + ',-1)">−</button><span class="inv-qty">' + item.stock + '</span><button class="inv-btn add" onclick="changeStock(' + item.id + ',1)">+</button></div><button class="shop-btn" onclick="editProduct(' + item.id + ')" style="margin-left:4px">✏️</button></div>';
+        });
+    }
+    document.getElementById('invList').innerHTML = html;
+}
+
+function selectInvCategory(cat) { currentInvCategory = cat; renderInventory(); }
+function filterInventory() { renderInventory(); }
+
+function changeStock(id, delta) {
+    var item = DATA.inventory.find(function(i) { return i.id === id; });
+    if (item) {
+        item.stock = Math.max(0, item.stock + delta);
+        if (item.stock <= item.minStock && item.autoAdd) {
+            var existing = DATA.shoppingList.find(function(s) { return s.name.toLowerCase() === item.name.toLowerCase() && !s.done; });
+            if (!existing) DATA.shoppingList.push({ id: Date.now(), name: item.name, qty: 1, category: item.category, done: false });
+        }
+        saveData();
+        renderInventory();
+        renderShoppingList();
+        checkAndShowAlerts();
+    }
+}
+
+function renderAlerts() {
+    var lowStock = DATA.inventory.filter(function(i) { return i.stock > 0 && i.stock <= i.minStock; });
+    var outStock = DATA.inventory.filter(function(i) { return i.stock === 0; });
+    var today = new Date();
+    var weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    var expiring = DATA.inventory.filter(function(i) {
+        if (!i.expiry) return false;
+        var exp = new Date(i.expiry);
+        return exp <= weekFromNow && exp >= today;
+    });
+    
+    document.getElementById('lowStockBadge').textContent = lowStock.length;
+    document.getElementById('outStockBadge').textContent = outStock.length;
+    document.getElementById('expiringBadge').textContent = expiring.length;
+    
+    var html = lowStock.length === 0 ? '<div class="empty"><div class="empty-text">✅ Todo OK</div></div>' : '';
+    lowStock.forEach(function(item) {
+        var cat = CATEGORIES.find(function(c){return c.id === item.category;}) || CATEGORIES[5];
+        html += '<div class="inv-item low"><div class="inv-icon">' + cat.icon + '</div><div class="inv-info"><div class="inv-name">' + esc(item.name) + '</div><div class="inv-stock">Stock: ' + item.stock + ' / Mín: ' + item.minStock + '</div></div><button class="btn small" onclick="quickAddToShop(\'' + esc(item.name) + '\',\'' + item.category + '\')">🛒</button></div>';
+    });
+    document.getElementById('lowStockList').innerHTML = html;
+    
+    html = outStock.length === 0 ? '<div class="empty"><div class="empty-text">✅ Nada agotado</div></div>' : '';
+    outStock.forEach(function(item) {
+        var cat = CATEGORIES.find(function(c){return c.id === item.category;}) || CATEGORIES[5];
+        html += '<div class="inv-item out"><div class="inv-icon">' + cat.icon + '</div><div class="inv-info"><div class="inv-name">' + esc(item.name) + '</div><div class="inv-stock"><span class="out">Agotado</span></div></div><button class="btn small danger" onclick="quickAddToShop(\'' + esc(item.name) + '\',\'' + item.category + '\')">🛒</button></div>';
+    });
+    document.getElementById('outStockList').innerHTML = html;
+    
+    html = expiring.length === 0 ? '<div class="empty"><div class="empty-text">✅ Nada por caducar</div></div>' : '';
+    expiring.forEach(function(item) {
+        var cat = CATEGORIES.find(function(c){return c.id === item.category;}) || CATEGORIES[5];
+        var daysLeft = Math.ceil((new Date(item.expiry) - today) / (24 * 60 * 60 * 1000));
+        html += '<div class="inv-item"><div class="inv-icon">' + cat.icon + '</div><div class="inv-info"><div class="inv-name">' + esc(item.name) + '</div><div class="inv-stock">Caduca en ' + daysLeft + ' días</div></div></div>';
+    });
+    document.getElementById('expiringList').innerHTML = html;
+}
+
+function checkAndShowAlerts() {
+    var lowStock = DATA.inventory.filter(function(i) { return i.stock <= i.minStock; });
+    var banner = document.getElementById('alertsBanner');
+    if (lowStock.length > 0 && currentTab === 'shopping') {
+        banner.style.display = 'block';
+        document.getElementById('alertsCount').textContent = lowStock.length + ' items';
+        var html = '';
+        lowStock.slice(0, 3).forEach(function(item) {
+            var cat = CATEGORIES.find(function(c){return c.id === item.category;}) || CATEGORIES[5];
+            html += '<div class="alert-item"><div class="alert-item-icon">' + cat.icon + '</div><div class="alert-item-text">' + esc(item.name) + '</div><button class="alert-item-btn" onclick="quickAddToShop(\'' + esc(item.name) + '\',\'' + item.category + '\')">+ Añadir</button></div>';
+        });
+        document.getElementById('alertsList').innerHTML = html;
+    } else banner.style.display = 'none';
+}
+
+function quickAddToShop(name, category) {
+    var existing = DATA.shoppingList.find(function(s) { return s.name.toLowerCase() === name.toLowerCase() && !s.done; });
+    if (existing) existing.qty++;
+    else DATA.shoppingList.push({ id: Date.now(), name: name, qty: 1, category: category, done: false });
+    saveData();
+    renderShoppingList();
+    checkAndShowAlerts();
+    if (currentTab === 'alerts') renderAlerts();
+}
+
+function openModal(name) {
+    document.getElementById('modal' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+    if (name === 'addProduct') {
+        document.getElementById('modalProductTitle').textContent = '➕ Añadir producto';
+        document.getElementById('prodName').value = '';
+        document.getElementById('prodStock').value = '';
+        document.getElementById('prodMin').value = '1';
+        document.getElementById('prodUnit').value = 'uds';
+        document.getElementById('prodExpiry').value = '';
+        document.getElementById('prodAutoAdd').checked = true;
+        document.getElementById('prodEditId').value = '';
+        renderCatSelector();
+    }
+}
+
+function closeModal(name) { document.getElementById('modal' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('active'); }
+
+function renderCatSelector() {
+    var html = '';
+    CATEGORIES.forEach(function(c) { html += '<div class="cat-opt" data-cat="' + c.id + '" onclick="selectProdCat(\'' + c.id + '\')"><div class="cat-opt-icon">' + c.icon + '</div><div class="cat-opt-name">' + c.name + '</div></div>'; });
+    document.getElementById('prodCatSelector').innerHTML = html;
+}
+
+function selectProdCat(cat) { document.querySelectorAll('#prodCatSelector .cat-opt').forEach(function(el) { el.classList.toggle('selected', el.dataset.cat === cat); }); }
+
+function saveProduct() {
+    var name = document.getElementById('prodName').value.trim();
+    var catEl = document.querySelector('#prodCatSelector .cat-opt.selected');
+    var stock = parseInt(document.getElementById('prodStock').value) || 0;
+    var minStock = parseInt(document.getElementById('prodMin').value) || 1;
+    var unit = document.getElementById('prodUnit').value;
+    var expiry = document.getElementById('prodExpiry').value || null;
+    var autoAdd = document.getElementById('prodAutoAdd').checked;
+    var editId = document.getElementById('prodEditId').value;
+    
+    if (!name) { alert('Introduce un nombre'); return; }
+    if (!catEl) { alert('Selecciona una categoría'); return; }
+    
+    if (editId) {
+        var item = DATA.inventory.find(function(i) { return i.id === parseInt(editId); });
+        if (item) { item.name = name; item.category = catEl.dataset.cat; item.stock = stock; item.minStock = minStock; item.unit = unit; item.expiry = expiry; item.autoAdd = autoAdd; }
+    } else {
+        DATA.inventory.push({ id: Date.now(), name: name, category: catEl.dataset.cat, stock: stock, minStock: minStock, unit: unit, expiry: expiry, autoAdd: autoAdd });
+    }
+    
+    if (stock <= minStock && autoAdd) {
+        var existing = DATA.shoppingList.find(function(s) { return s.name.toLowerCase() === name.toLowerCase() && !s.done; });
+        if (!existing) DATA.shoppingList.push({ id: Date.now() + 1, name: name, qty: 1, category: catEl.dataset.cat, done: false });
+    }
+    
+    saveData();
+    closeModal('addProduct');
+    renderInventory();
+    renderShoppingList();
+    checkAndShowAlerts();
+}
+
+function editProduct(id) {
+    var item = DATA.inventory.find(function(i) { return i.id === id; });
+    if (!item) return;
+    openModal('addProduct');
+    document.getElementById('modalProductTitle').textContent = '✏️ Editar producto';
+    document.getElementById('prodName').value = item.name;
+    document.getElementById('prodStock').value = item.stock;
+    document.getElementById('prodMin').value = item.minStock;
+    document.getElementById('prodUnit').value = item.unit;
+    document.getElementById('prodExpiry').value = item.expiry || '';
+    document.getElementById('prodAutoAdd').checked = item.autoAdd;
+    document.getElementById('prodEditId').value = id;
+    setTimeout(function() { selectProdCat(item.category); }, 100);
+}
+
+function esc(str) { return String(str || '').replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+
+document.getElementById('shopInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') addToShoppingList(); });
+document.querySelectorAll('.modal').forEach(function(m) { m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('active'); }); });
+
+renderShoppingList();
+checkAndShowAlerts();
+</script>
+<script src="../js/shell.js"></script>
 </body>
 </html>
