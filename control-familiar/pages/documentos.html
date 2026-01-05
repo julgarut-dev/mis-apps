@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>📚 Documentos - Control Familiar</title>
+    <link rel="stylesheet" href="../css/shell.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --primary:#6366f1;--primary2:#8b5cf6;--pink:#ec4899;
+            --bg:#f1f5f9;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+            --green:#10b981;--red:#ef4444;--orange:#f59e0b;--blue:#0ea5e9;
+        }
+        body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px}
+        .container{max-width:520px;margin:0 auto;padding:16px}
+        .hero{border-radius:26px;padding:18px;color:#fff;background:linear-gradient(135deg,#0ea5e9 0%,#06b6d4 50%,#14b8a6 100%);box-shadow:0 20px 50px rgba(0,0,0,.18);margin-bottom:16px}
+        .hero .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+        .hero .hello{font-weight:900;font-size:1.25rem}
+        .hero .sub{opacity:.92;margin-top:6px;font-size:.85rem}
+        .pill{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.8rem;cursor:pointer}
+        .tabs{display:flex;gap:6px;margin-bottom:16px;background:var(--card);padding:6px;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+        .tab{flex:1;padding:12px 8px;border:none;background:transparent;border-radius:12px;font-family:inherit;font-weight:700;font-size:.75rem;cursor:pointer;color:var(--muted);transition:all .2s}
+        .tab.active{background:var(--primary);color:#fff}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:16px;margin-bottom:12px;box-shadow:0 12px 30px rgba(2,6,23,.06)}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .card-title{font-weight:900;font-size:.95rem}
+        .badge{font-size:.7rem;font-weight:800;color:var(--muted);background:#f8fafc;border:1px solid var(--border);padding:5px 10px;border-radius:999px}
+        .sep{height:1px;background:var(--border);margin:12px 0}
+        .small{color:var(--muted);font-size:.82rem}
+        .input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);font-family:inherit;font-size:.9rem;outline:none;background:#fff}
+        .input:focus{border-color:var(--primary)}
+        .btn{width:100%;border:none;border-radius:14px;padding:14px;font-weight:800;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:.9rem}
+        .btn.secondary{background:var(--card);color:var(--text);border:1px solid var(--border)}
+        
+        /* Document items */
+        .doc-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg);border-radius:14px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+        .doc-item:hover{background:var(--border)}
+        .doc-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+        .doc-icon.seguro{background:#dbeafe;color:#2563eb}
+        .doc-icon.contrato{background:#fef3c7;color:#d97706}
+        .doc-icon.medico{background:#fce7f3;color:#db2777}
+        .doc-icon.vehiculo{background:#dcfce7;color:#16a34a}
+        .doc-icon.legal{background:#ede9fe;color:#7c3aed}
+        .doc-icon.otro{background:#f1f5f9;color:#64748b}
+        .doc-info{flex:1;min-width:0}
+        .doc-title{font-weight:700;font-size:.9rem;margin-bottom:2px}
+        .doc-desc{font-size:.75rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .doc-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+        .doc-tag{font-size:.6rem;padding:3px 8px;border-radius:6px;font-weight:600}
+        .doc-tag.expiry{background:#fef2f2;color:#ef4444}
+        .doc-tag.ok{background:#dcfce7;color:#16a34a}
+        .doc-actions{display:flex;gap:6px}
+        .doc-btn{width:32px;height:32px;border:none;border-radius:8px;background:var(--card);cursor:pointer;font-size:.9rem}
+        
+        /* Categories */
+        .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+        .cat-item{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s}
+        .cat-item:hover{border-color:var(--primary)}
+        .cat-item.active{border-color:var(--primary);background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(139,92,246,.1))}
+        .cat-icon{font-size:1.8rem;margin-bottom:4px}
+        .cat-name{font-weight:700;font-size:.7rem}
+        .cat-count{font-size:.6rem;color:var(--muted)}
+        
+        /* Modal */
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px}
+        .modal.active{display:flex}
+        .sheet{background:var(--card);border-radius:24px;padding:24px;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.25)}
+        .sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .sheet-title{font-weight:900;font-size:1.1rem}
+        .sheet-close{width:32px;height:32px;border:none;background:var(--bg);border-radius:50%;cursor:pointer;font-size:1rem}
+        .form-group{margin-bottom:14px}
+        .form-label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+        .form-input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;font-family:inherit;font-size:.9rem}
+        .form-input:focus{outline:none;border-color:var(--primary)}
+        textarea.form-input{min-height:100px;resize:vertical}
+        
+        /* Type selector */
+        .type-selector{display:flex;flex-wrap:wrap;gap:6px}
+        .type-btn{padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;font-size:.7rem;font-weight:600;transition:all .2s}
+        .type-btn.active{color:#fff}
+        .type-btn.seguro.active{background:#2563eb;border-color:#2563eb}
+        .type-btn.contrato.active{background:#d97706;border-color:#d97706}
+        .type-btn.medico.active{background:#db2777;border-color:#db2777}
+        .type-btn.vehiculo.active{background:#16a34a;border-color:#16a34a}
+        .type-btn.legal.active{background:#7c3aed;border-color:#7c3aed}
+        .type-btn.otro.active{background:#64748b;border-color:#64748b}
+        
+        /* Search */
+        .search-row{display:flex;gap:8px;margin-bottom:16px}
+        
+        /* Photos */
+        .photo-thumb{width:70px;height:70px;border-radius:10px;object-fit:cover;border:2px solid var(--border);cursor:pointer}
+        .photo-thumb-wrap{position:relative}
+        .photo-remove{position:absolute;top:-6px;right:-6px;width:22px;height:22px;background:#ef4444;color:#fff;border:none;border-radius:50%;cursor:pointer;font-size:.7rem;font-weight:700}
+        .photo-full{max-width:100%;border-radius:12px;margin-bottom:8px}
+        .photo-gallery{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <div class="top">
+                <div>
+                    <div class="hello">📚 Documentos</div>
+                    <div class="sub">Información importante del hogar</div>
+                </div>
+                <div class="pill" onclick="openModal('add')">➕ Añadir</div>
+            </div>
+        </div>
+        
+        <div class="search-row">
+            <input class="input" id="searchInput" placeholder="🔍 Buscar documento..." oninput="filterDocs()">
+        </div>
+        
+        <!-- Categorías -->
+        <div class="cat-grid" id="catGrid"></div>
+        
+        <!-- Lista de documentos -->
+        <div id="docsList"></div>
+    </div>
+    
+    <!-- Modal Añadir/Editar -->
+    <div class="modal" id="modalAdd">
+        <div class="sheet">
+            <div class="sheet-header">
+                <div class="sheet-title" id="modalTitle">➕ Nuevo documento</div>
+                <button class="sheet-close" onclick="closeModal('add')">✕</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Título</label>
+                <input class="form-input" id="docTitle" placeholder="Ej: Seguro del coche, Contrato alquiler...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tipo</label>
+                <div class="type-selector" id="typeSelector">
+                    <button type="button" class="type-btn seguro" onclick="setDocType('seguro')">🛡️ Seguro</button>
+                    <button type="button" class="type-btn contrato" onclick="setDocType('contrato')">📄 Contrato</button>
+                    <button type="button" class="type-btn medico" onclick="setDocType('medico')">🏥 Médico</button>
+                    <button type="button" class="type-btn vehiculo" onclick="setDocType('vehiculo')">🚗 Vehículo</button>
+                    <button type="button" class="type-btn legal" onclick="setDocType('legal')">⚖️ Legal</button>
+                    <button type="button" class="type-btn otro active" onclick="setDocType('otro')">📌 Otro</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">📸 Fotos (DNI, tarjetas, documentos...)</label>
+                <div id="photoPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+                <label style="display:flex;align-items:center;justify-content:center;gap:8px;padding:20px;border:2px dashed var(--border);border-radius:12px;cursor:pointer;background:var(--bg)">
+                    <span style="font-size:1.5rem">📷</span>
+                    <span style="font-weight:600;color:var(--muted)">Añadir foto</span>
+                    <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotos(this)">
+                </label>
+                <div class="small" style="margin-top:6px">Tip: Puedes añadir varias fotos (anverso/reverso)</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Descripción / Notas</label>
+                <textarea class="form-input" id="docDesc" placeholder="Detalles importantes, números de póliza, condiciones..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fecha de vencimiento (opcional)</label>
+                <input type="date" class="form-input" id="docExpiry">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Datos importantes</label>
+                <input class="form-input" id="docData1" placeholder="Ej: Nº Póliza: 123456" style="margin-bottom:8px">
+                <input class="form-input" id="docData2" placeholder="Ej: Teléfono: 900 123 456" style="margin-bottom:8px">
+                <input class="form-input" id="docData3" placeholder="Ej: Usuario: miusuario">
+            </div>
+            <button class="btn" onclick="saveDoc()">💾 Guardar</button>
+            <input type="hidden" id="editingDocId">
+        </div>
+    </div>
+    
+    <!-- Modal Ver Detalle -->
+    <div class="modal" id="modalView">
+        <div class="sheet">
+            <div class="sheet-header">
+                <div class="sheet-title" id="viewTitle">📄 Documento</div>
+                <button class="sheet-close" onclick="closeModal('view')">✕</button>
+            </div>
+            <div id="viewContent"></div>
+            <div class="sep"></div>
+            <div style="display:flex;gap:8px">
+                <button class="btn secondary" style="flex:1" onclick="editCurrentDoc()">✏️ Editar</button>
+                <button class="btn" style="flex:1;background:#ef4444" onclick="deleteCurrentDoc()">🗑️ Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+<script src="../js/cloud_store.js"></script>
+<script>
+// ========== DATA ==========
+var DOC_TYPES = {
+    seguro: {icon: '🛡️', name: 'Seguros', color: '#2563eb'},
+    contrato: {icon: '📄', name: 'Contratos', color: '#d97706'},
+    medico: {icon: '🏥', name: 'Médico', color: '#db2777'},
+    vehiculo: {icon: '🚗', name: 'Vehículo', color: '#16a34a'},
+    legal: {icon: '⚖️', name: 'Legal', color: '#7c3aed'},
+    otro: {icon: '📌', name: 'Otros', color: '#64748b'}
+};
+
+var DATA = {
+    documents: []
+};
+
+var currentDocType = 'otro';
+var currentCategory = 'all';
+var viewingDocId = null;
+var currentPhotos = []; // Array de fotos en base64
+
+// Cargar datos
+try {
+    var saved = localStorage.getItem('home_data');
+    if (saved) {
+        var parsed = JSON.parse(saved);
+        DATA.documents = parsed.documents || [];
+    }
+} catch(e) {}
+
+function saveData() {
+    var homeData = {};
+    try { homeData = JSON.parse(localStorage.getItem('home_data') || '{}'); } catch(e) {}
+    homeData.documents = DATA.documents;
+    localStorage.setItem('home_data', JSON.stringify(homeData));
+    if (window.CloudStore) CloudStore.syncCasa();
+}
+
+// ========== FOTOS ==========
+function handlePhotos(input) {
+    var files = input.files;
+    if (!files || !files.length) return;
+    
+    Array.from(files).forEach(function(file) {
+        if (!file.type.startsWith('image/')) return;
+        
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            // Comprimir imagen
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                var maxSize = 800;
+                var w = img.width;
+                var h = img.height;
+                
+                if (w > maxSize || h > maxSize) {
+                    if (w > h) {
+                        h = (h / w) * maxSize;
+                        w = maxSize;
+                    } else {
+                        w = (w / h) * maxSize;
+                        h = maxSize;
+                    }
+                }
+                
+                canvas.width = w;
+                canvas.height = h;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                
+                var compressed = canvas.toDataURL('image/jpeg', 0.7);
+                currentPhotos.push(compressed);
+                renderPhotoPreview();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    input.value = '';
+}
+
+function renderPhotoPreview() {
+    var html = '';
+    currentPhotos.forEach(function(photo, i) {
+        html += '<div class="photo-thumb-wrap">';
+        html += '<img src="' + photo + '" class="photo-thumb" onclick="viewPhoto(' + i + ')">';
+        html += '<button class="photo-remove" onclick="removePhoto(' + i + ')">✕</button>';
+        html += '</div>';
+    });
+    document.getElementById('photoPreview').innerHTML = html;
+}
+
+function removePhoto(idx) {
+    currentPhotos.splice(idx, 1);
+    renderPhotoPreview();
+}
+
+function viewPhoto(idx) {
+    var photo = currentPhotos[idx];
+    if (photo) {
+        window.open(photo, '_blank');
+    }
+}
+
+function esc(s) {
+    return String(s || '').replace(/[&<>"']/g, function(m) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+}
+
+// ========== UI ==========
+function renderCategories() {
+    var counts = {all: DATA.documents.length};
+    DATA.documents.forEach(function(d) {
+        counts[d.type] = (counts[d.type] || 0) + 1;
+    });
+    
+    var html = '<div class="cat-item' + (currentCategory === 'all' ? ' active' : '') + '" onclick="filterByCategory(\'all\')">';
+    html += '<div class="cat-icon">📚</div><div class="cat-name">Todos</div><div class="cat-count">' + counts.all + '</div></div>';
+    
+    Object.keys(DOC_TYPES).forEach(function(type) {
+        var t = DOC_TYPES[type];
+        var count = counts[type] || 0;
+        html += '<div class="cat-item' + (currentCategory === type ? ' active' : '') + '" onclick="filterByCategory(\'' + type + '\')">';
+        html += '<div class="cat-icon">' + t.icon + '</div><div class="cat-name">' + t.name + '</div><div class="cat-count">' + count + '</div></div>';
+    });
+    
+    document.getElementById('catGrid').innerHTML = html;
+}
+
+function filterByCategory(cat) {
+    currentCategory = cat;
+    renderCategories();
+    renderDocs();
+}
+
+function filterDocs() {
+    renderDocs();
+}
+
+function renderDocs() {
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var docs = DATA.documents.filter(function(d) {
+        if (currentCategory !== 'all' && d.type !== currentCategory) return false;
+        if (search && d.title.toLowerCase().indexOf(search) === -1 && (!d.desc || d.desc.toLowerCase().indexOf(search) === -1)) return false;
+        return true;
+    });
+    
+    // Ordenar: primero los que vencen pronto
+    docs.sort(function(a, b) {
+        if (a.expiry && b.expiry) return new Date(a.expiry) - new Date(b.expiry);
+        if (a.expiry) return -1;
+        if (b.expiry) return 1;
+        return 0;
+    });
+    
+    if (docs.length === 0) {
+        document.getElementById('docsList').innerHTML = '<div class="card"><div class="small" style="text-align:center;padding:30px">No hay documentos. ¡Añade uno! 📄</div></div>';
+        return;
+    }
+    
+    var html = '';
+    docs.forEach(function(doc) {
+        var type = DOC_TYPES[doc.type] || DOC_TYPES.otro;
+        var expiryTag = '';
+        if (doc.expiry) {
+            var exp = new Date(doc.expiry);
+            var today = new Date();
+            var diff = Math.ceil((exp - today) / (1000*60*60*24));
+            if (diff < 0) {
+                expiryTag = '<span class="doc-tag expiry">⚠️ Vencido</span>';
+            } else if (diff <= 30) {
+                expiryTag = '<span class="doc-tag expiry">📅 ' + diff + ' días</span>';
+            } else {
+                expiryTag = '<span class="doc-tag ok">✓ Vigente</span>';
+            }
+        }
+        
+        var photoTag = '';
+        if (doc.photos && doc.photos.length > 0) {
+            photoTag = '<span class="doc-tag" style="background:#dbeafe;color:#2563eb">📷 ' + doc.photos.length + '</span>';
+        }
+        
+        html += '<div class="doc-item" onclick="viewDoc(' + doc.id + ')">';
+        html += '<div class="doc-icon ' + doc.type + '">' + type.icon + '</div>';
+        html += '<div class="doc-info">';
+        html += '<div class="doc-title">' + esc(doc.title) + '</div>';
+        if (doc.desc) html += '<div class="doc-desc">' + esc(doc.desc) + '</div>';
+        html += '<div class="doc-meta">';
+        html += '<span class="doc-tag" style="background:' + type.color + '22;color:' + type.color + '">' + type.name + '</span>';
+        html += photoTag;
+        html += expiryTag;
+        html += '</div></div></div>';
+    });
+    
+    document.getElementById('docsList').innerHTML = html;
+}
+
+// ========== MODAL ==========
+function openModal(name) {
+    document.getElementById('modal' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+    if (name === 'add') {
+        document.getElementById('modalTitle').textContent = '➕ Nuevo documento';
+        document.getElementById('docTitle').value = '';
+        document.getElementById('docDesc').value = '';
+        document.getElementById('docExpiry').value = '';
+        document.getElementById('docData1').value = '';
+        document.getElementById('docData2').value = '';
+        document.getElementById('docData3').value = '';
+        document.getElementById('editingDocId').value = '';
+        currentPhotos = [];
+        renderPhotoPreview();
+        setDocType('otro');
+    }
+}
+
+function closeModal(name) {
+    document.getElementById('modal' + name.charAt(0).toUpperCase() + name.slice(1)).classList.remove('active');
+}
+
+function setDocType(type) {
+    currentDocType = type;
+    document.querySelectorAll('.type-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+        if (btn.classList.contains(type)) btn.classList.add('active');
+    });
+}
+
+function saveDoc() {
+    var title = document.getElementById('docTitle').value.trim();
+    if (!title) { alert('Escribe un título'); return; }
+    
+    var editId = document.getElementById('editingDocId').value;
+    var doc = {
+        id: editId ? parseInt(editId) : Date.now(),
+        title: title,
+        type: currentDocType,
+        desc: document.getElementById('docDesc').value.trim(),
+        expiry: document.getElementById('docExpiry').value,
+        photos: currentPhotos.slice(), // Guardar las fotos
+        data: [
+            document.getElementById('docData1').value.trim(),
+            document.getElementById('docData2').value.trim(),
+            document.getElementById('docData3').value.trim()
+        ].filter(function(d) { return d; }),
+        createdAt: new Date().toISOString()
+    };
+    
+    if (editId) {
+        var idx = DATA.documents.findIndex(function(d) { return d.id === parseInt(editId); });
+        if (idx >= 0) DATA.documents[idx] = doc;
+    } else {
+        DATA.documents.push(doc);
+    }
+    
+    saveData();
+    closeModal('add');
+    renderCategories();
+    renderDocs();
+}
+
+function viewDoc(id) {
+    var doc = DATA.documents.find(function(d) { return d.id === id; });
+    if (!doc) return;
+    
+    viewingDocId = id;
+    var type = DOC_TYPES[doc.type] || DOC_TYPES.otro;
+    
+    document.getElementById('viewTitle').textContent = type.icon + ' ' + doc.title;
+    
+    var html = '';
+    html += '<div style="margin-bottom:16px">';
+    html += '<span class="badge" style="background:' + type.color + ';color:#fff">' + type.name + '</span>';
+    if (doc.expiry) {
+        var exp = new Date(doc.expiry);
+        html += ' <span class="badge">📅 ' + exp.toLocaleDateString('es-ES') + '</span>';
+    }
+    html += '</div>';
+    
+    // Mostrar fotos
+    if (doc.photos && doc.photos.length > 0) {
+        html += '<div class="card" style="background:var(--bg);margin-bottom:12px">';
+        html += '<div class="small" style="font-weight:700;margin-bottom:8px">📷 Fotos (' + doc.photos.length + ')</div>';
+        html += '<div class="photo-gallery">';
+        doc.photos.forEach(function(photo, i) {
+            html += '<img src="' + photo + '" class="photo-thumb" onclick="openPhotoFullscreen(\'' + doc.id + '\',' + i + ')" style="width:80px;height:80px">';
+        });
+        html += '</div></div>';
+    }
+    
+    if (doc.desc) {
+        html += '<div class="card" style="background:var(--bg);margin-bottom:12px">';
+        html += '<div class="small" style="font-weight:700;margin-bottom:6px">📝 Descripción</div>';
+        html += '<div style="white-space:pre-wrap;font-size:.85rem">' + esc(doc.desc) + '</div>';
+        html += '</div>';
+    }
+    
+    if (doc.data && doc.data.length > 0) {
+        html += '<div class="card" style="background:var(--bg)">';
+        html += '<div class="small" style="font-weight:700;margin-bottom:8px">📋 Datos importantes</div>';
+        doc.data.forEach(function(d) {
+            html += '<div style="padding:8px;background:#fff;border-radius:8px;margin-bottom:6px;font-family:monospace;font-size:.85rem">' + esc(d) + '</div>';
+        });
+        html += '</div>';
+    }
+    
+    document.getElementById('viewContent').innerHTML = html;
+    document.getElementById('modalView').classList.add('active');
+}
+
+function openPhotoFullscreen(docId, photoIdx) {
+    var doc = DATA.documents.find(function(d) { return d.id === parseInt(docId); });
+    if (doc && doc.photos && doc.photos[photoIdx]) {
+        // Crear modal de foto grande
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+        overlay.onclick = function() { document.body.removeChild(overlay); };
+        
+        var img = document.createElement('img');
+        img.src = doc.photos[photoIdx];
+        img.style.cssText = 'max-width:100%;max-height:100%;border-radius:8px';
+        
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+    }
+}
+
+function editCurrentDoc() {
+    var doc = DATA.documents.find(function(d) { return d.id === viewingDocId; });
+    if (!doc) return;
+    
+    closeModal('view');
+    
+    document.getElementById('modalTitle').textContent = '✏️ Editar documento';
+    document.getElementById('docTitle').value = doc.title;
+    document.getElementById('docDesc').value = doc.desc || '';
+    document.getElementById('docExpiry').value = doc.expiry || '';
+    document.getElementById('docData1').value = doc.data && doc.data[0] ? doc.data[0] : '';
+    document.getElementById('docData2').value = doc.data && doc.data[1] ? doc.data[1] : '';
+    document.getElementById('docData3').value = doc.data && doc.data[2] ? doc.data[2] : '';
+    document.getElementById('editingDocId').value = doc.id;
+    
+    // Cargar fotos existentes
+    currentPhotos = doc.photos ? doc.photos.slice() : [];
+    renderPhotoPreview();
+    
+    setDocType(doc.type);
+    
+    document.getElementById('modalAdd').classList.add('active');
+}
+
+function deleteCurrentDoc() {
+    if (!confirm('¿Eliminar este documento?')) return;
+    DATA.documents = DATA.documents.filter(function(d) { return d.id !== viewingDocId; });
+    saveData();
+    closeModal('view');
+    renderCategories();
+    renderDocs();
+}
+
+// ========== INIT ==========
+renderCategories();
+renderDocs();
+
+// Click outside modal
+document.querySelectorAll('.modal').forEach(function(m) {
+    m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('active'); });
+});
+
+// Cargar de la nube
+setTimeout(function() {
+    if (window.CloudStore) {
+        CloudStore.loadCasa().then(function(data) {
+            if (data && data.documents) {
+                DATA.documents = data.documents;
+                renderCategories();
+                renderDocs();
+            }
+        });
+    }
+}, 500);
+</script>
+<script src="../js/shell.js"></script>
+</body>
+</html>
