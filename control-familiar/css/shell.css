@@ -1,0 +1,47 @@
+/* Shared Bottom Menu */
+:root{
+  --shell-border: var(--border, #e2e8f0);
+  --shell-muted: var(--text2, var(--text-light, #64748b));
+  --shell-primary: var(--accent, var(--primary, #6366f1));
+}
+.shell-bottom-nav{
+  position:fixed; left:0; right:0; bottom:0;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(14px);
+  border-top:1px solid var(--shell-border);
+  z-index:9999;
+}
+.shell-bottom-nav .nav-wrap{
+  max-width:520px;
+  margin:0 auto;
+  display:flex;
+  gap:4px;
+}
+.shell-bottom-nav a{
+  flex:1;
+  text-decoration:none;
+  color: var(--shell-muted);
+  background: rgba(255,255,255,.55);
+  border:1px solid rgba(148,163,184,.25);
+  border-radius:12px;
+  padding:8px 4px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  font-family: inherit;
+  font-weight:700;
+  font-size:9px;
+  min-width:0;
+}
+.shell-bottom-nav a .ico{font-size:18px; line-height:1}
+.shell-bottom-nav a span:not(.ico){white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.shell-bottom-nav a.active{
+  color:#fff;
+  border-color: rgba(99,102,241,.35);
+  background: linear-gradient(135deg, var(--shell-primary), #8b5cf6, #ec4899);
+  box-shadow: 0 8px 18px rgba(99,102,241,.18);
+}
+.shell-spacer{height:80px}
