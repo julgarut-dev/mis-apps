@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>🏠 Tareas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --bg:#fafafa;
+            --card:#ffffff;
+            --card2:#f5f5f5;
+            --border:#e8e8e8;
+            --text:#2d3436;
+            --text2:#636e72;
+            --text3:#b2bec3;
+            --accent:#6c5ce7;
+            --accent2:#a29bfe;
+            --success:#00b894;
+            --warn:#fdcb6e;
+            --danger:#ff7675;
+            --info:#74b9ff;
+            --shadow:0 2px 8px rgba(0,0,0,0.08);
+            --shadow-lg:0 4px 20px rgba(0,0,0,0.12);
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:80px}
+        .app{max-width:500px;margin:0 auto;padding:16px}
+        .header{text-align:center;padding:20px 0 16px}
+        .logo{font-size:1.8rem;font-weight:800;color:var(--accent)}
+        .logo span{color:var(--text)}
+        .subtitle{font-size:0.75rem;color:var(--text2);margin-top:2px}
+        
+        /* Navigation */
+        .nav{display:flex;gap:4px;background:var(--card);padding:6px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:16px;overflow-x:auto}
+        .nav-btn{flex:1;padding:10px 8px;border:0;background:0;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:600;font-size:0.8rem;color:var(--text2);cursor:pointer;transition:all 0.2s;white-space:nowrap}
+        .nav-btn.active{background:var(--accent);color:#fff}
+        
+        /* Tabs */
+        .tab{display:none}
+        .tab.active{display:block}
+        
+        /* Cards */
+        .card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+        .card-title{font-weight:700;font-size:1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        
+        /* Today Overview */
+        .today-date{font-size:0.85rem;color:var(--text2)}
+        .today-greeting{font-size:1.5rem;font-weight:800;margin:4px 0}
+        .today-progress{margin-top:16px}
+        .progress-label{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text2);margin-bottom:6px}
+        .progress-bar{height:10px;background:var(--card2);border-radius:5px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--success));border-radius:5px;transition:width 0.5s}
+        
+        /* Stats Grid */
+        .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+        .stat-box{background:var(--card2);border-radius:12px;padding:12px;text-align:center}
+        .stat-val{font-size:1.5rem;font-weight:800;color:var(--accent)}
+        .stat-lbl{font-size:0.65rem;color:var(--text2);margin-top:2px}
+        
+        /* Task List */
+        .task-section{margin-bottom:16px}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .section-title{font-weight:700;font-size:0.9rem;display:flex;align-items:center;gap:6px}
+        .section-count{font-size:0.7rem;color:var(--text3);background:var(--card2);padding:2px 8px;border-radius:10px}
+        
+        .task-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card);border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:all 0.2s}
+        .task-item.done{opacity:0.6}
+        .task-item.done .task-name{text-decoration:line-through;color:var(--text2)}
+        .task-check{width:26px;height:26px;border:2px solid var(--border);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
+        .task-check:hover{border-color:var(--accent)}
+        .task-item.done .task-check{background:var(--success);border-color:var(--success);color:#fff}
+        .task-info{flex:1;min-width:0}
+        .task-name{font-weight:600;font-size:0.9rem;margin-bottom:2px}
+        .task-meta{display:flex;align-items:center;gap:8px;font-size:0.7rem;color:var(--text2)}
+        .task-tag{padding:2px 8px;border-radius:6px;font-size:0.6rem;font-weight:600}
+        .task-tag.cocina{background:#fff3e0;color:#f57c00}
+        .task-tag.baño{background:#e3f2fd;color:#1976d2}
+        .task-tag.salon{background:#f3e5f5;color:#7b1fa2}
+        .task-tag.dormitorio{background:#e8f5e9;color:#388e3c}
+        .task-tag.general{background:#fce4ec;color:#c2185b}
+        .task-tag.compras{background:#fff8e1;color:#ffa000}
+        .task-tag.otros{background:#eceff1;color:#546e7a}
+        .task-actions{display:flex;gap:6px}
+        .task-action{width:32px;height:32px;border:0;background:var(--card2);border-radius:8px;cursor:pointer;font-size:0.9rem;transition:all 0.2s}
+        .task-action:hover{background:var(--border)}
+        
+        /* Assigned user badges */
+        .task-user{padding:2px 8px;border-radius:6px;font-size:0.6rem;font-weight:700}
+        .task-user.jessica{background:#fce7f3;color:#db2777}
+        .task-user.julia{background:#ede9fe;color:#7c3aed}
+        .task-user.both{background:#dbeafe;color:#2563eb}
+        
+        /* User selector in form */
+        .user-selector{display:flex;gap:8px}
+        .user-btn{flex:1;padding:12px;border:2px solid var(--border);border-radius:10px;background:var(--bg);cursor:pointer;font-weight:600;font-size:0.75rem;text-align:center;transition:all 0.2s}
+        .user-btn.jessica.active{border-color:#db2777;background:#fce7f3;color:#db2777}
+        .user-btn.julia.active{border-color:#7c3aed;background:#ede9fe;color:#7c3aed}
+        .user-btn.both.active{border-color:#2563eb;background:#dbeafe;color:#2563eb}
+        
+        /* Points & Gamification */
+        .points-card{background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:16px;padding:16px;color:#fff;margin-bottom:16px}
+        .points-header{display:flex;justify-content:space-between;align-items:center}
+        .points-title{font-weight:700;font-size:0.9rem}
+        .points-total{font-size:2rem;font-weight:800}
+        .points-ranking{display:flex;gap:12px;margin-top:12px}
+        .ranking-user{flex:1;background:rgba(255,255,255,0.2);border-radius:12px;padding:12px;text-align:center}
+        .ranking-avatar{font-size:1.5rem;margin-bottom:4px}
+        .ranking-name{font-size:0.7rem;opacity:0.9}
+        .ranking-pts{font-size:1.2rem;font-weight:800}
+        .ranking-user.leader{background:rgba(255,255,255,0.4)}
+        
+        /* Priority indicators */
+        .task-item.high{border-left:3px solid var(--danger)}
+        .task-item.medium{border-left:3px solid var(--warn)}
+        .task-item.low{border-left:3px solid var(--info)}
+        
+        /* Add Task Button */
+        .add-btn{position:fixed;bottom:90px;right:20px;width:56px;height:56px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:0;border-radius:50%;color:#fff;font-size:1.8rem;box-shadow:var(--shadow-lg);cursor:pointer;z-index:50;transition:transform 0.2s}
+        .add-btn:hover{transform:scale(1.1)}
+        
+        /* Calendar */
+        .calendar-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .calendar-title{font-weight:700;font-size:1.1rem}
+        .calendar-nav{display:flex;gap:8px}
+        .calendar-nav button{width:36px;height:36px;border:0;background:var(--card2);border-radius:8px;cursor:pointer;font-size:1rem}
+        .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+        .calendar-day-name{text-align:center;font-size:0.65rem;color:var(--text3);padding:8px 0;font-weight:600}
+        .calendar-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;cursor:pointer;transition:all 0.2s;font-size:0.85rem;font-weight:600;position:relative}
+        .calendar-day:hover{background:var(--card2)}
+        .calendar-day.other-month{color:var(--text3)}
+        .calendar-day.today{background:var(--accent);color:#fff}
+        .calendar-day.selected{outline:2px solid var(--accent);outline-offset:2px}
+        .calendar-day.has-tasks::after{content:'';position:absolute;bottom:4px;width:6px;height:6px;background:var(--success);border-radius:50%}
+        .calendar-day.today.has-tasks::after{background:#fff}
+        
+        /* Scheduled Tasks */
+        .scheduled-date{font-size:0.8rem;color:var(--text2);margin:16px 0 10px;font-weight:600}
+        
+        /* Habits/Routines */
+        .routine-card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+        .routine-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .routine-name{font-weight:700;font-size:0.95rem}
+        .routine-freq{font-size:0.65rem;color:var(--text2);background:var(--card2);padding:4px 10px;border-radius:8px}
+        .routine-tasks{display:flex;flex-direction:column;gap:6px}
+        .routine-task{display:flex;align-items:center;gap:10px;padding:10px;background:var(--card2);border-radius:10px}
+        .routine-task-check{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .routine-task.done .routine-task-check{background:var(--success);border-color:var(--success);color:#fff}
+        .routine-task.done .routine-task-name{text-decoration:line-through;color:var(--text2)}
+        .routine-task-name{font-size:0.85rem;flex:1}
+        
+        /* Week Streak */
+        .streak-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:16px;padding:16px;color:#fff;margin-bottom:16px}
+        .streak-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .streak-title{font-weight:700}
+        .streak-num{font-size:1.8rem;font-weight:800}
+        .streak-days{display:flex;justify-content:space-between}
+        .streak-day{text-align:center}
+        .streak-day-name{font-size:0.6rem;opacity:0.8;margin-bottom:4px}
+        .streak-day-check{width:32px;height:32px;background:rgba(255,255,255,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center}
+        .streak-day-check.done{background:rgba(255,255,255,0.9);color:var(--accent)}
+        
+        /* Modal */
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:flex-start;justify-content:center;padding-top:16px}
+        .modal.active{display:flex}
+        .modal-content{background:var(--card);border-radius:24px;padding:24px;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+        .modal-title{font-weight:800;font-size:1.2rem}
+        .modal-close{width:36px;height:36px;border:0;background:var(--card2);border-radius:10px;cursor:pointer;font-size:1.2rem}
+        .form-group{margin-bottom:16px}
+        .form-label{display:block;font-size:0.8rem;font-weight:600;color:var(--text2);margin-bottom:6px}
+        .form-input{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;background:var(--bg);transition:border-color 0.2s}
+        .form-input:focus{outline:0;border-color:var(--accent)}
+        .form-select{width:100%;padding:14px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;background:var(--bg);cursor:pointer}
+        .form-row{display:flex;gap:10px}
+        .form-row .form-group{flex:1}
+        .priority-select{display:flex;gap:8px}
+        .priority-btn{flex:1;padding:12px;border:2px solid var(--border);border-radius:10px;background:var(--bg);cursor:pointer;font-weight:600;font-size:0.8rem;transition:all 0.2s}
+        .priority-btn.high.active{border-color:var(--danger);background:#fff5f5;color:var(--danger)}
+        .priority-btn.medium.active{border-color:var(--warn);background:#fffdf5;color:#f39c12}
+        .priority-btn.low.active{border-color:var(--info);background:#f5faff;color:var(--info)}
+        .submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:0;border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;margin-top:8px}
+        
+        /* Toast */
+        .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:#fff;padding:12px 24px;border-radius:12px;font-size:0.85rem;font-weight:600;opacity:0;transition:all 0.3s;z-index:200;display:flex;align-items:center;gap:8px}
+        .toast.active{transform:translateX(-50%) translateY(0);opacity:1}
+        
+        /* Celebration */
+        .celebration{position:fixed;inset:0;background:rgba(255,255,255,0.95);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column}
+        .celebration.active{display:flex}
+        .celebration-icon{font-size:4rem;animation:bounce 0.5s ease infinite alternate}
+        @keyframes bounce{from{transform:scale(1)}to{transform:scale(1.1)}}
+        .celebration-title{font-size:1.5rem;font-weight:800;color:var(--accent);margin-top:16px}
+        .celebration-sub{color:var(--text2);margin-top:8px}
+        .celebration-btn{margin-top:24px;padding:14px 40px;background:var(--accent);border:0;border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer}
+        
+        /* Confetti */
+        .confetti-container{position:fixed;inset:0;pointer-events:none;z-index:301;overflow:hidden}
+        .confetti{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 3s ease-out forwards}
+        @keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+        
+        /* History */
+        .history-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:10px;margin-bottom:8px;box-shadow:var(--shadow)}
+        .history-date{width:50px;text-align:center}
+        .history-day{font-size:1.2rem;font-weight:800;color:var(--accent)}
+        .history-month{font-size:0.6rem;color:var(--text2)}
+        .history-info{flex:1}
+        .history-count{font-weight:700}
+        .history-tasks{font-size:0.75rem;color:var(--text2)}
+        .history-score{font-size:0.8rem;font-weight:700;color:var(--success)}
+        
+        /* Empty State */
+        .empty{text-align:center;padding:40px 20px}
+        .empty-icon{font-size:3rem;margin-bottom:12px}
+        .empty-text{color:var(--text2)}
+        
+        /* Sync Indicator */
+        .sync-indicator{position:fixed;top:12px;right:12px;width:10px;height:10px;border-radius:50%;background:var(--text3);z-index:100}
+        .sync-indicator.online{background:var(--success);box-shadow:0 0 8px var(--success)}
+        .sync-indicator.syncing{background:var(--info);animation:pulse 1s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+        
+        /* Library */
+        .lib-zone{margin-bottom:20px}
+        .lib-zone-header{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border-radius:12px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow)}
+        .lib-zone-icon{font-size:1.5rem}
+        .lib-zone-name{font-weight:700;flex:1}
+        .lib-zone-count{font-size:0.75rem;color:var(--text2);background:var(--card2);padding:4px 10px;border-radius:8px}
+        .lib-zone-toggle{color:var(--text3);transition:transform 0.2s}
+        .lib-zone-toggle.open{transform:rotate(180deg)}
+        .lib-zone-tasks{display:none;padding-left:8px}
+        .lib-zone-tasks.open{display:block}
+        .lib-task{display:flex;align-items:center;gap:10px;padding:12px;background:var(--card);border-radius:10px;margin-bottom:6px;box-shadow:var(--shadow);cursor:pointer;transition:all 0.2s}
+        .lib-task:hover{background:var(--card2)}
+        .lib-task:active{transform:scale(0.98)}
+        .lib-task-name{flex:1;font-size:0.9rem}
+        .lib-task-add{width:32px;height:32px;background:var(--accent);border:0;border-radius:8px;color:#fff;font-size:1rem;cursor:pointer}
+        .lib-task-freq{font-size:0.65rem;color:var(--text3);background:var(--card2);padding:3px 8px;border-radius:6px}
+        
+        /* Quick Add */
+        .quick-add{position:fixed;bottom:160px;right:20px;background:var(--card);border-radius:12px;padding:8px;box-shadow:var(--shadow-lg);display:none;flex-direction:column;gap:4px;z-index:49}
+        .quick-add.active{display:flex}
+        .quick-add-btn{padding:10px 16px;background:var(--card2);border:0;border-radius:8px;font-size:0.8rem;cursor:pointer;text-align:left;transition:background 0.2s}
+        .quick-add-btn:hover{background:var(--border)}
+    </style>
+    <link rel="stylesheet" href="../css/shell.css"></head>
+<body>
+<div class="app">
+    <div class="sync-indicator" id="sync-indicator"></div>
+    <header class="header">
+        <div class="logo">🏠 Listado de <span>Tareas</span></div>
+    </header>
+    
+    <nav class="nav">
+        <button class="nav-btn active" data-tab="today">Hoy</button>
+        <button class="nav-btn" data-tab="library">📚</button>
+        <button class="nav-btn" data-tab="calendar">📅</button>
+        <button class="nav-btn" data-tab="routines">🔄</button>
+        <button class="nav-btn" data-tab="history">📊</button>
+        <button class="nav-btn" data-tab="config">⚙️</button>
+    </nav>
+    
+    <div id="today" class="tab active">
+        <!-- Puntos y Ranking -->
+        <div class="points-card">
+            <div class="points-header">
+                <div class="points-title">⭐ Puntos del mes</div>
+                <div class="points-total" id="points-total">0</div>
+            </div>
+            <div class="points-ranking">
+                <div class="ranking-user" id="ranking-jessica">
+                    <div class="ranking-avatar">👩‍🦰</div>
+                    <div class="ranking-name">Jessica</div>
+                    <div class="ranking-pts" id="pts-jessica">0</div>
+                </div>
+                <div class="ranking-user" id="ranking-julia">
+                    <div class="ranking-avatar">👩🏻</div>
+                    <div class="ranking-name">Julia</div>
+                    <div class="ranking-pts" id="pts-julia">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="today-date" id="today-date"></div>
+            <div class="today-greeting" id="today-greeting">¡Buenos días!</div>
+            <div class="today-progress">
+                <div class="progress-label"><span>Progreso de hoy</span><span id="progress-pct">0%</span></div>
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box"><div class="stat-val" id="stat-done">0</div><div class="stat-lbl">Hechas</div></div>
+                <div class="stat-box"><div class="stat-val" id="stat-pending">0</div><div class="stat-lbl">Pendientes</div></div>
+                <div class="stat-box"><div class="stat-val" id="stat-streak">0</div><div class="stat-lbl">Racha 🔥</div></div>
+            </div>
+        </div>
+        <div id="today-tasks"></div>
+    </div>
+    
+    <div id="library" class="tab">
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="card-title">📚 Biblioteca de Tareas</div>
+                <button class="task-action" onclick="openLibraryModal()" style="width:auto;padding:0 12px;font-size:0.75rem;background:var(--accent)">+ Nueva</button>
+            </div>
+            <p style="font-size:0.8rem;color:var(--text2);margin-top:6px">Pulsa en una tarea para añadirla a hoy</p>
+        </div>
+        <div id="library-list"></div>
+    </div>
+    
+    <div id="calendar" class="tab">
+        <div class="card">
+            <div class="calendar-header">
+                <button class="calendar-nav-btn" onclick="changeMonth(-1)">←</button>
+                <div class="calendar-title" id="calendar-title"></div>
+                <button class="calendar-nav-btn" onclick="changeMonth(1)">→</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+        <div id="calendar-tasks"></div>
+    </div>
+    
+    <div id="routines" class="tab">
+        <div class="streak-card">
+            <div class="streak-header">
+                <div class="streak-title">🔥 Racha Semanal</div>
+                <div class="streak-num" id="week-streak">0</div>
+            </div>
+            <div class="streak-days" id="streak-days"></div>
+        </div>
+        <div class="section-header">
+            <div class="section-title">🔄 Rutinas Diarias</div>
+            <button class="task-action" onclick="openRoutineModal()" style="width:auto;padding:0 12px;font-size:0.75rem">+ Nueva</button>
+        </div>
+        <div id="routines-list"></div>
+    </div>
+    
+    <div id="history" class="tab">
+        <div class="card">
+            <div class="card-title">📊 Estadísticas</div>
+            <div class="stats-grid">
+                <div class="stat-box"><div class="stat-val" id="hist-total">0</div><div class="stat-lbl">Total hechas</div></div>
+                <div class="stat-box"><div class="stat-val" id="hist-best">0</div><div class="stat-lbl">Mejor racha</div></div>
+                <div class="stat-box"><div class="stat-val" id="hist-avg">0</div><div class="stat-lbl">Media/día</div></div>
+            </div>
+        </div>
+        <div class="section-title" style="margin:16px 0 12px">📜 Últimos días</div>
+        <div id="history-list"></div>
+    </div>
+    
+    <div id="config" class="tab">
+        <div class="card">
+            <div class="card-title">☁️ Sincronización</div>
+            <div id="sync-config"></div>
+        </div>
+        <div class="card">
+            <div class="card-title">📁 Datos</div>
+            <button class="submit-btn" style="background:var(--card2);color:var(--text);margin:0 0 8px" onclick="exportData()">📤 Exportar datos</button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+            <button class="submit-btn" style="background:var(--card2);color:var(--text);margin:0" onclick="document.getElementById('import-file').click()">📥 Importar datos</button>
+        </div>
+    </div>
+</div>
+
+<button class="add-btn" onclick="openTaskModal()">+</button>
+
+<!-- Task Modal -->
+<div class="modal" id="task-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="task-modal-title">Nueva tarea</div>
+            <button class="modal-close" onclick="closeTaskModal()">✕</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">¿Qué hay que hacer?</label>
+            <input type="text" class="form-input" id="task-name" placeholder="Ej: Limpiar el baño">
+        </div>
+        <div class="form-group">
+            <label class="form-label">👤 ¿Quién lo hace?</label>
+            <div class="user-selector">
+                <button type="button" class="user-btn jessica" onclick="setTaskUser('jessica')">👩‍🦰 Jessica</button>
+                <button type="button" class="user-btn julia" onclick="setTaskUser('julia')">👩🏻 Julia</button>
+                <button type="button" class="user-btn both active" onclick="setTaskUser('both')">👥 Las dos</button>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Zona</label>
+                <select class="form-select" id="task-zone">
+                    <option value="cocina">🍳 Cocina</option>
+                    <option value="baño">🚿 Baño</option>
+                    <option value="salon">🛋️ Salón</option>
+                    <option value="dormitorio">🛏️ Dormitorio</option>
+                    <option value="general">🏠 General</option>
+                    <option value="compras">🛒 Compras</option>
+                    <option value="otros">📦 Otros</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Fecha</label>
+                <input type="date" class="form-input" id="task-date">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Prioridad</label>
+            <div class="priority-select">
+                <button type="button" class="priority-btn high" onclick="setPriority('high')">🔴 Alta</button>
+                <button type="button" class="priority-btn medium active" onclick="setPriority('medium')">🟡 Media</button>
+                <button type="button" class="priority-btn low" onclick="setPriority('low')">🔵 Baja</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" id="task-rotate">
+                <span class="form-label" style="margin:0">🔁 Rotar cada semana (alterna Jessica/Julia)</span>
+            </label>
+        </div>
+        <button class="submit-btn" onclick="saveTask()">✓ Guardar tarea</button>
+    </div>
+</div>
+
+<!-- Routine Modal -->
+<div class="modal" id="routine-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Nueva rutina</div>
+            <button class="modal-close" onclick="closeRoutineModal()">✕</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Nombre de la rutina</label>
+            <input type="text" class="form-input" id="routine-name" placeholder="Ej: Rutina de mañana">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Tareas (una por línea)</label>
+            <textarea class="form-input" id="routine-tasks" rows="5" placeholder="Hacer la cama&#10;Ventilar habitación&#10;Recoger cocina"></textarea>
+        </div>
+        <button class="submit-btn" onclick="saveRoutine()">✓ Guardar rutina</button>
+    </div>
+</div>
+
+<!-- Library Modal -->
+<div class="modal" id="library-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">📚 Nueva tarea en biblioteca</div>
+            <button class="modal-close" onclick="closeLibraryModal()">✕</button>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Nombre de la tarea</label>
+            <input type="text" class="form-input" id="library-task-name" placeholder="Ej: Limpiar ventanas">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Zona</label>
+            <select class="form-select" id="library-task-zone">
+                <option value="cocina">🍳 Cocina</option>
+                <option value="baño">🚿 Baño</option>
+                <option value="salon">🛋️ Salón</option>
+                <option value="dormitorio">🛏️ Dormitorio</option>
+                <option value="general">🏠 General</option>
+                <option value="compras">🛒 Compras</option>
+                <option value="otros">📦 Otros</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Prioridad por defecto</label>
+            <div class="priority-select">
+                <button type="button" class="priority-btn high" onclick="setLibraryPriority('high')">🔴 Alta</button>
+                <button type="button" class="priority-btn medium active" onclick="setLibraryPriority('medium')">🟡 Media</button>
+                <button type="button" class="priority-btn low" onclick="setLibraryPriority('low')">🔵 Baja</button>
+            </div>
+        </div>
+        <button class="submit-btn" onclick="saveLibraryTask()">✓ Añadir a biblioteca</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toast-icon">✓</span><span id="toast-text">Guardado</span></div>
+
+<!-- Celebration -->
+<div class="celebration" id="celebration">
+    <div class="confetti-container" id="confetti-container"></div>
+    <div class="celebration-icon" id="celeb-icon">🎉</div>
+    <div class="celebration-title" id="celeb-title">¡Genial!</div>
+    <div class="celebration-sub" id="celeb-sub">Has completado todas las tareas</div>
+    <button class="celebration-btn" onclick="closeCelebration()">¡Gracias!</button>
+</div>
+
+<script>
+// ============ DATA ============
+var DATA = JSON.parse(localStorage.getItem('home_data')) || {
+    tasks: [],
+    routines: [],
+    history: [],
+    streak: 0,
+    bestStreak: 0
+};
+
+var ZONES = {
+    cocina: {icon: '🍳', name: 'Cocina'},
+    baño: {icon: '🚿', name: 'Baño'},
+    salon: {icon: '🛋️', name: 'Salón'},
+    dormitorio: {icon: '🛏️', name: 'Dormitorio'},
+    general: {icon: '🏠', name: 'General'},
+    compras: {icon: '🛒', name: 'Compras'},
+    otros: {icon: '📦', name: 'Otros'}
+};
+
+// Biblioteca de tareas predefinidas
+var TASK_LIBRARY = {
+    cocina: [
+        {name: 'Fregar los platos', freq: 'diario'},
+        {name: 'Limpiar encimera', freq: 'diario'},
+        {name: 'Barrer el suelo', freq: 'diario'},
+        {name: 'Fregar el suelo', freq: 'semanal'},
+        {name: 'Limpiar vitrocerámica', freq: 'semanal'},
+        {name: 'Limpiar microondas', freq: 'semanal'},
+        {name: 'Limpiar horno', freq: 'mensual'},
+        {name: 'Limpiar nevera', freq: 'mensual'},
+        {name: 'Limpiar campana extractora', freq: 'mensual'},
+        {name: 'Descongelar congelador', freq: 'mensual'},
+        {name: 'Limpiar armarios por dentro', freq: 'mensual'},
+        {name: 'Tirar basura', freq: 'diario'},
+        {name: 'Sacar contenedores', freq: 'semanal'},
+        {name: 'Limpiar cubos de basura', freq: 'mensual'},
+        {name: 'Vaciar lavavajillas', freq: 'diario'},
+        {name: 'Poner lavavajillas', freq: 'diario'},
+        {name: 'Limpiar fregadero', freq: 'diario'},
+        {name: 'Descalcificar cafetera', freq: 'mensual'},
+        {name: 'Limpiar tostadora', freq: 'mensual'}
+    ],
+    baño: [
+        {name: 'Limpiar váter', freq: 'semanal'},
+        {name: 'Limpiar lavabo', freq: 'semanal'},
+        {name: 'Limpiar espejo', freq: 'semanal'},
+        {name: 'Limpiar ducha/bañera', freq: 'semanal'},
+        {name: 'Fregar suelo', freq: 'semanal'},
+        {name: 'Cambiar toallas', freq: 'semanal'},
+        {name: 'Limpiar azulejos', freq: 'mensual'},
+        {name: 'Desatascar desagües', freq: 'mensual'},
+        {name: 'Limpiar mampara', freq: 'semanal'},
+        {name: 'Reponer papel higiénico', freq: 'semanal'},
+        {name: 'Reponer jabón', freq: 'semanal'},
+        {name: 'Lavar alfombrilla', freq: 'mensual'},
+        {name: 'Limpiar armario baño', freq: 'mensual'},
+        {name: 'Tirar productos caducados', freq: 'mensual'}
+    ],
+    salon: [
+        {name: 'Pasar aspiradora', freq: 'semanal'},
+        {name: 'Quitar polvo muebles', freq: 'semanal'},
+        {name: 'Limpiar TV y pantallas', freq: 'semanal'},
+        {name: 'Ordenar cojines', freq: 'diario'},
+        {name: 'Recoger mesa', freq: 'diario'},
+        {name: 'Fregar suelo', freq: 'semanal'},
+        {name: 'Limpiar ventanas', freq: 'mensual'},
+        {name: 'Limpiar sofá', freq: 'mensual'},
+        {name: 'Regar plantas', freq: 'semanal'},
+        {name: 'Quitar polvo estanterías', freq: 'semanal'},
+        {name: 'Limpiar lámparas', freq: 'mensual'},
+        {name: 'Aspirar sofá', freq: 'mensual'},
+        {name: 'Limpiar mandos TV', freq: 'mensual'},
+        {name: 'Ordenar revistas/libros', freq: 'semanal'}
+    ],
+    dormitorio: [
+        {name: 'Hacer la cama', freq: 'diario'},
+        {name: 'Cambiar sábanas', freq: 'semanal'},
+        {name: 'Pasar aspiradora', freq: 'semanal'},
+        {name: 'Quitar polvo', freq: 'semanal'},
+        {name: 'Ordenar armario', freq: 'mensual'},
+        {name: 'Recoger ropa', freq: 'diario'},
+        {name: 'Ventilar habitación', freq: 'diario'},
+        {name: 'Limpiar mesitas de noche', freq: 'semanal'},
+        {name: 'Girar colchón', freq: 'mensual'},
+        {name: 'Lavar almohadas', freq: 'mensual'},
+        {name: 'Lavar edredón/manta', freq: 'mensual'},
+        {name: 'Limpiar debajo cama', freq: 'mensual'},
+        {name: 'Ordenar cajones', freq: 'mensual'},
+        {name: 'Limpiar espejo', freq: 'semanal'}
+    ],
+    general: [
+        {name: 'Poner lavadora', freq: 'semanal'},
+        {name: 'Tender ropa', freq: 'semanal'},
+        {name: 'Planchar', freq: 'semanal'},
+        {name: 'Doblar y guardar ropa', freq: 'semanal'},
+        {name: 'Pasar mopa', freq: 'semanal'},
+        {name: 'Limpiar puertas', freq: 'mensual'},
+        {name: 'Limpiar interruptores', freq: 'mensual'},
+        {name: 'Limpiar pomos', freq: 'mensual'},
+        {name: 'Revisar bombillas', freq: 'mensual'},
+        {name: 'Limpiar rodapiés', freq: 'mensual'},
+        {name: 'Quitar telarañas', freq: 'mensual'},
+        {name: 'Limpiar terraza/balcón', freq: 'semanal'},
+        {name: 'Regar plantas exterior', freq: 'semanal'},
+        {name: 'Limpiar entrada', freq: 'semanal'},
+        {name: 'Pasar aspiradora escaleras', freq: 'semanal'},
+        {name: 'Cambiar flores/plantas', freq: 'mensual'},
+        {name: 'Organizar trastero', freq: 'mensual'},
+        {name: 'Limpiar garaje', freq: 'mensual'}
+    ],
+    compras: [
+        {name: 'Compra semanal supermercado', freq: 'semanal'},
+        {name: 'Comprar fruta y verdura', freq: 'semanal'},
+        {name: 'Comprar pan', freq: 'diario'},
+        {name: 'Comprar productos limpieza', freq: 'mensual'},
+        {name: 'Comprar papel higiénico', freq: 'mensual'},
+        {name: 'Revisar despensa', freq: 'semanal'},
+        {name: 'Hacer lista de la compra', freq: 'semanal'},
+        {name: 'Comprar detergente', freq: 'mensual'},
+        {name: 'Comprar suavizante', freq: 'mensual'},
+        {name: 'Comprar bolsas basura', freq: 'mensual'},
+        {name: 'Comprar servilletas', freq: 'mensual'},
+        {name: 'Comprar pilas', freq: 'mensual'}
+    ],
+    otros: [
+        {name: 'Revisar correo', freq: 'diario'},
+        {name: 'Pagar facturas', freq: 'mensual'},
+        {name: 'Revisar electrodomésticos', freq: 'mensual'},
+        {name: 'Llamar seguro/gestiones', freq: 'mensual'},
+        {name: 'Llevar coche al taller', freq: 'mensual'},
+        {name: 'Lavar coche', freq: 'mensual'},
+        {name: 'Reparaciones pendientes', freq: 'mensual'},
+        {name: 'Revisar alarmas humo', freq: 'mensual'},
+        {name: 'Cambiar filtros aire', freq: 'mensual'},
+        {name: 'Purgar radiadores', freq: 'mensual'},
+        {name: 'Revisar extintores', freq: 'mensual'}
+    ]
+};
+
+var currentPriority = 'medium';
+var libraryPriority = 'medium';
+var editingTask = null;
+var selectedDate = new Date();
+var viewingMonth = new Date();
+
+// ============ LIBRARY MODAL ============
+function openLibraryModal() {
+    document.getElementById('library-task-name').value = '';
+    document.getElementById('library-task-zone').value = 'general';
+    libraryPriority = 'medium';
+    document.querySelectorAll('#library-modal .priority-btn').forEach(function(b) {
+        b.classList.remove('active');
+        if (b.classList.contains('medium')) b.classList.add('active');
+    });
+    document.getElementById('library-modal').classList.add('active');
+}
+
+function closeLibraryModal() {
+    document.getElementById('library-modal').classList.remove('active');
+}
+
+function setLibraryPriority(p) {
+    libraryPriority = p;
+    document.querySelectorAll('#library-modal .priority-btn').forEach(function(b) {
+        b.classList.remove('active');
+        if (b.classList.contains(p)) b.classList.add('active');
+    });
+}
+
+function saveLibraryTask() {
+    var name = document.getElementById('library-task-name').value.trim();
+    if (!name) {
+        alert('Escribe el nombre de la tarea');
+        return;
+    }
+    
+    var zone = document.getElementById('library-task-zone').value;
+    
+    // Añadir a TASK_LIBRARY
+    if (!TASK_LIBRARY[zone]) TASK_LIBRARY[zone] = [];
+    TASK_LIBRARY[zone].push({
+        name: name,
+        freq: 'semanal',
+        priority: libraryPriority,
+        custom: true
+    });
+    
+    // Guardar tareas personalizadas en localStorage
+    var customTasks = JSON.parse(localStorage.getItem('custom_library_tasks') || '[]');
+    customTasks.push({zone: zone, name: name, freq: 'semanal', priority: libraryPriority});
+    localStorage.setItem('custom_library_tasks', JSON.stringify(customTasks));
+    
+    closeLibraryModal();
+    renderLibrary();
+    showToast('✓', 'Tarea añadida a biblioteca');
+}
+
+// Cargar tareas personalizadas al inicio
+function loadCustomLibraryTasks() {
+    var customTasks = JSON.parse(localStorage.getItem('custom_library_tasks') || '[]');
+    customTasks.forEach(function(t) {
+        if (!TASK_LIBRARY[t.zone]) TASK_LIBRARY[t.zone] = [];
+        TASK_LIBRARY[t.zone].push({name: t.name, freq: t.freq, priority: t.priority, custom: true});
+    });
+}
+loadCustomLibraryTasks();
+
+function save() {
+    localStorage.setItem('home_data', JSON.stringify(DATA));
+    if (CLOUD.url && CLOUD.autoSync) {
+        clearTimeout(window.syncTimeout);
+        window.syncTimeout = setTimeout(cloudSave, 2000);
+    }
+}
+
+function getTodayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function formatDate(dateStr) {
+    var parts = dateStr.split('-');
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+
+// ============ TODAY ============
+function renderToday() {
+    var today = new Date();
+    var days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    var months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    
+    document.getElementById('today-date').textContent = days[today.getDay()] + ', ' + today.getDate() + ' de ' + months[today.getMonth()];
+    
+    var hour = today.getHours();
+    var greeting = hour < 12 ? '¡Buenos días! ☀️' : hour < 20 ? '¡Buenas tardes! 🌤️' : '¡Buenas noches! 🌙';
+    document.getElementById('today-greeting').textContent = greeting;
+    
+    var todayKey = getTodayKey();
+    var todayTasks = DATA.tasks.filter(function(t) { return t.date === todayKey; });
+    var done = todayTasks.filter(function(t) { return t.done; }).length;
+    var total = todayTasks.length;
+    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    
+    document.getElementById('progress-pct').textContent = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('stat-done').textContent = done;
+    document.getElementById('stat-pending').textContent = total - done;
+    document.getElementById('stat-streak').textContent = DATA.streak;
+    
+    // Actualizar puntos
+    updatePointsDisplay();
+    
+    // Render tasks
+    var html = '';
+    
+    // Pendientes primero
+    var pending = todayTasks.filter(function(t) { return !t.done; });
+    var completed = todayTasks.filter(function(t) { return t.done; });
+    
+    if (pending.length > 0) {
+        html += '<div class="section-header"><div class="section-title">📋 Pendientes</div><div class="section-count">' + pending.length + '</div></div>';
+        pending.sort(function(a,b) { 
+            var p = {high:0, medium:1, low:2};
+            return p[a.priority] - p[b.priority];
+        }).forEach(function(t) {
+            html += renderTaskItem(t);
+        });
+    }
+    
+    if (completed.length > 0) {
+        html += '<div class="section-header" style="margin-top:16px"><div class="section-title">✅ Completadas</div><div class="section-count">' + completed.length + '</div></div>';
+        completed.forEach(function(t) {
+            html += renderTaskItem(t);
+        });
+    }
+    
+    if (todayTasks.length === 0) {
+        html = '<div class="empty"><div class="empty-icon">🎉</div><div class="empty-text">No hay tareas para hoy<br><small>Pulsa + para añadir una</small></div></div>';
+    }
+    
+    document.getElementById('today-tasks').innerHTML = html;
+}
+
+function renderTaskItem(t) {
+    var zone = ZONES[t.zone] || ZONES.otros;
+    var userBadge = '';
+    if (t.assignedTo === 'jessica') userBadge = '<span class="task-user jessica">👩‍🦰 Jessica</span>';
+    else if (t.assignedTo === 'julia') userBadge = '<span class="task-user julia">👩🏻 Julia</span>';
+    else if (t.assignedTo === 'both') userBadge = '<span class="task-user both">👥 Las dos</span>';
+    
+    var rotateBadge = t.rotate ? ' 🔁' : '';
+    
+    return '<div class="task-item ' + t.priority + (t.done ? ' done' : '') + '">' +
+        '<div class="task-check" onclick="toggleTask(' + t.id + ')">' + (t.done ? '✓' : '') + '</div>' +
+        '<div class="task-info">' +
+            '<div class="task-name">' + t.name + rotateBadge + '</div>' +
+            '<div class="task-meta"><span class="task-tag ' + t.zone + '">' + zone.icon + ' ' + zone.name + '</span>' + userBadge + '</div>' +
+        '</div>' +
+        '<div class="task-actions">' +
+            '<button class="task-action" onclick="editTask(' + t.id + ')">✏️</button>' +
+            '<button class="task-action" onclick="deleteTask(' + t.id + ')">🗑️</button>' +
+        '</div>' +
+    '</div>';
+}
+
+function toggleTask(id) {
+    var task = DATA.tasks.find(function(t) { return t.id === id; });
+    if (!task) return;
+    
+    task.done = !task.done;
+    task.doneAt = task.done ? new Date().toISOString() : null;
+    
+    // Si está asignada a "both", preguntar quién la completó
+    if (task.done && task.assignedTo === 'both') {
+        var who = prompt('¿Quién completó esta tarea?\n1 = Jessica\n2 = Julia');
+        if (who === '1') task.doneBy = 'jessica';
+        else if (who === '2') task.doneBy = 'julia';
+    } else if (task.done) {
+        task.doneBy = task.assignedTo;
+    }
+    
+    save();
+    renderToday();
+    renderCalendar();
+    updatePointsDisplay();
+    
+    if (task.done) {
+        showToast('✓', '¡Tarea completada! +' + (task.priority === 'high' ? '3' : task.priority === 'medium' ? '2' : '1') + ' pts');
+        checkAllDone();
+    }
+}
+
+function checkAllDone() {
+    var todayKey = getTodayKey();
+    var todayTasks = DATA.tasks.filter(function(t) { return t.date === todayKey; });
+    var allDone = todayTasks.length > 0 && todayTasks.every(function(t) { return t.done; });
+    
+    if (allDone) {
+        // Update streak
+        updateStreak();
+        showCelebration('🎉', '¡Increíble!', 'Has completado todas las tareas de hoy');
+    }
+}
+
+function updateStreak() {
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    
+    var streak = 0;
+    for (var i = 0; i < 365; i++) {
+        var d = new Date(today);
+        d.setDate(d.getDate() - i);
+        var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        
+        var dayTasks = DATA.tasks.filter(function(t) { return t.date === key; });
+        if (dayTasks.length === 0) {
+            if (i === 0) continue; // Hoy puede no tener tareas aún
+            break;
+        }
+        
+        var allDone = dayTasks.every(function(t) { return t.done; });
+        if (allDone) streak++;
+        else if (i > 0) break;
+    }
+    
+    DATA.streak = streak;
+    if (streak > DATA.bestStreak) DATA.bestStreak = streak;
+    save();
+}
+
+// ============ USER ASSIGNMENT ============
+var currentTaskUser = 'both';
+
+function setTaskUser(user) {
+    currentTaskUser = user;
+    document.querySelectorAll('.user-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+        if (btn.classList.contains(user)) btn.classList.add('active');
+    });
+}
+
+// ============ POINTS SYSTEM ============
+function calcPoints() {
+    var now = new Date();
+    var monthKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+    var jessicaPts = 0;
+    var juliaPts = 0;
+    
+    DATA.tasks.forEach(function(t) {
+        if (t.done && t.doneAt && t.doneAt.startsWith(monthKey)) {
+            var pts = t.priority === 'high' ? 3 : t.priority === 'medium' ? 2 : 1;
+            if (t.doneBy === 'jessica') jessicaPts += pts;
+            else if (t.doneBy === 'julia') juliaPts += pts;
+            else if (t.assignedTo === 'jessica') jessicaPts += pts;
+            else if (t.assignedTo === 'julia') juliaPts += pts;
+            else { jessicaPts += pts/2; juliaPts += pts/2; }
+        }
+    });
+    
+    return {jessica: Math.round(jessicaPts), julia: Math.round(juliaPts), total: Math.round(jessicaPts + juliaPts)};
+}
+
+function updatePointsDisplay() {
+    var pts = calcPoints();
+    document.getElementById('points-total').textContent = pts.total;
+    document.getElementById('pts-jessica').textContent = pts.jessica;
+    document.getElementById('pts-julia').textContent = pts.julia;
+    
+    var jessicaEl = document.getElementById('ranking-jessica');
+    var juliaEl = document.getElementById('ranking-julia');
+    jessicaEl.classList.remove('leader');
+    juliaEl.classList.remove('leader');
+    if (pts.jessica > pts.julia) jessicaEl.classList.add('leader');
+    else if (pts.julia > pts.jessica) juliaEl.classList.add('leader');
+}
+
+// ============ TASK MODAL ============
+function openTaskModal(taskId) {
+    editingTask = taskId || null;
+    document.getElementById('task-modal-title').textContent = taskId ? 'Editar tarea' : 'Nueva tarea';
+    
+    if (taskId) {
+        var task = DATA.tasks.find(function(t) { return t.id === taskId; });
+        if (task) {
+            document.getElementById('task-name').value = task.name;
+            document.getElementById('task-zone').value = task.zone;
+            document.getElementById('task-date').value = task.date;
+            setPriority(task.priority);
+            setTaskUser(task.assignedTo || 'both');
+            document.getElementById('task-rotate').checked = task.rotate || false;
+        }
+    } else {
+        document.getElementById('task-name').value = '';
+        document.getElementById('task-zone').value = 'general';
+        document.getElementById('task-date').value = getTodayKey();
+        setPriority('medium');
+        setTaskUser('both');
+        document.getElementById('task-rotate').checked = false;
+    }
+    
+    document.getElementById('task-modal').classList.add('active');
+}
+
+function closeTaskModal() {
+    document.getElementById('task-modal').classList.remove('active');
+    editingTask = null;
+}
+
+function setPriority(p) {
+    currentPriority = p;
+    document.querySelectorAll('.priority-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+        if (btn.classList.contains(p)) btn.classList.add('active');
+    });
+}
+
+function saveTask() {
+    var name = document.getElementById('task-name').value.trim();
+    if (!name) {
+        showToast('❌', 'Escribe una tarea');
+        return;
+    }
+    
+    var task = {
+        id: editingTask || Date.now(),
+        name: name,
+        zone: document.getElementById('task-zone').value,
+        date: document.getElementById('task-date').value || getTodayKey(),
+        priority: currentPriority,
+        assignedTo: currentTaskUser,
+        rotate: document.getElementById('task-rotate').checked,
+        done: false,
+        createdAt: new Date().toISOString()
+    };
+    
+    if (editingTask) {
+        var idx = DATA.tasks.findIndex(function(t) { return t.id === editingTask; });
+        if (idx >= 0) {
+            task.done = DATA.tasks[idx].done;
+            task.doneAt = DATA.tasks[idx].doneAt;
+            task.doneBy = DATA.tasks[idx].doneBy;
+            DATA.tasks[idx] = task;
+        }
+    } else {
+        DATA.tasks.push(task);
+    }
+    
+    save();
+    closeTaskModal();
+    renderToday();
+    renderCalendar();
+    updatePointsDisplay();
+    showToast('✓', editingTask ? 'Tarea actualizada' : 'Tarea añadida');
+}
+
+function editTask(id) {
+    openTaskModal(id);
+}
+
+function deleteTask(id) {
+    if (confirm('¿Eliminar esta tarea?')) {
+        DATA.tasks = DATA.tasks.filter(function(t) { return t.id !== id; });
+        save();
+        renderToday();
+        renderCalendar();
+        showToast('🗑️', 'Tarea eliminada');
+    }
+}
+
+// ============ LIBRARY ============
+var openZones = {};
+
+function renderLibrary() {
+    var html = '';
+    
+    Object.keys(TASK_LIBRARY).forEach(function(zoneKey) {
+        var zone = ZONES[zoneKey];
+        var tasks = TASK_LIBRARY[zoneKey];
+        var isOpen = openZones[zoneKey];
+        
+        html += '<div class="lib-zone">';
+        html += '<div class="lib-zone-header" onclick="toggleZone(\'' + zoneKey + '\')">';
+        html += '<div class="lib-zone-icon">' + zone.icon + '</div>';
+        html += '<div class="lib-zone-name">' + zone.name + '</div>';
+        html += '<div class="lib-zone-count">' + tasks.length + ' tareas</div>';
+        html += '<div class="lib-zone-toggle' + (isOpen ? ' open' : '') + '">▼</div>';
+        html += '</div>';
+        
+        html += '<div class="lib-zone-tasks' + (isOpen ? ' open' : '') + '">';
+        tasks.forEach(function(task, idx) {
+            var freqLabel = task.freq === 'diario' ? '📅 Diario' : task.freq === 'semanal' ? '📆 Semanal' : '🗓️ Mensual';
+            html += '<div class="lib-task" onclick="addFromLibrary(\'' + zoneKey + '\',' + idx + ')">';
+            html += '<div class="lib-task-name">' + task.name + '</div>';
+            html += '<div class="lib-task-freq">' + freqLabel + '</div>';
+            html += '<div class="lib-task-add">+</div>';
+            html += '</div>';
+        });
+        html += '</div>';
+        html += '</div>';
+    });
+    
+    document.getElementById('library-list').innerHTML = html;
+}
+
+function toggleZone(zoneKey) {
+    openZones[zoneKey] = !openZones[zoneKey];
+    renderLibrary();
+}
+
+function addFromLibrary(zoneKey, taskIdx) {
+    var libTask = TASK_LIBRARY[zoneKey][taskIdx];
+    if (!libTask) return;
+    
+    var task = {
+        id: Date.now(),
+        name: libTask.name,
+        zone: zoneKey,
+        date: getTodayKey(),
+        priority: 'medium',
+        done: false,
+        createdAt: new Date().toISOString()
+    };
+    
+    DATA.tasks.push(task);
+    save();
+    renderToday();
+    showToast('✓', libTask.name + ' añadida a hoy');
+}
+
+// ============ CALENDAR ============
+function renderCalendar() {
+    var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    document.getElementById('calendar-title').textContent = months[viewingMonth.getMonth()] + ' ' + viewingMonth.getFullYear();
+    
+    var firstDay = new Date(viewingMonth.getFullYear(), viewingMonth.getMonth(), 1);
+    var lastDay = new Date(viewingMonth.getFullYear(), viewingMonth.getMonth() + 1, 0);
+    var startDay = firstDay.getDay();
+    
+    var html = ['D','L','M','X','J','V','S'].map(function(d) {
+        return '<div class="calendar-day-name">' + d + '</div>';
+    }).join('');
+    
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var todayKey = getTodayKey();
+    
+    // Días del mes anterior
+    var prevMonth = new Date(viewingMonth.getFullYear(), viewingMonth.getMonth(), 0);
+    for (var i = startDay - 1; i >= 0; i--) {
+        html += '<div class="calendar-day other-month">' + (prevMonth.getDate() - i) + '</div>';
+    }
+    
+    // Días del mes actual
+    for (var d = 1; d <= lastDay.getDate(); d++) {
+        var dateKey = viewingMonth.getFullYear() + '-' + String(viewingMonth.getMonth()+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+        var isToday = dateKey === todayKey;
+        var hasTasks = DATA.tasks.some(function(t) { return t.date === dateKey; });
+        var isSelected = dateKey === selectedDate.getFullYear() + '-' + String(selectedDate.getMonth()+1).padStart(2,'0') + '-' + String(selectedDate.getDate()).padStart(2,'0');
+        
+        html += '<div class="calendar-day' + (isToday ? ' today' : '') + (hasTasks ? ' has-tasks' : '') + (isSelected ? ' selected' : '') + '" onclick="selectDate(\'' + dateKey + '\')">' + d + '</div>';
+    }
+    
+    // Días del mes siguiente
+    var remaining = 42 - (startDay + lastDay.getDate());
+    for (var i = 1; i <= remaining; i++) {
+        html += '<div class="calendar-day other-month">' + i + '</div>';
+    }
+    
+    document.getElementById('calendar-grid').innerHTML = html;
+    
+    // Tasks for selected date
+    var selKey = selectedDate.getFullYear() + '-' + String(selectedDate.getMonth()+1).padStart(2,'0') + '-' + String(selectedDate.getDate()).padStart(2,'0');
+    var tasks = DATA.tasks.filter(function(t) { return t.date === selKey; });
+    
+    var tasksHtml = '<div class="scheduled-date">📅 ' + formatDate(selKey) + '</div>';
+    if (tasks.length > 0) {
+        tasks.forEach(function(t) { tasksHtml += renderTaskItem(t); });
+    } else {
+        tasksHtml += '<div class="empty" style="padding:20px"><div class="empty-text">Sin tareas este día</div></div>';
+    }
+    
+    document.getElementById('calendar-tasks').innerHTML = tasksHtml;
+}
+
+function changeMonth(delta) {
+    viewingMonth.setMonth(viewingMonth.getMonth() + delta);
+    renderCalendar();
+}
+
+function selectDate(dateKey) {
+    var parts = dateKey.split('-');
+    selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    renderCalendar();
+}
+
+// ============ ROUTINES ============
+function renderRoutines() {
+    // Streak days
+    var days = ['D','L','M','X','J','V','S'];
+    var today = new Date();
+    var html = '';
+    
+    for (var i = 0; i < 7; i++) {
+        var d = new Date(today);
+        d.setDate(d.getDate() - (6 - i));
+        var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        var dayTasks = DATA.tasks.filter(function(t) { return t.date === key; });
+        var allDone = dayTasks.length > 0 && dayTasks.every(function(t) { return t.done; });
+        
+        html += '<div class="streak-day"><div class="streak-day-name">' + days[d.getDay()] + '</div><div class="streak-day-check' + (allDone ? ' done' : '') + '">' + (allDone ? '✓' : '') + '</div></div>';
+    }
+    document.getElementById('streak-days').innerHTML = html;
+    document.getElementById('week-streak').textContent = DATA.streak;
+    
+    // Routines list
+    if (DATA.routines.length === 0) {
+        document.getElementById('routines-list').innerHTML = '<div class="empty"><div class="empty-icon">🔄</div><div class="empty-text">Sin rutinas<br><small>Crea una rutina diaria</small></div></div>';
+        return;
+    }
+    
+    var todayKey = getTodayKey();
+    html = '';
+    DATA.routines.forEach(function(r) {
+        html += '<div class="routine-card">';
+        html += '<div class="routine-header"><div class="routine-name">' + r.name + '</div><button class="task-action" onclick="deleteRoutine(' + r.id + ')">🗑️</button></div>';
+        html += '<div class="routine-tasks">';
+        r.tasks.forEach(function(task, i) {
+            var doneToday = r.doneToday && r.doneToday[todayKey] && r.doneToday[todayKey].includes(i);
+            html += '<div class="routine-task' + (doneToday ? ' done' : '') + '" onclick="toggleRoutineTask(' + r.id + ',' + i + ')"><div class="routine-task-check">' + (doneToday ? '✓' : '') + '</div><div class="routine-task-name">' + task + '</div></div>';
+        });
+        html += '</div></div>';
+    });
+    document.getElementById('routines-list').innerHTML = html;
+}
+
+function openRoutineModal() {
+    document.getElementById('routine-name').value = '';
+    document.getElementById('routine-tasks').value = '';
+    document.getElementById('routine-modal').classList.add('active');
+}
+
+function closeRoutineModal() {
+    document.getElementById('routine-modal').classList.remove('active');
+}
+
+function saveRoutine() {
+    var name = document.getElementById('routine-name').value.trim();
+    var tasks = document.getElementById('routine-tasks').value.trim().split('\n').filter(function(t) { return t.trim(); });
+    
+    if (!name || tasks.length === 0) {
+        showToast('❌', 'Completa todos los campos');
+        return;
+    }
+    
+    DATA.routines.push({
+        id: Date.now(),
+        name: name,
+        tasks: tasks,
+        doneToday: {}
+    });
+    
+    save();
+    closeRoutineModal();
+    renderRoutines();
+    showToast('✓', 'Rutina creada');
+}
+
+function toggleRoutineTask(routineId, taskIdx) {
+    var routine = DATA.routines.find(function(r) { return r.id === routineId; });
+    if (!routine) return;
+    
+    var todayKey = getTodayKey();
+    if (!routine.doneToday) routine.doneToday = {};
+    if (!routine.doneToday[todayKey]) routine.doneToday[todayKey] = [];
+    
+    var idx = routine.doneToday[todayKey].indexOf(taskIdx);
+    if (idx >= 0) {
+        routine.doneToday[todayKey].splice(idx, 1);
+    } else {
+        routine.doneToday[todayKey].push(taskIdx);
+        showToast('✓', '¡Hecho!');
+    }
+    
+    save();
+    renderRoutines();
+}
+
+function deleteRoutine(id) {
+    if (confirm('¿Eliminar esta rutina?')) {
+        DATA.routines = DATA.routines.filter(function(r) { return r.id !== id; });
+        save();
+        renderRoutines();
+        showToast('🗑️', 'Rutina eliminada');
+    }
+}
+
+// ============ HISTORY ============
+function renderHistory() {
+    // Stats
+    var totalDone = DATA.tasks.filter(function(t) { return t.done; }).length;
+    var days = {};
+    DATA.tasks.forEach(function(t) {
+        if (!days[t.date]) days[t.date] = {total: 0, done: 0};
+        days[t.date].total++;
+        if (t.done) days[t.date].done++;
+    });
+    var daysWithTasks = Object.keys(days).length;
+    var avg = daysWithTasks > 0 ? Math.round(totalDone / daysWithTasks) : 0;
+    
+    document.getElementById('hist-total').textContent = totalDone;
+    document.getElementById('hist-best').textContent = DATA.bestStreak;
+    document.getElementById('hist-avg').textContent = avg;
+    
+    // History list
+    var sortedDays = Object.keys(days).sort().reverse().slice(0, 14);
+    
+    if (sortedDays.length === 0) {
+        document.getElementById('history-list').innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Sin historial aún</div></div>';
+        return;
+    }
+    
+    var html = '';
+    sortedDays.forEach(function(dateKey) {
+        var d = days[dateKey];
+        var pct = Math.round((d.done / d.total) * 100);
+        var parts = dateKey.split('-');
+        var months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        
+        html += '<div class="history-item">' +
+            '<div class="history-date"><div class="history-day">' + parseInt(parts[2]) + '</div><div class="history-month">' + months[parseInt(parts[1])-1] + '</div></div>' +
+            '<div class="history-info"><div class="history-count">' + d.done + '/' + d.total + ' tareas</div><div class="history-tasks">' + (pct === 100 ? '✨ Día perfecto' : pct + '% completado') + '</div></div>' +
+            '<div class="history-score">' + pct + '%</div>' +
+        '</div>';
+    });
+    
+    document.getElementById('history-list').innerHTML = html;
+}
+
+// ============ CONFIG & CLOUD ============
+var CLOUD = {
+    url: 'https://script.google.com/macros/s/AKfycbwredZeSCW6l8uYx4sx_Q_s1bCGh_mR_2qN1BGY5R4_a7NkStIuZ5Z4VhPrt9pgdnd64g/exec',
+    lastSync: localStorage.getItem('home_last_sync') || null,
+    autoSync: true
+};
+
+function updateSyncIndicator(status) {
+    var el = document.getElementById('sync-indicator');
+    el.className = 'sync-indicator';
+    if (status === 'online') {
+        el.classList.add('online');
+        el.title = 'Conectado ✓';
+    } else if (status === 'syncing') {
+        el.classList.add('syncing');
+        el.title = 'Sincronizando...';
+    } else {
+        el.title = 'Desconectado';
+    }
+    console.log('Sync status:', status, 'URL:', CLOUD.url);
+}
+
+function cloudSave() {
+    if (!CLOUD.url) return;
+    updateSyncIndicator('syncing');
+    
+    fetch(CLOUD.url + '?action=save&key=homedata&data=' + encodeURIComponent(JSON.stringify(DATA)))
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                CLOUD.lastSync = new Date().toISOString();
+                localStorage.setItem('home_last_sync', CLOUD.lastSync);
+                updateSyncIndicator('online');
+            }
+        })
+        .catch(function() { updateSyncIndicator(''); });
+}
+
+function cloudLoad() {
+    if (!CLOUD.url) {
+        console.log('No hay URL configurada');
+        return Promise.resolve(false);
+    }
+    updateSyncIndicator('syncing');
+    console.log('Cargando datos de:', CLOUD.url);
+    
+    return fetch(CLOUD.url + '?action=load')
+        .then(function(r) { 
+            console.log('Respuesta recibida:', r.status);
+            return r.json(); 
+        })
+        .then(function(res) {
+            console.log('Datos recibidos:', res);
+            if (res.success && res.data && res.data.homedata) {
+                DATA = res.data.homedata;
+                localStorage.setItem('home_data', JSON.stringify(DATA));
+                updateSyncIndicator('online');
+                console.log('Datos cargados correctamente');
+                return true;
+            }
+            updateSyncIndicator('online');
+            console.log('Sin datos en la nube (normal si es primera vez)');
+            return false;
+        })
+        .catch(function(err) { 
+            console.error('Error de conexión:', err);
+            updateSyncIndicator(''); 
+            return false; 
+        });
+}
+
+function connectCloud() {
+    var url = document.getElementById('cloud-url').value.trim();
+    if (!url) return showToast('❌', 'Introduce la URL');
+    
+    CLOUD.url = url;
+    CLOUD.autoSync = true;
+    localStorage.setItem('family_cloud_url', url);
+    localStorage.setItem('home_auto_sync', 'true');
+    
+    updateSyncIndicator('syncing');
+    fetch(url + '?action=init')
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+            if (res.success) {
+                showToast('✓', '¡Conectado!');
+                updateSyncIndicator('online');
+                renderConfig();
+                if (confirm('¿Cargar datos de la nube?')) {
+                    cloudLoad().then(function() { renderToday(); });
+                } else {
+                    cloudSave();
+                }
+            }
+        })
+        .catch(function() { showToast('❌', 'Error de conexión'); });
+}
+
+function disconnectCloud() {
+    CLOUD.url = '';
+    localStorage.removeItem('family_cloud_url');
+    updateSyncIndicator('');
+    renderConfig();
+    showToast('☁️', 'Desconectado');
+}
+
+function renderConfig() {
+    var html = '';
+    if (!CLOUD.url) {
+        html = '<input type="text" class="form-input" id="cloud-url" placeholder="URL del Apps Script..." style="margin-bottom:8px">' +
+               '<button class="submit-btn" onclick="connectCloud()" style="margin:0">🔗 Conectar</button>';
+    } else {
+        html = '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><div style="width:10px;height:10px;background:var(--success);border-radius:50%"></div><span style="font-size:0.85rem">Conectado</span></div>' +
+               '<button class="submit-btn" onclick="cloudSave()" style="background:var(--success);margin:0 0 8px">🔄 Sincronizar</button>' +
+               '<button class="submit-btn" onclick="disconnectCloud()" style="background:var(--card2);color:var(--text);margin:0">✕ Desconectar</button>';
+    }
+    document.getElementById('sync-config').innerHTML = html;
+}
+
+function exportData() {
+    var blob = new Blob([JSON.stringify(DATA, null, 2)], {type: 'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'home-tasks-' + getTodayKey() + '.json';
+    a.click();
+    showToast('✓', 'Datos exportados');
+}
+
+function importData(input) {
+    var file = input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            DATA = JSON.parse(e.target.result);
+            save();
+            renderToday();
+            showToast('✓', 'Datos importados');
+        } catch (err) {
+            showToast('❌', 'Error al importar');
+        }
+    };
+    reader.readAsText(file);
+}
+
+function resetData() {
+    if (confirm('¿Borrar TODOS los datos?')) {
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+// ============ UI HELPERS ============
+function showToast(icon, text) {
+    document.getElementById('toast-icon').textContent = icon;
+    document.getElementById('toast-text').textContent = text;
+    document.getElementById('toast').classList.add('active');
+    setTimeout(function() { document.getElementById('toast').classList.remove('active'); }, 2500);
+}
+
+function showCelebration(icon, title, sub) {
+    document.getElementById('celeb-icon').textContent = icon;
+    document.getElementById('celeb-title').textContent = title;
+    document.getElementById('celeb-sub').textContent = sub;
+    createConfetti();
+    document.getElementById('celebration').classList.add('active');
+}
+
+function closeCelebration() {
+    document.getElementById('celebration').classList.remove('active');
+}
+
+function createConfetti() {
+    var container = document.getElementById('confetti-container');
+    container.innerHTML = '';
+    var colors = ['#6c5ce7','#a29bfe','#00b894','#fdcb6e','#ff7675','#74b9ff'];
+    for (var i = 0; i < 50; i++) {
+        var conf = document.createElement('div');
+        conf.className = 'confetti';
+        conf.style.left = Math.random() * 100 + '%';
+        conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(conf);
+    }
+}
+
+// ============ NAVIGATION ============
+document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        document.getElementById(this.dataset.tab).classList.add('active');
+        
+        if (this.dataset.tab === 'library') renderLibrary();
+        if (this.dataset.tab === 'calendar') renderCalendar();
+        if (this.dataset.tab === 'routines') renderRoutines();
+        if (this.dataset.tab === 'history') renderHistory();
+        if (this.dataset.tab === 'config') renderConfig();
+    });
+});
+
+// Close modals on backdrop click
+['task-modal', 'routine-modal'].forEach(function(id) {
+    document.getElementById(id).addEventListener('click', function(e) {
+        if (e.target.id === id) {
+            if (id === 'task-modal') closeTaskModal();
+            if (id === 'routine-modal') closeRoutineModal();
+        }
+    });
+});
+
+// ============ INIT ============
+renderToday();
+updateStreak();
+
+if (CLOUD.url) {
+    console.log('Iniciando conexión con:', CLOUD.url);
+    updateSyncIndicator('syncing');
+    cloudLoad().then(function(loaded) {
+        if (loaded) {
+            renderToday();
+            showToast('☁️', 'Datos sincronizados');
+        } else {
+            showToast('✓', 'Conectado a la nube');
+        }
+    });
+} else {
+    console.log('Sin URL de cloud configurada');
+}
+</script>
+<script src="../js/shell.js"></script></body>
+</html>
