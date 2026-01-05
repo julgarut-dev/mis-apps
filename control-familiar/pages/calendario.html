@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>📅 Calendario - Control Familiar</title>
+    <link rel="stylesheet" href="../css/shell.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --primary:#6366f1;--primary2:#8b5cf6;
+            --bg:#f1f5f9;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+            --task:#10b981;--event:#6366f1;--expense:#ef4444;--birthday:#f59e0b;--income:#22c55e;
+        }
+        body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:100px}
+        .container{max-width:520px;margin:0 auto;padding:16px}
+        
+        .header{background:linear-gradient(135deg,var(--primary),var(--primary2));border-radius:20px;padding:16px;color:#fff;margin-bottom:16px}
+        .header-nav{display:flex;justify-content:space-between;align-items:center}
+        .header-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:40px;height:40px;border-radius:12px;cursor:pointer;font-size:1.2rem}
+        .header-title{font-size:1.1rem;font-weight:800;text-align:center}
+        .header-sub{font-size:.75rem;opacity:.9;text-align:center;margin-top:4px}
+        
+        .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px}
+        .weekday{text-align:center;font-size:.7rem;font-weight:700;color:var(--muted);padding:8px 0}
+        
+        .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+        .day{background:var(--card);border-radius:10px;min-height:70px;padding:6px;cursor:pointer;transition:all .2s;position:relative}
+        .day:hover{box-shadow:0 4px 12px rgba(0,0,0,.1)}
+        .day.other-month{opacity:.4}
+        .day.today{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+        .day.today .day-num{color:#fff}
+        .day.selected{outline:2px solid var(--primary);outline-offset:2px}
+        .day-num{font-size:.8rem;font-weight:700;margin-bottom:4px}
+        .day-dots{display:flex;flex-wrap:wrap;gap:2px}
+        .day-dot{width:6px;height:6px;border-radius:50%}
+        .day-dot.task{background:var(--task)}
+        .day-dot.event{background:var(--event)}
+        .day-dot.expense{background:var(--expense)}
+        .day-dot.birthday{background:var(--birthday)}
+        .day-dot.income{background:var(--income)}
+        .day-count{position:absolute;top:4px;right:4px;background:var(--primary);color:#fff;font-size:.55rem;font-weight:700;padding:2px 5px;border-radius:8px}
+        .day.today .day-count{background:rgba(255,255,255,.3)}
+        
+        .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:12px;background:var(--card);border-radius:14px;margin-bottom:16px}
+        .legend-item{display:flex;align-items:center;gap:4px;font-size:.7rem;color:var(--muted)}
+        .legend-dot{width:10px;height:10px;border-radius:50%}
+        
+        .card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 4px 15px rgba(0,0,0,.05)}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .card-title{font-weight:800;font-size:.95rem}
+        .badge{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--bg);color:var(--muted)}
+        
+        .item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:12px;margin-bottom:8px}
+        .item:last-child{margin-bottom:0}
+        .item-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+        .item-icon.task{background:#dcfce7;color:var(--task)}
+        .item-icon.event{background:#e0e7ff;color:var(--event)}
+        .item-icon.expense{background:#fee2e2;color:var(--expense)}
+        .item-icon.birthday{background:#fef3c7;color:var(--birthday)}
+        .item-icon.income{background:#dcfce7;color:var(--income)}
+        .item-info{flex:1;min-width:0}
+        .item-title{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .item-sub{font-size:.7rem;color:var(--muted)}
+        .item-badge{font-size:.7rem;font-weight:700;padding:4px 8px;border-radius:8px}
+        
+        .empty{text-align:center;padding:30px;color:var(--muted)}
+        .empty-icon{font-size:2.5rem;margin-bottom:8px}
+        
+        /* Modal */
+        .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;justify-content:center}
+        .modal.active{display:flex}
+        .sheet{background:var(--card);border-radius:24px 24px 0 0;padding:20px;width:100%;max-width:520px;max-height:70vh;overflow-y:auto}
+        .sheet-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        .sheet-title{font-weight:900;font-size:1.1rem}
+        .sheet-close{width:32px;height:32px;border:none;background:var(--bg);border-radius:50%;cursor:pointer;font-size:1rem}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-nav">
+                <button class="header-btn" onclick="changeMonth(-1)">‹</button>
+                <div>
+                    <div class="header-title" id="monthTitle">Enero 2026</div>
+                    <div class="header-sub" id="monthSub">12 eventos este mes</div>
+                </div>
+                <button class="header-btn" onclick="changeMonth(1)">›</button>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--task)"></div>Tareas</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--event)"></div>Eventos</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--expense)"></div>Gastos</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--income)"></div>Ingresos</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--birthday)"></div>Cumples</div>
+        </div>
+        
+        <div class="weekdays">
+            <div class="weekday">L</div>
+            <div class="weekday">M</div>
+            <div class="weekday">X</div>
+            <div class="weekday">J</div>
+            <div class="weekday">V</div>
+            <div class="weekday">S</div>
+            <div class="weekday">D</div>
+        </div>
+        
+        <div class="calendar" id="calendar"></div>
+    </div>
+    
+    <!-- Modal día -->
+    <div class="modal" id="modalDay">
+        <div class="sheet">
+            <div class="sheet-header">
+                <div class="sheet-title" id="dayTitle">📅 5 de Enero</div>
+                <button class="sheet-close" onclick="closeModal()">✕</button>
+            </div>
+            <div id="dayContent"></div>
+        </div>
+    </div>
+
+<script src="../js/cloud_store.js"></script>
+<script>
+// ========== DATA ==========
+var currentDate = new Date();
+var selectedDate = null;
+
+var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var WEEKDAYS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+function loadAllData() {
+    var data = {
+        tasks: [],
+        events: [],
+        transactions: [],
+        birthdays: []
+    };
+    
+    try {
+        // Tareas
+        var tareasRaw = localStorage.getItem('homedata');
+        if (tareasRaw) {
+            var tareas = JSON.parse(tareasRaw);
+            data.tasks = tareas.tasks || [];
+        }
+    } catch(e) {}
+    
+    try {
+        // Eventos y cumpleaños de home_data
+        var homeRaw = localStorage.getItem('home_data');
+        if (homeRaw) {
+            var home = JSON.parse(homeRaw);
+            data.events = home.events || [];
+            data.birthdays = home.birthdays || [];
+        }
+    } catch(e) {}
+    
+    try {
+        // Gastos
+        var gastosRaw = localStorage.getItem('gastos_familia_v2');
+        if (gastosRaw) {
+            var gastos = JSON.parse(gastosRaw);
+            data.transactions = gastos.transactions || [];
+        }
+    } catch(e) {}
+    
+    return data;
+}
+
+function getDateKey(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function getItemsForDate(dateKey, data) {
+    var items = [];
+    var date = new Date(dateKey);
+    
+    // Tareas
+    data.tasks.forEach(function(t) {
+        if (t.date === dateKey) {
+            items.push({
+                type: 'task',
+                icon: '✅',
+                title: t.name,
+                sub: t.done ? 'Completada' : 'Pendiente',
+                done: t.done
+            });
+        }
+    });
+    
+    // Eventos
+    data.events.forEach(function(e) {
+        if (e.date === dateKey) {
+            items.push({
+                type: 'event',
+                icon: '📅',
+                title: e.name,
+                sub: e.type ? e.type.charAt(0).toUpperCase() + e.type.slice(1) : 'Evento',
+                done: e.done
+            });
+        }
+        // Eventos recurrentes
+        if (e.recur) {
+            var evDate = new Date(e.date);
+            if (e.recur === 'daily' || 
+                (e.recur === 'weekly' && evDate.getDay() === date.getDay()) ||
+                (e.recur === 'monthly' && evDate.getDate() === date.getDate()) ||
+                (e.recur === 'yearly' && evDate.getMonth() === date.getMonth() && evDate.getDate() === date.getDate())) {
+                if (e.date !== dateKey) {
+                    items.push({
+                        type: 'event',
+                        icon: '🔁',
+                        title: e.name,
+                        sub: 'Recurrente',
+                        done: false
+                    });
+                }
+            }
+        }
+    });
+    
+    // Transacciones
+    data.transactions.forEach(function(t) {
+        if (t.date === dateKey) {
+            if (t.type === 'expense') {
+                items.push({
+                    type: 'expense',
+                    icon: '💸',
+                    title: t.desc || 'Gasto',
+                    sub: '-' + t.amount.toFixed(2) + '€',
+                    amount: t.amount
+                });
+            } else if (t.type === 'income') {
+                items.push({
+                    type: 'income',
+                    icon: '💰',
+                    title: t.desc || 'Ingreso',
+                    sub: '+' + t.amount.toFixed(2) + '€',
+                    amount: t.amount
+                });
+            }
+        }
+    });
+    
+    // Cumpleaños
+    data.birthdays.forEach(function(b) {
+        if (b.date) {
+            var parts = b.date.split('-');
+            var bMonth = parseInt(parts[0]);
+            var bDay = parseInt(parts[1]);
+            if (date.getMonth() + 1 === bMonth && date.getDate() === bDay) {
+                var age = date.getFullYear() - (parseInt(parts[2]) || date.getFullYear());
+                items.push({
+                    type: 'birthday',
+                    icon: '🎂',
+                    title: b.name,
+                    sub: age > 0 ? 'Cumple ' + age + ' años' : '¡Feliz cumpleaños!'
+                });
+            }
+        }
+    });
+    
+    return items;
+}
+
+function renderCalendar() {
+    var data = loadAllData();
+    var year = currentDate.getFullYear();
+    var month = currentDate.getMonth();
+    
+    // Título
+    document.getElementById('monthTitle').textContent = MONTHS[month] + ' ' + year;
+    
+    // Primer día del mes
+    var firstDay = new Date(year, month, 1);
+    var lastDay = new Date(year, month + 1, 0);
+    var startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Lunes = 0
+    
+    // Contar items del mes
+    var monthKey = year + '-' + String(month+1).padStart(2,'0');
+    var monthItems = 0;
+    for (var d = 1; d <= lastDay.getDate(); d++) {
+        var dk = monthKey + '-' + String(d).padStart(2,'0');
+        monthItems += getItemsForDate(dk, data).length;
+    }
+    document.getElementById('monthSub').textContent = monthItems + ' elementos este mes';
+    
+    // Generar días
+    var html = '';
+    var today = new Date();
+    var todayKey = getDateKey(today);
+    
+    // Días del mes anterior
+    var prevMonth = new Date(year, month, 0);
+    for (var i = startDay - 1; i >= 0; i--) {
+        var dayNum = prevMonth.getDate() - i;
+        html += '<div class="day other-month"><div class="day-num">' + dayNum + '</div></div>';
+    }
+    
+    // Días del mes actual
+    for (var d = 1; d <= lastDay.getDate(); d++) {
+        var dateKey = monthKey + '-' + String(d).padStart(2,'0');
+        var items = getItemsForDate(dateKey, data);
+        var isToday = dateKey === todayKey;
+        
+        html += '<div class="day' + (isToday ? ' today' : '') + '" onclick="openDay(\'' + dateKey + '\')">';
+        html += '<div class="day-num">' + d + '</div>';
+        
+        if (items.length > 0) {
+            if (items.length > 3) {
+                html += '<span class="day-count">' + items.length + '</span>';
+            }
+            html += '<div class="day-dots">';
+            var types = {};
+            items.forEach(function(it) { types[it.type] = true; });
+            Object.keys(types).slice(0, 4).forEach(function(type) {
+                html += '<div class="day-dot ' + type + '"></div>';
+            });
+            html += '</div>';
+        }
+        html += '</div>';
+    }
+    
+    // Días del mes siguiente
+    var remaining = 42 - (startDay + lastDay.getDate());
+    for (var i = 1; i <= remaining; i++) {
+        html += '<div class="day other-month"><div class="day-num">' + i + '</div></div>';
+    }
+    
+    document.getElementById('calendar').innerHTML = html;
+}
+
+function changeMonth(dir) {
+    currentDate.setMonth(currentDate.getMonth() + dir);
+    renderCalendar();
+}
+
+function openDay(dateKey) {
+    selectedDate = dateKey;
+    var data = loadAllData();
+    var items = getItemsForDate(dateKey, data);
+    var date = new Date(dateKey);
+    
+    document.getElementById('dayTitle').textContent = '📅 ' + date.getDate() + ' de ' + MONTHS[date.getMonth()];
+    
+    if (items.length === 0) {
+        document.getElementById('dayContent').innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div>No hay nada este día</div></div>';
+    } else {
+        var html = '';
+        items.forEach(function(item) {
+            html += '<div class="item">';
+            html += '<div class="item-icon ' + item.type + '">' + item.icon + '</div>';
+            html += '<div class="item-info">';
+            html += '<div class="item-title"' + (item.done ? ' style="text-decoration:line-through;opacity:.7"' : '') + '>' + escHtml(item.title) + '</div>';
+            html += '<div class="item-sub">' + escHtml(item.sub) + '</div>';
+            html += '</div>';
+            if (item.type === 'expense') {
+                html += '<span class="item-badge" style="background:#fee2e2;color:#ef4444">' + item.sub + '</span>';
+            } else if (item.type === 'income') {
+                html += '<span class="item-badge" style="background:#dcfce7;color:#22c55e">' + item.sub + '</span>';
+            }
+            html += '</div>';
+        });
+        document.getElementById('dayContent').innerHTML = html;
+    }
+    
+    document.getElementById('modalDay').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('modalDay').classList.remove('active');
+}
+
+function escHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, function(m) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+}
+
+// Click outside modal
+document.getElementById('modalDay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+// Init
+renderCalendar();
+
+// Cargar datos de la nube
+setTimeout(function() {
+    if (window.CloudStore) {
+        Promise.all([
+            CloudStore.loadCasa(),
+            CloudStore.loadGastos(),
+            CloudStore.loadTareas()
+        ]).then(function() {
+            renderCalendar();
+        });
+    }
+}, 500);
+</script>
+<script src="../js/shell.js"></script>
+</body>
+</html>
