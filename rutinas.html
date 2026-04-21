@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Mis Tareas ✨ Júlia & Álex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+  html, body { height: 100%; overflow-x: hidden; font-family: 'Fredoka', system-ui, sans-serif; font-weight: 500; }
+
+  body {
+    background:
+      radial-gradient(ellipse at top left, #ffe0ec 0%, transparent 40%),
+      radial-gradient(ellipse at top right, #d4f4f4 0%, transparent 40%),
+      radial-gradient(ellipse at bottom, #fff4e0 0%, transparent 50%),
+      #fafbfd;
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #2d3748;
+    padding: 12px;
+  }
+
+  h1, h2, h3, h4, .brand-title, .kid-name { font-family: 'Baloo 2', sans-serif; }
+
+  /* Elementos decorativos flotantes */
+  .deco {
+    position: fixed; pointer-events: none;
+    opacity: 0.25; z-index: 0;
+    animation: floatDeco 12s ease-in-out infinite;
+  }
+  .deco-1 { top: 8%; left: 3%; font-size: 40px; animation-delay: 0s; color: #ff9eb5; }
+  .deco-2 { top: 18%; right: 5%; font-size: 32px; animation-delay: 3s; color: #7ed3d3; }
+  .deco-3 { bottom: 25%; left: 4%; font-size: 36px; animation-delay: 6s; color: #ffc971; }
+  .deco-4 { bottom: 10%; right: 6%; font-size: 30px; animation-delay: 9s; color: #c7a3f5; }
+  @keyframes floatDeco {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+  }
+
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: block; animation: fadeIn 0.5s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* TOP BAR */
+  .top-bar {
+    background: white;
+    border-radius: 24px; padding: 14px 22px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 4px 20px rgba(136, 105, 145, 0.08);
+    margin-bottom: 16px;
+    flex-wrap: wrap; gap: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+  .brand-title {
+    font-size: 1.7rem; font-weight: 800;
+    background: linear-gradient(135deg, #ff6b9d 0%, #ffb347 50%, #4ecdc4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .brand-sparkle { font-size: 1.1rem; animation: sparkle 2s ease-in-out infinite; }
+  @keyframes sparkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.3) rotate(180deg); } }
+
+  .btn {
+    border: none; padding: 11px 20px;
+    border-radius: 22px; font-size: 0.95rem; cursor: pointer;
+    font-family: inherit; font-weight: 600;
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn-timer {
+    background: linear-gradient(135deg, #4ecdc4, #45b7aa);
+    color: white;
+    box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
+  }
+  .btn-parent {
+    background: linear-gradient(135deg, #ffd93d, #ffb347);
+    color: #7a4a00;
+    box-shadow: 0 4px 12px rgba(255, 179, 71, 0.3);
+  }
+
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* VISTA DUAL */
+  .dual-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 750px) {
+    .dual-view { grid-template-columns: 1fr; }
+  }
+
+  .kid-column {
+    background: white;
+    border-radius: 28px;
+    padding: 18px;
+    box-shadow: 0 8px 30px rgba(136, 105, 145, 0.08);
+    position: relative;
+    overflow: hidden;
+    border-top: 6px solid;
+  }
+  .kid-column.julia { border-top-color: #ff6b9d; }
+  .kid-column.alex { border-top-color: #4ecdc4; }
+  .kid-column::before {
+    content: ''; position: absolute;
+    top: -50px; right: -50px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+  .kid-column.julia::before { background: radial-gradient(circle, #ff6b9d, transparent 70%); }
+  .kid-column.alex::before { background: radial-gradient(circle, #4ecdc4, transparent 70%); }
+
+  .kid-header {
+    text-align: center;
+    padding: 8px 0 14px;
+    margin-bottom: 14px;
+    border-bottom: 2px dashed #f0f0f0;
+  }
+  .kid-avatar-wrap {
+    display: inline-block;
+    position: relative;
+    animation: bobble 4s ease-in-out infinite;
+  }
+  @keyframes bobble {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-6px) rotate(-3deg); }
+  }
+  .kid-avatar-svg {
+    width: 90px; height: 90px;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.1));
+  }
+  .kid-name {
+    font-size: 1.6rem; font-weight: 800; margin-top: 6px;
+  }
+  .julia .kid-name { color: #ff6b9d; }
+  .alex .kid-name { color: #4ecdc4; }
+
+  .kid-stats {
+    display: flex; gap: 6px; justify-content: center; margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: linear-gradient(135deg, #ffd93d, #ffb347);
+    color: #7a4a00; padding: 6px 12px; border-radius: 18px;
+    font-weight: 700; font-size: 0.9rem;
+    box-shadow: 0 3px 8px rgba(255, 179, 71, 0.25);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .alex .stat-chip {
+    background: linear-gradient(135deg, #b8e6e2, #4ecdc4);
+    color: #0a4a47;
+    box-shadow: 0 3px 8px rgba(78, 205, 196, 0.25);
+  }
+  .julia .stat-chip {
+    background: linear-gradient(135deg, #ffcee0, #ff6b9d);
+    color: #7a1843;
+    box-shadow: 0 3px 8px rgba(255, 107, 157, 0.25);
+  }
+  .stat-chip.streak {
+    background: linear-gradient(135deg, #ffcc80, #ff8a65) !important;
+    color: #5a1f00 !important;
+    box-shadow: 0 3px 8px rgba(255, 138, 101, 0.3) !important;
+  }
+
+  /* MASCOTA */
+  .pet-box {
+    background: linear-gradient(135deg, #fafcff, #f0f7ff);
+    border-radius: 18px; padding: 12px;
+    text-align: center; margin-bottom: 12px;
+    border: 2px solid #f0f7ff;
+  }
+  .pet-display {
+    font-size: 55px;
+    animation: petFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15));
+    display: inline-block;
+  }
+  @keyframes petFloat {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    25% { transform: translateY(-6px) rotate(-3deg); }
+    75% { transform: translateY(-6px) rotate(3deg); }
+  }
+  .pet-name { font-size: 0.88rem; color: #666; margin-top: 4px; font-weight: 600; }
+  .pet-level-bar {
+    background: #eef2f7; border-radius: 12px; height: 18px;
+    overflow: hidden; margin-top: 8px; position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  }
+  .julia .pet-level-fill { background: linear-gradient(90deg, #ff9eb5, #ff6b9d); }
+  .alex .pet-level-fill { background: linear-gradient(90deg, #7ed3d3, #4ecdc4); }
+  .pet-level-fill {
+    height: 100%; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 0.72rem;
+    position: relative; overflow: hidden;
+  }
+  .pet-level-fill::after {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: fillShine 2.5s ease-in-out infinite;
+  }
+  @keyframes fillShine { 0% { left: -100%; } 100% { left: 100%; } }
+
+  /* MEDALLAS */
+  .medals-box {
+    background: linear-gradient(135deg, #fff9f0, #fef3e4);
+    border-radius: 18px; padding: 12px;
+    margin-bottom: 12px;
+    border: 2px solid #fef3e4;
+  }
+  .medals-title {
+    font-size: 0.75rem; color: #a08660; margin-bottom: 6px;
+    text-align: center; text-transform: uppercase; letter-spacing: 1.2px;
+    font-weight: 700;
+  }
+  .medals-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .medal {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    background: white; opacity: 0.4;
+    transition: all 0.4s;
+    border: 2px dashed #e0d4bb;
+  }
+  .medal.earned {
+    opacity: 1;
+    background: linear-gradient(135deg, #ffd93d, #ffb347);
+    border: 2px solid #ff9a56;
+    animation: medalPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(255, 154, 86, 0.4), 0 0 20px rgba(255, 217, 61, 0.3);
+  }
+  @keyframes medalPop {
+    0% { transform: scale(0) rotate(-180deg); }
+    60% { transform: scale(1.4) rotate(10deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  /* SECCIONES */
+  .section-label {
+    font-size: 1.05rem; font-weight: 700; margin: 12px 0 8px;
+    color: #4a5568; display: flex; align-items: center; gap: 6px;
+    padding-left: 6px;
+  }
+  .section-label .count {
+    margin-left: auto; font-size: 0.82rem; color: #888;
+    background: #f5f7fa; padding: 3px 12px; border-radius: 12px;
+    font-weight: 600;
+  }
+
+  .tasks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .task-card {
+    background: white; border-radius: 18px; padding: 12px 6px;
+    text-align: center; cursor: pointer; position: relative;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid #f5f7fa;
+    overflow: hidden;
+  }
+  .task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  }
+  .task-card:active { transform: scale(0.94); }
+  .task-card.done {
+    background: linear-gradient(135deg, #d4f4e8, #a8e6cf);
+    border-color: #6bcf7f;
+    box-shadow: 0 4px 14px rgba(107, 207, 127, 0.25);
+  }
+  .task-card.done::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+    animation: doneShine 1.5s ease-in-out;
+    pointer-events: none;
+  }
+  @keyframes doneShine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  .task-card.done .task-emoji { animation: pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4) rotate(15deg); }
+    100% { transform: scale(1); }
+  }
+  .task-emoji {
+    font-size: 44px; display: block; line-height: 1;
+    filter: drop-shadow(0 3px 5px rgba(0,0,0,0.1));
+  }
+  .task-name { font-size: 0.85rem; font-weight: 700; line-height: 1.1; margin-top: 5px; color: #2d3748; }
+  .task-card.done .task-name { color: #1a3a2a; }
+  .task-points { font-size: 0.72rem; color: #888; margin-top: 2px; font-weight: 600; }
+  .task-card.done .task-points { color: #2a5a3a; }
+  .task-check {
+    position: absolute; top: 4px; right: 4px; font-size: 1.4rem;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .task-card.done .task-check { opacity: 1; animation: checkBounce 0.5s; }
+  @keyframes checkBounce {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  .task-timer-icon {
+    position: absolute; top: 4px; left: 4px; font-size: 0.7rem;
+    background: linear-gradient(135deg, #ffd93d, #ffb347);
+    color: #7a4a00;
+    border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(255, 179, 71, 0.3);
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(50, 30, 60, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center; justify-content: center; padding: 15px;
+  }
+  .modal-overlay.active { display: flex; animation: overlayFade 0.3s; }
+  @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: white; border-radius: 28px; padding: 24px;
+    max-width: 620px; width: 100%; max-height: 92vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.9) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-title {
+    font-size: 1.5rem; text-align: center; margin-bottom: 15px;
+    font-weight: 800; color: #ff6b9d;
+  }
+
+  .time-picker {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  .time-btn {
+    background: #fef3e4;
+    border: 2px solid #fce4c3;
+    padding: 10px 18px;
+    border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; color: #7a4a00;
+    transition: transform 0.15s;
+  }
+  .time-btn:active { transform: scale(0.95); }
+  .time-btn.active {
+    background: linear-gradient(135deg, #ff6b9d, #ff4f7d);
+    border-color: #ff4f7d;
+    color: white;
+    box-shadow: 0 3px 10px rgba(255, 107, 157, 0.35);
+  }
+
+  .animation-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+    gap: 8px; margin-bottom: 15px;
+  }
+  .anim-btn {
+    background: #f5f7fa; border: 3px solid transparent; padding: 10px 6px;
+    border-radius: 14px; cursor: pointer;
+    font-family: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    transition: all 0.2s;
+  }
+  .anim-btn:hover { background: #fafbfd; }
+  .anim-btn.active {
+    border-color: #ff6b9d; background: #fff0f5;
+    box-shadow: 0 3px 10px rgba(255, 107, 157, 0.2);
+  }
+  .anim-btn svg { width: 36px; height: 36px; }
+  .anim-btn div { font-size: 0.72rem; font-weight: 700; color: #555; }
+
+  .timer-display {
+    font-size: 4rem; text-align: center; font-weight: 800;
+    color: #ff6b9d; margin: 15px 0;
+    text-shadow: 3px 3px 0 rgba(255, 107, 157, 0.1);
+    font-family: 'Baloo 2', sans-serif;
+    letter-spacing: 2px;
+  }
+
+  .animation-area {
+    height: 220px;
+    background: linear-gradient(to bottom, #e0f2ff 0%, #b3e0ff 60%, #c8e6c9 60%, #a5d6a7 100%);
+    border-radius: 20px;
+    position: relative; overflow: hidden; margin-bottom: 15px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .modal-btn {
+    border: none; padding: 12px 22px; border-radius: 16px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; min-width: 110px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.15s;
+  }
+  .modal-btn:active { transform: scale(0.95); }
+  .btn-start { background: linear-gradient(135deg, #6bcf7f, #4caf50); color: white; }
+  .btn-pause { background: linear-gradient(135deg, #ffb347, #ff9800); color: white; }
+  .btn-close { background: #a0aec0; color: white; }
+  .btn-save { background: linear-gradient(135deg, #6bcf7f, #4caf50); color: white; }
+  .btn-delete { background: linear-gradient(135deg, #ff8a80, #ff5252); color: white; }
+
+  /* CELEBRACIÓN */
+  .celebration { position: fixed; inset: 0; pointer-events: none; z-index: 200; display: none; }
+  .celebration.active { display: block; }
+  .confetti {
+    position: absolute; width: 12px; height: 12px;
+    animation: fall 3s linear forwards;
+  }
+  @keyframes fall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+  .celebration-msg {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3.5rem; font-weight: 800; color: white;
+    text-shadow: 3px 3px 0 #ff6b9d, 6px 6px 0 rgba(0,0,0,0.2);
+    z-index: 201;
+    animation: celebrate 2s ease-out forwards;
+    text-align: center;
+    font-family: 'Baloo 2', sans-serif;
+  }
+  @keyframes celebrate {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); }
+    50% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); }
+    100% { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 0; }
+  }
+
+  /* PANEL PADRES */
+  .parent-tabs {
+    display: flex; gap: 4px; margin-bottom: 15px; flex-wrap: wrap;
+    background: #f5f7fa; padding: 5px; border-radius: 16px;
+  }
+  .parent-tab {
+    flex: 1; min-width: 85px;
+    background: transparent; border: none; padding: 10px 12px;
+    border-radius: 12px; font-family: inherit;
+    font-weight: 700; cursor: pointer; font-size: 0.9rem;
+    transition: all 0.2s;
+    color: #666;
+  }
+  .parent-tab.active {
+    background: white; color: #ff6b9d;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+  .parent-section {
+    margin-bottom: 15px; padding: 14px;
+    background: linear-gradient(135deg, #fafbfd, #f5f7fa);
+    border-radius: 16px;
+    border: 1px solid #eef2f7;
+  }
+  .parent-section h3 { margin-bottom: 10px; font-size: 1.1rem; color: #ff6b9d; }
+
+  .stat-row {
+    display: flex; justify-content: space-between; padding: 6px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px dashed #e0e7ef;
+  }
+  .stat-row:last-child { border-bottom: none; }
+
+  .reset-btn {
+    background: linear-gradient(135deg, #ff8a80, #ff5252);
+    color: white; border: none; padding: 10px 18px;
+    border-radius: 14px; cursor: pointer; font-family: inherit;
+    font-weight: 700; margin: 4px;
+    box-shadow: 0 3px 8px rgba(255, 82, 82, 0.25);
+  }
+
+  /* INFO DATOS */
+  .data-info {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 14px; padding: 14px;
+    margin-bottom: 12px;
+    font-size: 0.88rem; color: #1565c0;
+    border: 1px solid #90caf9;
+  }
+  .data-info strong { color: #0d47a1; }
+
+  /* BIBLIOTECA */
+  .library-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; flex-wrap: wrap; gap: 10px;
+  }
+  .add-task-btn {
+    background: linear-gradient(135deg, #6bcf7f, #4caf50);
+    color: white; border: none; padding: 10px 18px;
+    border-radius: 14px; cursor: pointer; font-family: inherit;
+    font-weight: 700;
+    box-shadow: 0 3px 8px rgba(76, 175, 80, 0.25);
+  }
+
+  .task-library-section {
+    margin-bottom: 15px; padding: 14px;
+    background: linear-gradient(135deg, #fef9ed, #fef3d6);
+    border-radius: 16px;
+    border: 1px solid #fce4c3;
+  }
+  .task-library-section.afternoon {
+    background: linear-gradient(135deg, #e8f4fd, #d5eaf8);
+    border-color: #b3d9f2;
+  }
+
+  .library-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .library-item {
+    background: white; border-radius: 14px; padding: 10px;
+    text-align: center; position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: transform 0.15s;
+    border: 1px solid #f0f0f0;
+  }
+  .library-item:hover { transform: translateY(-2px); background: #fafafa; }
+  .library-item .emo { font-size: 34px; }
+  .library-item .nm { font-size: 0.85rem; font-weight: 700; }
+  .library-item .pt { font-size: 0.75rem; color: #888; }
+  .library-delete {
+    position: absolute; top: 3px; right: 3px;
+    background: #ff5252; color: white; border: none;
+    width: 24px; height: 24px; border-radius: 50%;
+    font-size: 0.9rem; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(255, 82, 82, 0.3);
+  }
+
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-weight: 700; margin-bottom: 4px; font-size: 0.95rem; color: #555; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 11px 14px; border: 2px solid #eef2f7; border-radius: 12px;
+    font-size: 1rem; font-family: inherit;
+    transition: border-color 0.2s;
+    background: #fafbfd;
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none; border-color: #ff6b9d; background: white;
+  }
+
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+    gap: 5px; max-height: 200px; overflow-y: auto;
+    padding: 10px; background: #fafbfd; border-radius: 12px;
+    margin-top: 5px;
+  }
+  .emoji-option {
+    background: white; border: 2px solid transparent; border-radius: 10px;
+    padding: 6px; font-size: 24px; cursor: pointer; text-align: center;
+    transition: all 0.15s;
+  }
+  .emoji-option:hover { background: #f5f7fa; }
+  .emoji-option.selected {
+    border-color: #ff6b9d; background: #fff0f5;
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(255, 107, 157, 0.2);
+  }
+
+  .form-row { display: flex; gap: 10px; }
+  .form-row .form-group { flex: 1; }
+
+  /* CALENDARIO */
+  .week-calendar {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 5px; margin-top: 10px;
+  }
+  .day-cell {
+    aspect-ratio: 1;
+    background: white; border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700;
+    border: 2px solid #eef2f7;
+    padding: 3px;
+  }
+  .day-cell .day-label { font-size: 0.7rem; color: #999; text-transform: uppercase; }
+  .day-cell .day-progress { font-size: 1.4rem; }
+  .day-cell.today { border-color: #ff6b9d; background: #fff0f5; }
+  .day-cell.perfect { background: linear-gradient(135deg, #a8e6cf, #6bcf7f); color: white; border-color: #4caf50; }
+  .day-cell.perfect .day-label { color: white; }
+  .day-cell.partial { background: linear-gradient(135deg, #fff3a0, #ffd93d); }
+  .day-cell.empty { opacity: 0.4; }
+
+  /* RECOMPENSAS */
+  .rewards-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px; margin-top: 10px;
+  }
+  .reward-item {
+    background: white; border-radius: 14px; padding: 12px;
+    position: relative; box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+  }
+  .reward-emoji { font-size: 32px; text-align: center; }
+  .reward-name { font-weight: 700; font-size: 0.9rem; text-align: center; margin-top: 4px; }
+  .reward-cost {
+    text-align: center; margin-top: 6px; font-size: 0.85rem;
+    background: linear-gradient(135deg, #ffd93d, #ffb347);
+    color: #7a4a00; padding: 4px 10px; border-radius: 12px;
+    font-weight: 700;
+  }
+  .reward-delete {
+    position: absolute; top: 3px; right: 3px;
+    background: #ff5252; color: white; border: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 0.85rem; cursor: pointer;
+  }
+  .claim-buttons { display: flex; gap: 5px; margin-top: 8px; }
+  .claim-btn {
+    flex: 1; border: none; padding: 6px; border-radius: 10px;
+    font-family: inherit; font-weight: 700; font-size: 0.8rem;
+    cursor: pointer; color: white;
+  }
+  .claim-btn.julia { background: linear-gradient(135deg, #ff9eb5, #ff6b9d); }
+  .claim-btn.alex { background: linear-gradient(135deg, #7ed3d3, #4ecdc4); }
+  .claim-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .empty-state {
+    grid-column: 1/-1; text-align: center;
+    color: #999; padding: 20px;
+    font-size: 0.9rem;
+  }
+
+  /* MODO NOCHE */
+  body.night-mode {
+    background:
+      radial-gradient(ellipse at top, #3f4978 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, #5a3a7e 0%, transparent 50%),
+      linear-gradient(180deg, #1a1f3a 0%, #2d2560 100%);
+  }
+  body.night-mode::before {
+    content: '✨ ⭐ ✨ ⭐ ✨';
+    position: fixed; top: 15%; left: 0; right: 0;
+    text-align: center; font-size: 2rem;
+    animation: twinkle 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+    letter-spacing: 1em;
+  }
+  @keyframes twinkle { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<!-- Decoración flotante -->
+<div class="deco deco-1">⭐</div>
+<div class="deco deco-2">✨</div>
+<div class="deco deco-3">🌟</div>
+<div class="deco deco-4">💫</div>
+
+<!-- AVATARES SVG (definidos una vez, usados como símbolos) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- JÚLIA: pelo marrón claro, piel clarita -->
+    <symbol id="avatar-julia" viewBox="0 0 100 100">
+      <!-- Pelo trasero (largo) -->
+      <ellipse cx="50" cy="55" rx="32" ry="34" fill="#a67c4e"/>
+      <!-- Cuello -->
+      <rect x="43" y="65" width="14" height="12" fill="#fde0c8"/>
+      <!-- Cara -->
+      <ellipse cx="50" cy="50" rx="22" ry="25" fill="#fde0c8"/>
+      <!-- Mejillas -->
+      <circle cx="36" cy="55" r="4" fill="#ffb5c0" opacity="0.6"/>
+      <circle cx="64" cy="55" r="4" fill="#ffb5c0" opacity="0.6"/>
+      <!-- Flequillo -->
+      <path d="M 28,38 Q 30,28 42,30 Q 48,22 58,30 Q 68,28 72,38 Q 72,44 65,42 Q 60,40 55,42 Q 50,44 45,42 Q 40,40 35,42 Q 28,44 28,38 Z" fill="#b8885a"/>
+      <!-- Mechones laterales largos -->
+      <path d="M 28,40 Q 22,55 24,72 Q 26,80 30,78 Q 32,65 30,50 Z" fill="#b8885a"/>
+      <path d="M 72,40 Q 78,55 76,72 Q 74,80 70,78 Q 68,65 70,50 Z" fill="#b8885a"/>
+      <!-- Ojos -->
+      <g>
+        <ellipse cx="42" cy="50" rx="2.5" ry="3.5" fill="#4a2c1a"/>
+        <ellipse cx="58" cy="50" rx="2.5" ry="3.5" fill="#4a2c1a"/>
+        <circle cx="43" cy="48.5" r="1" fill="white"/>
+        <circle cx="59" cy="48.5" r="1" fill="white"/>
+      </g>
+      <!-- Cejas -->
+      <path d="M 37,43 Q 42,41 46,43" stroke="#8b5a2b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M 54,43 Q 58,41 63,43" stroke="#8b5a2b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Nariz -->
+      <path d="M 49,56 Q 50,59 51,56" stroke="#d4a68a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <!-- Boca sonriente -->
+      <path d="M 44,63 Q 50,68 56,63" stroke="#c94f6d" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Lacito -->
+      <g>
+        <path d="M 35,28 L 30,24 L 30,32 Z" fill="#ff6b9d"/>
+        <path d="M 35,28 L 40,24 L 40,32 Z" fill="#ff6b9d"/>
+        <circle cx="35" cy="28" r="2" fill="#ff4f7d"/>
+      </g>
+    </symbol>
+
+    <!-- ÁLEX: rubio rizado, piel clarita -->
+    <symbol id="avatar-alex" viewBox="0 0 100 100">
+      <!-- Cuello -->
+      <rect x="43" y="65" width="14" height="12" fill="#fde0c8"/>
+      <!-- Cara -->
+      <ellipse cx="50" cy="52" rx="22" ry="24" fill="#fde0c8"/>
+      <!-- Mejillas -->
+      <circle cx="36" cy="58" r="4" fill="#ffb5c0" opacity="0.6"/>
+      <circle cx="64" cy="58" r="4" fill="#ffb5c0" opacity="0.6"/>
+      <!-- Pelo rizado (varios bucles) -->
+      <g fill="#ffd54f">
+        <circle cx="32" cy="34" r="9"/>
+        <circle cx="42" cy="26" r="10"/>
+        <circle cx="52" cy="24" r="10"/>
+        <circle cx="62" cy="26" r="10"/>
+        <circle cx="70" cy="34" r="9"/>
+        <circle cx="28" cy="42" r="7"/>
+        <circle cx="74" cy="42" r="7"/>
+        <!-- Algunos bucles más pequeños encima para dar volumen -->
+        <circle cx="38" cy="22" r="5"/>
+        <circle cx="48" cy="20" r="5"/>
+        <circle cx="58" cy="20" r="5"/>
+        <circle cx="66" cy="22" r="5"/>
+      </g>
+      <!-- Bucles más claros (highlights) -->
+      <g fill="#ffe082" opacity="0.7">
+        <circle cx="40" cy="24" r="3"/>
+        <circle cx="55" cy="22" r="3"/>
+        <circle cx="64" cy="30" r="2.5"/>
+      </g>
+      <!-- Ojos -->
+      <g>
+        <ellipse cx="42" cy="52" rx="2.5" ry="3.5" fill="#2e5c8a"/>
+        <ellipse cx="58" cy="52" rx="2.5" ry="3.5" fill="#2e5c8a"/>
+        <circle cx="43" cy="50.5" r="1" fill="white"/>
+        <circle cx="59" cy="50.5" r="1" fill="white"/>
+      </g>
+      <!-- Cejas -->
+      <path d="M 37,45 Q 42,43 46,45" stroke="#d4a845" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M 54,45 Q 58,43 63,45" stroke="#d4a845" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Nariz -->
+      <path d="M 49,58 Q 50,61 51,58" stroke="#d4a68a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <!-- Boca sonriente (con dientes asomando) -->
+      <path d="M 44,65 Q 50,70 56,65" stroke="#c94f6d" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <rect x="47" y="65.5" width="6" height="2" fill="white"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="screen active" id="main-screen">
+  <div class="top-bar">
+    <div class="brand-title">
+      <span class="brand-sparkle">✨</span>
+      Mis Tareas
+      <span class="brand-sparkle">✨</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-timer" onclick="openTimer()">⏰ Timer</button>
+      <button class="btn btn-parent" onclick="openParentPanel()">⚙️ Padres</button>
+    </div>
+  </div>
+
+  <div class="dual-view">
+    <!-- JÚLIA -->
+    <div class="kid-column julia">
+      <div class="kid-header">
+        <div class="kid-avatar-wrap">
+          <svg class="kid-avatar-svg"><use href="#avatar-julia"/></svg>
+        </div>
+        <div class="kid-name">Júlia</div>
+        <div class="kid-stats">
+          <div class="stat-chip">⭐ <span id="julia-points">0</span></div>
+          <div class="stat-chip">🏆 <span id="julia-medals">0</span></div>
+          <div class="stat-chip streak">🔥 <span id="julia-streak">0</span></div>
+        </div>
+      </div>
+
+      <div class="pet-box">
+        <div class="pet-display" id="julia-pet-display">🥚</div>
+        <div class="pet-name" id="julia-pet-name">Tu mascota</div>
+        <div class="pet-level-bar">
+          <div class="pet-level-fill" id="julia-pet-fill" style="width:0%">Nv 1</div>
+        </div>
+      </div>
+
+      <div class="medals-box">
+        <div class="medals-title">Medallas de hoy</div>
+        <div class="medals-row" id="julia-medals-row"></div>
+      </div>
+
+      <div class="section-label">🌅 Mañana <span class="count" id="julia-morning-count">0/0</span></div>
+      <div class="tasks-grid" id="julia-morning"></div>
+
+      <div class="section-label">🌙 Tarde <span class="count" id="julia-afternoon-count">0/0</span></div>
+      <div class="tasks-grid" id="julia-afternoon"></div>
+    </div>
+
+    <!-- ÁLEX -->
+    <div class="kid-column alex">
+      <div class="kid-header">
+        <div class="kid-avatar-wrap">
+          <svg class="kid-avatar-svg"><use href="#avatar-alex"/></svg>
+        </div>
+        <div class="kid-name">Álex</div>
+        <div class="kid-stats">
+          <div class="stat-chip">⭐ <span id="alex-points">0</span></div>
+          <div class="stat-chip">🏆 <span id="alex-medals">0</span></div>
+          <div class="stat-chip streak">🔥 <span id="alex-streak">0</span></div>
+        </div>
+      </div>
+
+      <div class="pet-box">
+        <div class="pet-display" id="alex-pet-display">🥚</div>
+        <div class="pet-name" id="alex-pet-name">Tu mascota</div>
+        <div class="pet-level-bar">
+          <div class="pet-level-fill" id="alex-pet-fill" style="width:0%">Nv 1</div>
+        </div>
+      </div>
+
+      <div class="medals-box">
+        <div class="medals-title">Medallas de hoy</div>
+        <div class="medals-row" id="alex-medals-row"></div>
+      </div>
+
+      <div class="section-label">🌅 Mañana <span class="count" id="alex-morning-count">0/0</span></div>
+      <div class="tasks-grid" id="alex-morning"></div>
+
+      <div class="section-label">🌙 Tarde <span class="count" id="alex-afternoon-count">0/0</span></div>
+      <div class="tasks-grid" id="alex-afternoon"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TEMPORIZADOR -->
+<div class="modal-overlay" id="timer-modal">
+  <div class="modal">
+    <h2 class="modal-title" id="timer-modal-title">⏰ Temporizador</h2>
+    <div id="timer-setup">
+      <p style="text-align:center; margin-bottom:8px; font-weight:600; color:#666;">¿Cuántos minutos?</p>
+      <div class="time-picker" id="time-picker">
+        <button class="time-btn" data-min="1">1</button>
+        <button class="time-btn" data-min="2">2</button>
+        <button class="time-btn active" data-min="3">3</button>
+        <button class="time-btn" data-min="5">5</button>
+        <button class="time-btn" data-min="10">10</button>
+        <button class="time-btn" data-min="15">15</button>
+        <button class="time-btn" data-min="20">20</button>
+      </div>
+      <p style="text-align:center; margin-bottom:8px; font-weight:600; color:#666;">¿Qué animación?</p>
+      <div class="animation-picker" id="anim-picker">
+        <button class="anim-btn active" data-anim="mouse">
+          <svg viewBox="0 0 40 40"><circle cx="20" cy="22" r="10" fill="#a0a0a0"/><circle cx="15" cy="17" r="4" fill="#a0a0a0"/><circle cx="25" cy="17" r="4" fill="#a0a0a0"/><circle cx="18" cy="20" r="1.5" fill="#000"/><circle cx="22" cy="20" r="1.5" fill="#000"/><polygon points="35,30 40,28 40,33" fill="#ffd54f"/></svg>
+          <div>Ratón</div>
+        </button>
+        <button class="anim-btn" data-anim="cake">
+          <svg viewBox="0 0 40 40"><rect x="8" y="20" width="24" height="15" fill="#ff6b9d" rx="2"/><rect x="8" y="17" width="24" height="5" fill="#fff3e0"/><line x1="20" y1="8" x2="20" y2="17" stroke="#ffd54f" stroke-width="2"/><circle cx="20" cy="7" r="2" fill="#ff5252"/></svg>
+          <div>Tarta</div>
+        </button>
+        <button class="anim-btn" data-anim="race">
+          <svg viewBox="0 0 40 40"><ellipse cx="20" cy="28" rx="10" ry="5" fill="#66bb6a"/><circle cx="20" cy="22" r="5" fill="#81c784"/><circle cx="18" cy="20" r="1" fill="#000"/></svg>
+          <div>Tortuga</div>
+        </button>
+        <button class="anim-btn" data-anim="rocket">
+          <svg viewBox="0 0 40 40"><path d="M20 5 L25 25 L15 25 Z" fill="#ff5252"/><rect x="17" y="25" width="6" height="8" fill="#b0bec5"/><path d="M15 33 Q12 38 15 38 L25 38 Q28 38 25 33" fill="#ff9800"/></svg>
+          <div>Cohete</div>
+        </button>
+        <button class="anim-btn" data-anim="plant">
+          <svg viewBox="0 0 40 40"><rect x="12" y="28" width="16" height="10" fill="#8d6e63" rx="2"/><path d="M20 28 Q20 18 20 12" stroke="#66bb6a" stroke-width="2" fill="none"/><circle cx="20" cy="10" r="5" fill="#e91e63"/><circle cx="20" cy="10" r="2" fill="#ffd54f"/></svg>
+          <div>Planta</div>
+        </button>
+        <button class="anim-btn" data-anim="fish">
+          <svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="10" ry="6" fill="#42a5f5"/><polygon points="28,22 35,17 35,27" fill="#42a5f5"/><circle cx="15" cy="20" r="1.5" fill="#000"/></svg>
+          <div>Pecera</div>
+        </button>
+      </div>
+    </div>
+    <div class="timer-display" id="timer-display">03:00</div>
+    <div class="animation-area" id="animation-area"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn btn-start" id="start-btn" onclick="startTimer()">▶️ Empezar</button>
+      <button class="modal-btn btn-pause" id="pause-btn" onclick="pauseTimer()" style="display:none">⏸️ Pausa</button>
+      <button class="modal-btn btn-close" onclick="closeTimer()">✖️ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PADRES -->
+<div class="modal-overlay" id="parent-modal">
+  <div class="modal">
+    <h2 class="modal-title">⚙️ Panel de padres</h2>
+
+    <div class="parent-tabs">
+      <button class="parent-tab active" data-tab="stats" onclick="switchTab('stats')">📊 Stats</button>
+      <button class="parent-tab" data-tab="calendar" onclick="switchTab('calendar')">📅 Semana</button>
+      <button class="parent-tab" data-tab="library" onclick="switchTab('library')">📚 Tareas</button>
+      <button class="parent-tab" data-tab="rewards" onclick="switchTab('rewards')">🎁 Premios</button>
+      <button class="parent-tab" data-tab="actions" onclick="switchTab('actions')">🔧 Datos</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="tab-content active" id="tab-stats">
+      <div class="parent-section">
+        <h3>
+          <svg style="width:28px; height:28px; vertical-align:middle;"><use href="#avatar-julia"/></svg>
+          Júlia
+        </h3>
+        <div id="julia-detail"></div>
+      </div>
+      <div class="parent-section">
+        <h3>
+          <svg style="width:28px; height:28px; vertical-align:middle;"><use href="#avatar-alex"/></svg>
+          Álex
+        </h3>
+        <div id="alex-detail"></div>
+      </div>
+    </div>
+
+    <!-- CALENDARIO -->
+    <div class="tab-content" id="tab-calendar">
+      <div class="parent-section">
+        <h3>Júlia - Últimos 7 días</h3>
+        <div class="week-calendar" id="julia-calendar"></div>
+      </div>
+      <div class="parent-section">
+        <h3>Álex - Últimos 7 días</h3>
+        <div class="week-calendar" id="alex-calendar"></div>
+      </div>
+      <div style="padding:10px; background:#fff3cd; border-radius:12px; font-size:0.85rem;">
+        <strong>Leyenda:</strong> 🟢 Día perfecto · 🟡 Parcial · ⚪ Sin actividad
+      </div>
+    </div>
+
+    <!-- BIBLIOTECA -->
+    <div class="tab-content" id="tab-library">
+      <div style="font-size:0.9rem; color:#666; margin-bottom:10px;">
+        Toca una tarea para editarla, o "+ Añadir" para crear una nueva.
+      </div>
+      <div class="task-library-section">
+        <div class="library-header">
+          <h4>🌅 Tareas de mañana</h4>
+          <button class="add-task-btn" onclick="openTaskEditor('morning')">+ Añadir</button>
+        </div>
+        <div class="library-list" id="library-morning"></div>
+      </div>
+      <div class="task-library-section afternoon">
+        <div class="library-header">
+          <h4>🌙 Tareas de tarde</h4>
+          <button class="add-task-btn" onclick="openTaskEditor('afternoon')">+ Añadir</button>
+        </div>
+        <div class="library-list" id="library-afternoon"></div>
+      </div>
+    </div>
+
+    <!-- RECOMPENSAS -->
+    <div class="tab-content" id="tab-rewards">
+      <div style="font-size:0.9rem; color:#666; margin-bottom:10px;">
+        Define premios que los niños pueden canjear con sus puntos.
+      </div>
+      <div class="library-header">
+        <h4>🎁 Recompensas</h4>
+        <button class="add-task-btn" onclick="openRewardEditor()">+ Añadir premio</button>
+      </div>
+      <div class="rewards-list" id="rewards-list"></div>
+    </div>
+
+    <!-- DATOS/ACCIONES -->
+    <div class="tab-content" id="tab-actions">
+      <div class="data-info">
+        <strong>💾 ¿Dónde se guardan los datos?</strong><br>
+        Todo se guarda en el navegador de esta tablet (localStorage). No sale a internet ni necesita cuenta.<br><br>
+        <strong>⚠️ Importante:</strong> Si borras el caché del navegador o desinstalas Chrome/Safari, los datos se pierden. <strong>Haz copias de seguridad regularmente</strong> con el botón "Exportar" de abajo.
+      </div>
+      <div class="parent-section">
+        <h3>📥 Copia de seguridad</h3>
+        <p style="margin-bottom:8px; font-size:0.9rem; color:#666;">Guarda o restaura todo (progreso, tareas, recompensas)</p>
+        <button class="reset-btn" style="background:linear-gradient(135deg,#64b5f6,#1976d2);" onclick="exportData()">⬇️ Exportar copia</button>
+        <button class="reset-btn" style="background:linear-gradient(135deg,#64b5f6,#1976d2);" onclick="importData()">⬆️ Importar copia</button>
+      </div>
+      <div class="parent-section">
+        <h3>🔄 Reiniciar tareas de hoy</h3>
+        <p style="margin-bottom:8px; font-size:0.9rem; color:#666;">Desmarca las tareas de hoy (mantiene puntos totales)</p>
+        <button class="reset-btn" style="background:linear-gradient(135deg,#ffb347,#ff9800);" onclick="resetDay()">Reiniciar hoy</button>
+      </div>
+      <div class="parent-section">
+        <h3>↩️ Restaurar tareas por defecto</h3>
+        <button class="reset-btn" style="background:linear-gradient(135deg,#ffb347,#ff9800);" onclick="restoreDefaultTasks()">Restaurar tareas</button>
+      </div>
+      <div class="parent-section">
+        <h3>⚠️ Borrar todo el progreso</h3>
+        <button class="reset-btn" onclick="resetAll()">Borrar progreso</button>
+      </div>
+    </div>
+
+    <div class="modal-buttons" style="margin-top:15px;">
+      <button class="modal-btn btn-close" onclick="closeParentPanel()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITOR TAREA -->
+<div class="modal-overlay" id="task-editor-modal">
+  <div class="modal">
+    <h2 class="modal-title" id="editor-title">Nueva tarea</h2>
+    <div class="form-group">
+      <label>Nombre de la tarea</label>
+      <input type="text" id="task-name-input" placeholder="Ej: Lavar la cara" maxlength="25">
+    </div>
+    <div class="form-group">
+      <label>Emoji</label>
+      <input type="text" id="task-emoji-input" placeholder="🦷" maxlength="4" style="font-size:1.5rem; text-align:center;">
+      <div class="emoji-grid" id="emoji-grid"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Puntos</label>
+        <select id="task-points-input">
+          <option value="5">5 ⭐</option>
+          <option value="10" selected>10 ⭐</option>
+          <option value="15">15 ⭐</option>
+          <option value="20">20 ⭐</option>
+          <option value="25">25 ⭐</option>
+          <option value="50">50 ⭐</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Temporizador</label>
+        <select id="task-timer-input">
+          <option value="0">Sin timer</option>
+          <option value="1">1 min</option>
+          <option value="2">2 min</option>
+          <option value="3">3 min</option>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="15">15 min</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Momento del día</label>
+      <select id="task-period-input">
+        <option value="morning">🌅 Mañana</option>
+        <option value="afternoon">🌙 Tarde</option>
+      </select>
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn btn-save" onclick="saveTask()">💾 Guardar</button>
+      <button class="modal-btn btn-delete" id="delete-task-btn" onclick="deleteTaskFromEditor()" style="display:none">🗑️ Borrar</button>
+      <button class="modal-btn btn-close" onclick="closeTaskEditor()">✖️ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITOR RECOMPENSA -->
+<div class="modal-overlay" id="reward-editor-modal">
+  <div class="modal">
+    <h2 class="modal-title">🎁 Nueva recompensa</h2>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="reward-name-input" placeholder="Ej: Ver una película" maxlength="30">
+    </div>
+    <div class="form-group">
+      <label>Emoji</label>
+      <input type="text" id="reward-emoji-input" placeholder="🎬" maxlength="4" style="font-size:1.5rem; text-align:center;">
+    </div>
+    <div class="form-group">
+      <label>Coste (puntos)</label>
+      <input type="number" id="reward-cost-input" value="50" min="5" max="2000" step="5">
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn btn-save" onclick="saveReward()">💾 Guardar</button>
+      <button class="modal-btn btn-close" onclick="closeRewardEditor()">✖️ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="celebration" id="celebration"></div>
+
+<script>
+const DEFAULT_TASKS = {
+  morning: [
+    { id: 'levantar', name: 'Levantarse', emoji: '🛏️', points: 5 },
+    { id: 'desayuno', name: 'Desayunar', emoji: '🥣', points: 5 },
+    { id: 'dientes_m', name: 'Lavar dientes', emoji: '🪥', points: 10, timer: 2 },
+    { id: 'ropa', name: 'Ropa en su sitio', emoji: '👚', points: 10 },
+    { id: 'vestir', name: 'Vestirse', emoji: '👕', points: 10 },
+    { id: 'mochila', name: 'Preparar mochila', emoji: '🎒', points: 10 },
+    { id: 'cole', name: '¡Al cole!', emoji: '🏫', points: 5 }
+  ],
+  afternoon: [
+    { id: 'merienda', name: 'Merendar', emoji: '🍎', points: 5 },
+    { id: 'extraescolar', name: 'Extraescolar', emoji: '⚽', points: 10 },
+    { id: 'jugar', name: 'Jugar', emoji: '🧸', points: 5 },
+    { id: 'cena', name: 'Cenar', emoji: '🍽️', points: 5 },
+    { id: 'dientes_n', name: 'Lavar dientes', emoji: '🪥', points: 10, timer: 2 },
+    { id: 'dormir', name: '¡A dormir!', emoji: '😴', points: 10 }
+  ]
+};
+
+const DEFAULT_REWARDS = [
+  { id: 'r1', name: 'Película en familia', emoji: '🎬', cost: 100 },
+  { id: 'r2', name: 'Helado especial', emoji: '🍦', cost: 50 },
+  { id: 'r3', name: 'Ir al parque', emoji: '🎠', cost: 80 },
+  { id: 'r4', name: 'Pizza para cenar', emoji: '🍕', cost: 120 }
+];
+
+const EMOJI_SUGGESTIONS = [
+  '🛏️','🥣','🪥','👚','👕','🎒','🏫','🍎','⚽','🧸','🍽️','😴',
+  '🦷','🧼','🚿','🛁','🧴','🧻','🚽','🧺','👗','🧦','👟','🧣',
+  '📚','✏️','🎨','🖍️','📖','🔢','🧮','🎭','🎪','🎯','🎲','🧩',
+  '🚴','🏊','🤸','⛹️','🏃','🧘','🏀','🏐','🏸','🥏','🎾','⛳',
+  '🎵','🎹','🎸','🥁','🎤','🎧','🎼','🎺','🎻','🪕','🪘','🎷',
+  '🥗','🥑','🥕','🍅','🍊','🍌','🍓','🫐','🥝','🍇','🍉','🥭',
+  '🍞','🥛','🥤','🧃','☕','🍵','🥞','🧇','🥐','🥯','🧈','🍯',
+  '🐶','🐱','🐰','🐹','🐻','🦁','🐯','🐨','🐼','🐸','🐙','🦄',
+  '🌳','🌸','🌻','🌺','🌷','🌼','🍀','🌈','☀️','🌙','⭐','✨',
+  '🎁','🎂','🎈','🎉','🎊','🥳','😊','😄','🥰','😎','🤗','🙌',
+  '👏','✋','👍','💪','🦴','🫁','🫀','👁️','👂','👃','👄','🧠',
+  '📱','💻','📺','🎮','🕹️','🖥️','⌚','📷','🎬','📹','🔋','💡',
+  '🏠','🛋️','🪑','🛒','🧹','🧽','🗑️','🛠️','🔧','🔨','📦','🎀',
+  '🚗','🚙','🚌','🚑','🚒','🚜','🛵','🚲','🛴','✈️','🚀','⛵'
+];
+
+const MEDALS = [
+  { id: 'first', name: 'Primera tarea', emoji: '🌟', condition: (d) => d.tasks.length >= 1 },
+  { id: 'morning', name: 'Mañana completa', emoji: '☀️', condition: (d, total, tasks) => tasks.morning.length > 0 && tasks.morning.every(t => d.tasks.includes(t.id)) },
+  { id: 'afternoon', name: 'Tarde completa', emoji: '🌙', condition: (d, total, tasks) => tasks.afternoon.length > 0 && tasks.afternoon.every(t => d.tasks.includes(t.id)) },
+  { id: 'half', name: 'Medio día', emoji: '⭐', condition: (d, total) => d.tasks.length >= Math.ceil(total / 2) },
+  { id: 'all', name: '¡Día perfecto!', emoji: '🏆', condition: (d, total) => d.tasks.length >= total && total > 0 }
+];
+
+const PET_LEVELS = [
+  { min: 0, emoji: '🥚', name: 'Huevo' },
+  { min: 30, emoji: '🐣', name: '¡Ha nacido!' },
+  { min: 80, emoji: '🐥', name: 'Pollito' },
+  { min: 150, emoji: '🐤', name: 'Pollo feliz' },
+  { min: 250, emoji: '🦆', name: 'Patito' },
+  { min: 400, emoji: '🦢', name: 'Cisne' },
+  { min: 600, emoji: '🦅', name: 'Águila' },
+  { min: 900, emoji: '🐉', name: '¡Dragón!' },
+  { min: 1300, emoji: '🦄', name: '¡Unicornio!' }
+];
+
+const STORAGE_KEY = 'tareas_ninos_v3';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (!parsed.tasks) parsed.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+      if (!parsed.rewards) parsed.rewards = JSON.parse(JSON.stringify(DEFAULT_REWARDS));
+      if (parsed.julia && !parsed.julia.streak) parsed.julia.streak = 0;
+      if (parsed.alex && !parsed.alex.streak) parsed.alex.streak = 0;
+      return parsed;
+    }
+  } catch(e) {}
+  return {
+    julia: { totalPoints: 0, days: {}, streak: 0, lastPerfectDay: null },
+    alex:  { totalPoints: 0, days: {}, streak: 0, lastPerfectDay: null },
+    tasks: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
+    rewards: JSON.parse(JSON.stringify(DEFAULT_REWARDS))
+  };
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function today() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function yesterday() {
+  const d = new Date(); d.setDate(d.getDate() - 1);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getTodayData(user) {
+  const t = today();
+  if (!state[user].days[t]) state[user].days[t] = { tasks: [], medals: [] };
+  return state[user].days[t];
+}
+function findTaskById(id) {
+  return [...state.tasks.morning, ...state.tasks.afternoon].find(t => t.id === id);
+}
+
+let state = loadState();
+
+function renderAll() {
+  ['julia', 'alex'].forEach(user => {
+    renderTasksForUser(user);
+    updateStatsForUser(user);
+    updatePetForUser(user);
+    renderMedalsForUser(user);
+  });
+  checkNightMode();
+}
+
+function checkNightMode() {
+  const total = state.tasks.morning.length + state.tasks.afternoon.length;
+  if (total === 0) { document.body.classList.remove('night-mode'); return; }
+  const juliaDone = getTodayData('julia').tasks.length >= total;
+  const alexDone = getTodayData('alex').tasks.length >= total;
+  document.body.classList.toggle('night-mode', juliaDone && alexDone);
+}
+
+function renderTasksForUser(user) {
+  renderTaskList(user + '-morning', state.tasks.morning, user);
+  renderTaskList(user + '-afternoon', state.tasks.afternoon, user);
+  const td = getTodayData(user);
+  const mDone = state.tasks.morning.filter(t => td.tasks.includes(t.id)).length;
+  const aDone = state.tasks.afternoon.filter(t => td.tasks.includes(t.id)).length;
+  document.getElementById(user + '-morning-count').textContent = mDone + '/' + state.tasks.morning.length;
+  document.getElementById(user + '-afternoon-count').textContent = aDone + '/' + state.tasks.afternoon.length;
+}
+
+function renderTaskList(containerId, list, user) {
+  const container = document.getElementById(containerId);
+  const todayData = getTodayData(user);
+  container.innerHTML = '';
+  list.forEach(task => {
+    const done = todayData.tasks.includes(task.id);
+    const card = document.createElement('div');
+    card.className = 'task-card' + (done ? ' done' : '');
+    card.innerHTML = `
+      <span class="task-check">✅</span>
+      ${task.timer ? `<span class="task-timer-icon" title="${task.timer} min">${task.timer}</span>` : ''}
+      <span class="task-emoji">${task.emoji}</span>
+      <div class="task-name">${task.name}</div>
+      <div class="task-points">+${task.points} ⭐</div>
+    `;
+    card.addEventListener('click', () => {
+      if (task.timer && !done) {
+        const option = confirm(`¿Iniciar temporizador de ${task.timer} min para "${task.name}"?\n\nOK = Timer + marcar\nCancelar = Solo marcar`);
+        if (option) {
+          toggleTask(task, user);
+          openTimer(task.timer, task.name);
+          return;
+        }
+      }
+      toggleTask(task, user);
+    });
+    container.appendChild(card);
+  });
+  if (list.length === 0) container.innerHTML = '<div class="empty-state">No hay tareas</div>';
+}
+
+function toggleTask(task, user) {
+  const todayData = getTodayData(user);
+  const idx = todayData.tasks.indexOf(task.id);
+  if (idx >= 0) {
+    todayData.tasks.splice(idx, 1);
+    state[user].totalPoints = Math.max(0, state[user].totalPoints - task.points);
+  } else {
+    todayData.tasks.push(task.id);
+    state[user].totalPoints += task.points;
+    playSound('ding');
+    celebrate(task);
+    checkMedals(user);
+    checkStreak(user);
+  }
+  saveState();
+  renderTasksForUser(user);
+  updateStatsForUser(user);
+  updatePetForUser(user);
+  renderMedalsForUser(user);
+  checkNightMode();
+}
+
+function checkStreak(user) {
+  const total = state.tasks.morning.length + state.tasks.afternoon.length;
+  if (total === 0) return;
+  const todayData = getTodayData(user);
+  if (todayData.tasks.length >= total) {
+    const t = today();
+    const y = yesterday();
+    if (state[user].lastPerfectDay === t) return;
+    if (state[user].lastPerfectDay === y) {
+      state[user].streak = (state[user].streak || 0) + 1;
+    } else {
+      state[user].streak = 1;
+    }
+    state[user].lastPerfectDay = t;
+    setTimeout(() => {
+      const msg = document.createElement('div');
+      msg.className = 'celebration-msg';
+      const name = user === 'julia' ? 'Júlia' : 'Álex';
+      msg.innerHTML = `🔥<br><span style="font-size:1.5rem">¡${name}: ${state[user].streak} días seguidos!</span>`;
+      document.body.appendChild(msg);
+      playSound('medal');
+      spawnConfetti(100);
+      setTimeout(() => msg.remove(), 2500);
+    }, 1200);
+  }
+}
+
+function updateStatsForUser(user) {
+  const todayData = getTodayData(user);
+  document.getElementById(user + '-points').textContent = state[user].totalPoints;
+  document.getElementById(user + '-medals').textContent = todayData.medals.length;
+  document.getElementById(user + '-streak').textContent = state[user].streak || 0;
+}
+
+function updatePetForUser(user) {
+  const points = state[user].totalPoints;
+  let currentLevel = PET_LEVELS[0];
+  let nextLevel = null;
+  for (let i = 0; i < PET_LEVELS.length; i++) {
+    if (points >= PET_LEVELS[i].min) {
+      currentLevel = PET_LEVELS[i];
+      nextLevel = PET_LEVELS[i+1] || null;
+    }
+  }
+  document.getElementById(user + '-pet-display').textContent = currentLevel.emoji;
+  document.getElementById(user + '-pet-name').textContent = currentLevel.name;
+  let pct = 100; let text = '¡MÁX!';
+  if (nextLevel) {
+    const range = nextLevel.min - currentLevel.min;
+    const progress = points - currentLevel.min;
+    pct = Math.min(100, (progress / range) * 100);
+    text = `${points}/${nextLevel.min}`;
+  }
+  const fill = document.getElementById(user + '-pet-fill');
+  fill.style.width = pct + '%';
+  fill.textContent = text;
+}
+
+function renderMedalsForUser(user) {
+  const row = document.getElementById(user + '-medals-row');
+  const todayData = getTodayData(user);
+  row.innerHTML = '';
+  MEDALS.forEach(m => {
+    const earned = todayData.medals.includes(m.id);
+    const el = document.createElement('div');
+    el.className = 'medal' + (earned ? ' earned' : '');
+    el.textContent = m.emoji;
+    el.title = m.name;
+    row.appendChild(el);
+  });
+}
+
+function checkMedals(user) {
+  const todayData = getTodayData(user);
+  const totalTasks = state.tasks.morning.length + state.tasks.afternoon.length;
+  MEDALS.forEach(m => {
+    if (!todayData.medals.includes(m.id) && m.condition(todayData, totalTasks, state.tasks)) {
+      todayData.medals.push(m.id);
+      setTimeout(() => showMedalPopup(m, user), 600);
+    }
+  });
+}
+
+function showMedalPopup(medal, user) {
+  const msg = document.createElement('div');
+  msg.className = 'celebration-msg';
+  const name = user === 'julia' ? 'Júlia' : 'Álex';
+  msg.innerHTML = `${medal.emoji}<br><span style="font-size:1.3rem">¡${name}: ${medal.name}!</span>`;
+  document.body.appendChild(msg);
+  playSound('medal');
+  spawnConfetti();
+  setTimeout(() => msg.remove(), 2000);
+}
+
+function celebrate(task) {
+  spawnConfetti(35);
+  const msg = document.createElement('div');
+  msg.className = 'celebration-msg';
+  msg.style.fontSize = '2.8rem';
+  msg.innerHTML = `${task.emoji}<br>+${task.points} ⭐`;
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 1500);
+}
+
+function spawnConfetti(count = 50) {
+  const colors = ['#ff6b9d', '#ffd93d', '#4ecdc4', '#ff9a9e', '#a8e6cf', '#ffdfba', '#c9b1ff'];
+  const celebrations = document.getElementById('celebration');
+  celebrations.classList.add('active');
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.top = '-10px';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = (Math.random() * 0.5) + 's';
+    c.style.animationDuration = (2 + Math.random() * 2) + 's';
+    if (Math.random() > 0.5) c.style.borderRadius = '50%';
+    celebrations.appendChild(c);
+    setTimeout(() => c.remove(), 3500);
+  }
+  setTimeout(() => celebrations.classList.remove('active'), 3500);
+}
+
+let audioCtx = null;
+function playSound(type) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    if (type === 'ding') {
+      o.frequency.value = 800;
+      o.frequency.exponentialRampToValueAtTime(1600, audioCtx.currentTime + 0.1);
+      g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    } else if (type === 'medal') {
+      o.frequency.value = 523;
+      o.frequency.exponentialRampToValueAtTime(1047, audioCtx.currentTime + 0.3);
+      g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+    } else if (type === 'tick') {
+      o.frequency.value = 400;
+      g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    } else if (type === 'alarm') {
+      o.frequency.value = 600;
+      g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+    } else if (type === 'bite') {
+      o.frequency.value = 200;
+      o.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.08);
+      g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    }
+    o.start();
+    o.stop(audioCtx.currentTime + (type === 'alarm' ? 1 : 0.6));
+  } catch(e) {}
+}
+
+let timerState = {
+  minutes: 3, animation: 'mouse',
+  remaining: 180, total: 180,
+  interval: null, running: false
+};
+
+function openTimer(presetMinutes, taskName) {
+  document.getElementById('timer-modal').classList.add('active');
+  document.getElementById('timer-modal-title').textContent =
+    taskName ? `⏰ ${taskName}` : '⏰ Temporizador';
+  setMinutes(presetMinutes || timerState.minutes);
+  renderAnimation();
+}
+
+function closeTimer() {
+  stopTimerInterval();
+  document.getElementById('timer-modal').classList.remove('active');
+  document.getElementById('timer-setup').style.display = 'block';
+  document.getElementById('start-btn').style.display = 'inline-block';
+  document.getElementById('pause-btn').style.display = 'none';
+  document.getElementById('pause-btn').textContent = '⏸️ Pausa';
+}
+
+function setMinutes(m) {
+  timerState.minutes = m;
+  timerState.total = m * 60;
+  timerState.remaining = m * 60;
+  updateTimerDisplay();
+  document.querySelectorAll('#time-picker .time-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.min) === m);
+  });
+  renderAnimation();
+}
+
+document.querySelectorAll('#time-picker .time-btn').forEach(b => {
+  b.addEventListener('click', () => setMinutes(parseInt(b.dataset.min)));
+});
+document.querySelectorAll('#anim-picker .anim-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    timerState.animation = b.dataset.anim;
+    document.querySelectorAll('#anim-picker .anim-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    renderAnimation();
+  });
+});
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerState.remaining / 60);
+  const s = timerState.remaining % 60;
+  document.getElementById('timer-display').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+
+function startTimer() {
+  timerState.running = true;
+  document.getElementById('timer-setup').style.display = 'none';
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('pause-btn').style.display = 'inline-block';
+  timerState.interval = setInterval(() => {
+    timerState.remaining--;
+    updateTimerDisplay();
+    updateAnimation();
+    if (timerState.remaining <= 5 && timerState.remaining > 0) playSound('tick');
+    if (timerState.remaining <= 0) {
+      stopTimerInterval();
+      playSound('alarm');
+      spawnConfetti(100);
+      setTimeout(() => {
+        alert('¡Tiempo terminado! 🎉');
+        closeTimer();
+      }, 100);
+    }
+  }, 1000);
+}
+
+function pauseTimer() {
+  if (timerState.running) {
+    stopTimerInterval();
+    document.getElementById('pause-btn').textContent = '▶️ Seguir';
+    timerState.running = false;
+  } else {
+    startTimer();
+    document.getElementById('pause-btn').textContent = '⏸️ Pausa';
+  }
+}
+
+function stopTimerInterval() {
+  if (timerState.interval) clearInterval(timerState.interval);
+  timerState.interval = null;
+  timerState.running = false;
+}
+
+function renderAnimation() {
+  const area = document.getElementById('animation-area');
+  if (timerState.animation === 'mouse') renderMouseAnimation(area);
+  else if (timerState.animation === 'cake') renderCakeAnimation(area);
+  else if (timerState.animation === 'race') renderRaceAnimation(area);
+  else if (timerState.animation === 'rocket') renderRocketAnimation(area);
+  else if (timerState.animation === 'plant') renderPlantAnimation(area);
+  else if (timerState.animation === 'fish') renderFishAnimation(area);
+}
+
+function renderMouseAnimation(area) {
+  const n = Math.max(4, Math.min(8, timerState.minutes + 3));
+  let cheeses = '';
+  for (let i = 0; i < n; i++) {
+    const x = 40 + (i * (520 / n));
+    cheeses += `
+      <g class="cheese-group" data-idx="${i}" transform="translate(${x},155)">
+        <g class="cheese-full">
+          <polygon points="0,0 50,0 45,35 5,35" fill="#ffd54f" stroke="#f57f17" stroke-width="2"/>
+          <circle cx="15" cy="12" r="3" fill="#f57f17"/>
+          <circle cx="30" cy="20" r="2.5" fill="#f57f17"/>
+          <circle cx="40" cy="8" r="2" fill="#f57f17"/>
+          <circle cx="22" cy="28" r="2.5" fill="#f57f17"/>
+        </g>
+        <g class="cheese-bite1" style="display:none">
+          <path d="M 0,0 L 50,0 L 45,35 L 5,35 Z M 38,0 A 8,8 0 0,0 50,10 L 48,5 Z" fill="#ffd54f" stroke="#f57f17" stroke-width="2"/>
+          <circle cx="15" cy="12" r="3" fill="#f57f17"/>
+          <circle cx="22" cy="28" r="2.5" fill="#f57f17"/>
+        </g>
+        <g class="cheese-bite2" style="display:none">
+          <path d="M 0,0 L 30,0 A 12,12 0 0,0 45,15 L 45,35 L 5,35 Z" fill="#ffd54f" stroke="#f57f17" stroke-width="2"/>
+          <circle cx="15" cy="20" r="3" fill="#f57f17"/>
+        </g>
+        <g class="cheese-bite3" style="display:none">
+          <path d="M 0,5 L 15,0 A 15,15 0 0,0 30,20 L 25,35 L 5,35 Z" fill="#ffd54f" stroke="#f57f17" stroke-width="2"/>
+        </g>
+      </g>`;
+  }
+  area.innerHTML = `
+    <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+      <defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff9c4"/><stop offset="100%" stop-color="#ffe0b2"/></linearGradient></defs>
+      <rect width="600" height="220" fill="url(#skyGrad)"/>
+      <rect x="0" y="190" width="600" height="30" fill="#8d6e63"/>
+      <path d="M 0,190 Q 150,185 300,190 T 600,190 L 600,195 L 0,195 Z" fill="#6d4c41"/>
+      <g opacity="0.7">
+        <ellipse cx="100" cy="40" rx="25" ry="10" fill="white"/>
+        <ellipse cx="115" cy="35" rx="20" ry="8" fill="white"/>
+        <ellipse cx="450" cy="30" rx="30" ry="11" fill="white"/>
+      </g>
+      <g>
+        <circle cx="50" cy="185" r="4" fill="#ff6b9d"/>
+        <circle cx="580" cy="187" r="4" fill="#4ecdc4"/>
+        <circle cx="200" cy="185" r="3" fill="#ffd93d"/>
+      </g>
+      <g id="cheeses-container">${cheeses}</g>
+      <g id="mouse-group" transform="translate(0, 150)">
+        <ellipse cx="30" cy="25" rx="25" ry="18" fill="#9e9e9e"/>
+        <circle cx="55" cy="15" r="13" fill="#9e9e9e"/>
+        <circle cx="48" cy="5" r="6" fill="#9e9e9e"/>
+        <circle cx="48" cy="5" r="3" fill="#ffcdd2"/>
+        <circle cx="60" cy="3" r="6" fill="#9e9e9e"/>
+        <circle cx="60" cy="3" r="3" fill="#ffcdd2"/>
+        <circle cx="57" cy="14" r="2" fill="#000"/>
+        <circle cx="58" cy="13" r="0.7" fill="white"/>
+        <circle cx="66" cy="17" r="1.8" fill="#ff6b9d"/>
+        <line x1="64" y1="18" x2="73" y2="15" stroke="#000" stroke-width="0.5"/>
+        <line x1="64" y1="19" x2="73" y2="19" stroke="#000" stroke-width="0.5"/>
+        <line x1="64" y1="20" x2="73" y2="23" stroke="#000" stroke-width="0.5"/>
+        <ellipse id="mouse-leg1" cx="18" cy="42" rx="4" ry="2" fill="#757575"/>
+        <ellipse id="mouse-leg2" cx="40" cy="42" rx="4" ry="2" fill="#757575"/>
+        <path id="mouse-tail" d="M 5,25 Q -5,20 -10,30 Q -15,40 -5,42" stroke="#9e9e9e" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+    </svg>`;
+}
+
+function renderCakeAnimation(area) {
+  const slices = 8; let paths = '';
+  const cx = 150, cy = 120, r = 70;
+  const colors = ['#ff6b9d','#ffd93d','#4ecdc4','#ff9a9e','#a8e6cf','#ffdfba','#c9b1ff','#ffb3ba'];
+  for (let i = 0; i < slices; i++) {
+    const startAngle = (i / slices) * 2 * Math.PI - Math.PI / 2;
+    const endAngle = ((i + 1) / slices) * 2 * Math.PI - Math.PI / 2;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const midAngle = (startAngle + endAngle) / 2;
+    const cxv = cx + (r - 15) * Math.cos(midAngle);
+    const cyv = cy + (r - 15) * Math.sin(midAngle);
+    paths += `
+      <g class="cake-slice" data-idx="${i}" style="transition: opacity 0.6s, transform 0.6s; transform-origin: ${cx}px ${cy}px;">
+        <path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z" fill="${colors[i]}" stroke="white" stroke-width="3"/>
+        <circle cx="${cxv}" cy="${cyv}" r="8" fill="white" opacity="0.9"/>
+        <circle cx="${cxv}" cy="${cyv}" r="4" fill="#e91e63"/>
+      </g>`;
+  }
+  area.innerHTML = `
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+      <defs><linearGradient id="partyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e1bee7"/><stop offset="100%" stop-color="#f8bbd0"/></linearGradient></defs>
+      <rect width="400" height="220" fill="url(#partyGrad)"/>
+      <g>
+        <ellipse cx="40" cy="40" rx="12" ry="15" fill="#ff5252"/>
+        <line x1="40" y1="55" x2="40" y2="90" stroke="#666" stroke-width="1"/>
+        <ellipse cx="360" cy="35" rx="12" ry="15" fill="#4fc3f7"/>
+        <line x1="360" y1="50" x2="360" y2="85" stroke="#666" stroke-width="1"/>
+        <ellipse cx="370" cy="70" rx="10" ry="13" fill="#ffd54f"/>
+        <line x1="370" y1="83" x2="370" y2="115" stroke="#666" stroke-width="1"/>
+      </g>
+      <ellipse cx="${cx}" cy="${cy + r + 15}" rx="${r + 20}" ry="10" fill="#bdbdbd"/>
+      <rect x="${cx - r - 5}" y="${cy - 5}" width="${(r + 5) * 2}" height="20" fill="#6d4c41" rx="5"/>
+      ${paths}
+      <circle cx="${cx}" cy="${cy}" r="15" fill="white" stroke="#ffd54f" stroke-width="2"/>
+      <text x="${cx}" y="${cy + 6}" text-anchor="middle" font-size="18">🎂</text>
+    </svg>`;
+}
+
+function renderRaceAnimation(area) {
+  area.innerHTML = `
+    <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+      <defs><linearGradient id="raceSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#87ceeb"/><stop offset="100%" stop-color="#ffffff"/></linearGradient></defs>
+      <rect width="600" height="160" fill="url(#raceSky)"/>
+      <rect x="0" y="160" width="600" height="60" fill="#8bc34a"/>
+      <rect x="0" y="155" width="600" height="10" fill="#689f38"/>
+      <g id="race-clouds">
+        <g class="cloud" transform="translate(100, 40)"><ellipse cx="0" cy="0" rx="20" ry="8" fill="white"/><ellipse cx="12" cy="-5" rx="15" ry="6" fill="white"/></g>
+        <g class="cloud" transform="translate(350, 60)"><ellipse cx="0" cy="0" rx="25" ry="10" fill="white" opacity="0.9"/><ellipse cx="15" cy="-6" rx="18" ry="7" fill="white" opacity="0.9"/></g>
+      </g>
+      <circle cx="520" cy="45" r="25" fill="#ffd54f"/>
+      <g stroke="#ffd54f" stroke-width="3" stroke-linecap="round">
+        <line x1="520" y1="10" x2="520" y2="20"/><line x1="555" y1="45" x2="565" y2="45"/>
+        <line x1="475" y1="45" x2="485" y2="45"/><line x1="545" y1="20" x2="552" y2="13"/>
+        <line x1="545" y1="70" x2="552" y2="77"/>
+      </g>
+      <g transform="translate(555, 145)">
+        <rect x="0" y="0" width="4" height="50" fill="#333"/>
+        <rect x="4" y="0" width="25" height="20" fill="#ff5252"/>
+        <text x="16" y="14" text-anchor="middle" font-size="12" fill="white" font-weight="bold">🏁</text>
+      </g>
+      <line x1="30" y1="185" x2="555" y2="185" stroke="white" stroke-width="2" stroke-dasharray="10,10"/>
+      <g id="turtle-group" transform="translate(20, 160)">
+        <ellipse id="turtle-leg-back" cx="5" cy="25" rx="5" ry="3" fill="#4caf50"/>
+        <ellipse cx="20" cy="15" rx="18" ry="13" fill="#66bb6a"/>
+        <path d="M 5,15 Q 20,0 35,15" stroke="#388e3c" stroke-width="2" fill="none"/>
+        <circle cx="15" cy="12" r="3" fill="#81c784"/><circle cx="25" cy="12" r="3" fill="#81c784"/><circle cx="20" cy="18" r="3" fill="#81c784"/>
+        <circle cx="38" cy="17" r="7" fill="#81c784"/>
+        <circle cx="41" cy="15" r="1.5" fill="#000"/><circle cx="42" cy="14.5" r="0.5" fill="white"/>
+        <path d="M 42,19 Q 44,20 43,21" stroke="#000" stroke-width="0.8" fill="none"/>
+        <ellipse id="turtle-leg-front" cx="35" cy="25" rx="5" ry="3" fill="#4caf50"/>
+      </g>
+    </svg>`;
+}
+
+function renderRocketAnimation(area) {
+  area.innerHTML = `
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+      <defs><linearGradient id="spaceGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a237e"/><stop offset="70%" stop-color="#5c6bc0"/><stop offset="100%" stop-color="#ff9800"/></linearGradient></defs>
+      <rect width="400" height="220" fill="url(#spaceGrad)"/>
+      <g fill="white">
+        <circle cx="50" cy="30" r="1.5" class="star"/><circle cx="120" cy="50" r="1" class="star"/>
+        <circle cx="280" cy="25" r="2" class="star"/><circle cx="350" cy="60" r="1.5" class="star"/>
+        <circle cx="200" cy="35" r="1" class="star"/><circle cx="80" cy="80" r="1" class="star"/>
+        <circle cx="320" cy="90" r="1.5" class="star"/>
+      </g>
+      <circle cx="340" cy="45" r="20" fill="#e0e0e0"/>
+      <circle cx="335" cy="40" r="3" fill="#bdbdbd"/>
+      <circle cx="345" cy="50" r="2" fill="#bdbdbd"/>
+      <ellipse cx="200" cy="225" rx="250" ry="20" fill="#a1887f"/>
+      <circle cx="100" cy="210" r="8" fill="#8d6e63"/>
+      <circle cx="320" cy="215" r="10" fill="#8d6e63"/>
+      <g id="rocket-group" transform="translate(200, 180)">
+        <g id="rocket-smoke" opacity="0">
+          <ellipse cx="0" cy="50" rx="15" ry="20" fill="#ff5252" opacity="0.8"/>
+          <ellipse cx="-5" cy="55" rx="10" ry="15" fill="#ff9800" opacity="0.7"/>
+          <ellipse cx="5" cy="60" rx="8" ry="12" fill="#ffd54f" opacity="0.6"/>
+          <ellipse cx="0" cy="70" rx="12" ry="18" fill="#ff9a9e" opacity="0.5"/>
+        </g>
+        <path d="M 0,-35 L -12,-10 L 12,-10 Z" fill="#ff5252"/>
+        <circle cx="0" cy="-5" r="5" fill="#81d4fa" stroke="white" stroke-width="1.5"/>
+        <rect x="-12" y="-10" width="24" height="35" fill="white" stroke="#ddd" stroke-width="1"/>
+        <line x1="-12" y1="5" x2="12" y2="5" stroke="#ff5252" stroke-width="2"/>
+        <polygon points="-12,15 -20,30 -12,25" fill="#ff5252"/>
+        <polygon points="12,15 20,30 12,25" fill="#ff5252"/>
+      </g>
+    </svg>`;
+}
+
+function renderPlantAnimation(area) {
+  area.innerHTML = `
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+      <defs><linearGradient id="skyPlant" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b3e5fc"/><stop offset="100%" stop-color="#fff9c4"/></linearGradient></defs>
+      <rect width="400" height="220" fill="url(#skyPlant)"/>
+      <g transform="translate(350, 40)">
+        <circle r="20" fill="#ffd54f"/>
+        <g stroke="#ffd54f" stroke-width="2.5" stroke-linecap="round">
+          <line x1="0" y1="-28" x2="0" y2="-35"/><line x1="28" y1="0" x2="35" y2="0"/>
+          <line x1="-28" y1="0" x2="-35" y2="0"/><line x1="20" y1="-20" x2="25" y2="-25"/>
+          <line x1="-20" y1="-20" x2="-25" y2="-25"/>
+        </g>
+      </g>
+      <g transform="translate(200, 175)">
+        <path d="M -50,0 L 50,0 L 45,45 L -45,45 Z" fill="#d84315"/>
+        <rect x="-52" y="-5" width="104" height="10" fill="#bf360c"/>
+      </g>
+      <ellipse cx="200" cy="170" rx="45" ry="5" fill="#6d4c41"/>
+      <g id="plant-group" transform="translate(200, 170)">
+        <path id="plant-stem" d="M 0,0 L 0,0" stroke="#388e3c" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g id="plant-leaves" opacity="0">
+          <ellipse cx="-12" cy="-20" rx="10" ry="5" fill="#66bb6a" transform="rotate(-30 -12 -20)"/>
+          <ellipse cx="12" cy="-35" rx="10" ry="5" fill="#66bb6a" transform="rotate(30 12 -35)"/>
+          <ellipse cx="-10" cy="-50" rx="10" ry="5" fill="#66bb6a" transform="rotate(-30 -10 -50)"/>
+        </g>
+        <g id="plant-bud" opacity="0" transform="translate(0, -70)"><circle r="8" fill="#66bb6a"/></g>
+        <g id="plant-flower" opacity="0" transform="translate(0, -80)">
+          <circle cx="-12" cy="0" r="10" fill="#ff6b9d"/><circle cx="12" cy="0" r="10" fill="#ff6b9d"/>
+          <circle cx="0" cy="-12" r="10" fill="#ff6b9d"/><circle cx="0" cy="12" r="10" fill="#ff6b9d"/>
+          <circle cx="-8" cy="-8" r="10" fill="#ff4081"/><circle cx="8" cy="-8" r="10" fill="#ff4081"/>
+          <circle cx="-8" cy="8" r="10" fill="#ff4081"/><circle cx="8" cy="8" r="10" fill="#ff4081"/>
+          <circle r="8" fill="#ffd54f"/>
+        </g>
+      </g>
+      <g id="butterfly" opacity="0" transform="translate(100, 80)">
+        <ellipse cx="-5" cy="0" rx="8" ry="10" fill="#ff9a56" opacity="0.8"/>
+        <ellipse cx="5" cy="0" rx="8" ry="10" fill="#ff9a56" opacity="0.8"/>
+        <circle r="2" fill="#5d4037"/>
+      </g>
+    </svg>`;
+}
+
+function renderFishAnimation(area) {
+  area.innerHTML = `
+    <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+      <defs><linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#81d4fa"/><stop offset="100%" stop-color="#0288d1"/></linearGradient></defs>
+      <rect width="400" height="220" fill="url(#waterGrad)"/>
+      <g fill="white" opacity="0.6">
+        <circle cx="60" cy="150" r="4"/><circle cx="80" cy="120" r="3"/>
+        <circle cx="320" cy="160" r="5"/><circle cx="340" cy="130" r="3"/>
+        <circle cx="200" cy="180" r="4"/>
+      </g>
+      <path d="M 0,200 Q 100,185 200,195 T 400,200 L 400,220 L 0,220 Z" fill="#ffe082"/>
+      <g fill="#66bb6a" opacity="0.8">
+        <path d="M 50,200 Q 55,180 50,160 Q 55,150 50,140" stroke="#66bb6a" stroke-width="3" fill="none"/>
+        <path d="M 55,200 Q 60,185 55,170" stroke="#66bb6a" stroke-width="3" fill="none"/>
+        <path d="M 350,200 Q 355,175 350,150" stroke="#66bb6a" stroke-width="3" fill="none"/>
+      </g>
+      <ellipse cx="350" cy="205" rx="30" ry="12" fill="#757575"/>
+      <g id="food-container"></g>
+      <g id="fish-group" transform="translate(50, 110)">
+        <polygon id="fish-tail" points="-20,0 -35,-12 -35,12" fill="#ff6b9d"/>
+        <ellipse cx="0" cy="0" rx="22" ry="13" fill="#ff8a80"/>
+        <polygon points="-5,-13 5,-13 0,-22" fill="#ff6b9d"/>
+        <polygon points="-5,13 5,13 0,20" fill="#ff6b9d"/>
+        <circle cx="10" cy="-3" r="4" fill="white"/>
+        <circle cx="11" cy="-3" r="2.5" fill="#000"/>
+        <circle cx="12" cy="-4" r="0.8" fill="white"/>
+        <path d="M 20,2 Q 22,5 20,7" stroke="#d32f2f" stroke-width="1.5" fill="none"/>
+      </g>
+    </svg>`;
+  const n = Math.max(5, Math.min(10, timerState.minutes + 3));
+  const foodContainer = area.querySelector('#food-container');
+  for (let i = 0; i < n; i++) {
+    const x = 80 + (i * (280 / n));
+    const y = 100 + Math.sin(i * 2) * 20;
+    const food = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    food.classList.add('food-item');
+    food.dataset.idx = i;
+    food.setAttribute('transform', `translate(${x}, ${y})`);
+    food.innerHTML = `<circle r="3" fill="#ff5252"/><circle r="1.5" fill="#ffcdd2"/>`;
+    foodContainer.appendChild(food);
+  }
+}
+
+function updateAnimation() {
+  const elapsed = timerState.total - timerState.remaining;
+  const pct = elapsed / timerState.total;
+  if (timerState.animation === 'mouse') updateMouseAnim(pct);
+  else if (timerState.animation === 'cake') updateCakeAnim(pct);
+  else if (timerState.animation === 'race') updateRaceAnim(pct);
+  else if (timerState.animation === 'rocket') updateRocketAnim(pct);
+  else if (timerState.animation === 'plant') updatePlantAnim(pct);
+  else if (timerState.animation === 'fish') updateFishAnim(pct);
+}
+
+function updateMouseAnim(pct) {
+  const mouse = document.getElementById('mouse-group');
+  if (!mouse) return;
+  const mouseX = pct * (600 - 80);
+  mouse.setAttribute('transform', `translate(${mouseX}, 150)`);
+  const legOffset = Math.sin(Date.now() / 100) * 3;
+  const leg1 = document.getElementById('mouse-leg1');
+  const leg2 = document.getElementById('mouse-leg2');
+  if (leg1) leg1.setAttribute('cx', 18 + legOffset);
+  if (leg2) leg2.setAttribute('cx', 40 - legOffset);
+  const cheeses = document.querySelectorAll('.cheese-group');
+  cheeses.forEach((group, i) => {
+    const cheeseProgress = pct * cheeses.length - i;
+    let state = 0;
+    if (cheeseProgress >= 0) state = Math.min(4, Math.floor(cheeseProgress * 4));
+    const full = group.querySelector('.cheese-full');
+    const b1 = group.querySelector('.cheese-bite1');
+    const b2 = group.querySelector('.cheese-bite2');
+    const b3 = group.querySelector('.cheese-bite3');
+    if (full) full.style.display = state === 0 ? '' : 'none';
+    if (b1) b1.style.display = state === 1 ? '' : 'none';
+    if (b2) b2.style.display = state === 2 ? '' : 'none';
+    if (b3) b3.style.display = state === 3 ? '' : 'none';
+    group.style.opacity = state === 4 ? '0' : '1';
+    if (state === 1 && !group.dataset.started) {
+      group.dataset.started = '1';
+      playSound('bite');
+    }
+  });
+}
+
+function updateCakeAnim(pct) {
+  const slices = document.querySelectorAll('.cake-slice');
+  const eatenCount = Math.floor(pct * slices.length);
+  slices.forEach((s, i) => {
+    if (i < eatenCount) {
+      s.style.opacity = '0';
+      s.style.transform = `translateY(30px) rotate(${i * 45}deg)`;
+    }
+  });
+}
+
+function updateRaceAnim(pct) {
+  const turtle = document.getElementById('turtle-group');
+  if (!turtle) return;
+  const turtleX = 20 + pct * (600 - 100);
+  const bounce = Math.sin(Date.now() / 200) * 2;
+  turtle.setAttribute('transform', `translate(${turtleX}, ${160 + bounce})`);
+  const legAngle = Math.sin(Date.now() / 150) * 5;
+  const legBack = document.getElementById('turtle-leg-back');
+  const legFront = document.getElementById('turtle-leg-front');
+  if (legBack) legBack.setAttribute('cy', 25 + legAngle);
+  if (legFront) legFront.setAttribute('cy', 25 - legAngle);
+  const clouds = document.querySelectorAll('#race-clouds .cloud');
+  clouds.forEach((cloud, i) => {
+    const baseX = i === 0 ? 100 : 350;
+    const speed = (Date.now() / (i === 0 ? 80 : 100)) % 700;
+    cloud.setAttribute('transform', `translate(${baseX - speed + (speed > 600 ? 700 : 0)}, ${i === 0 ? 40 : 60})`);
+  });
+}
+
+function updateRocketAnim(pct) {
+  const rocket = document.getElementById('rocket-group');
+  const smoke = document.getElementById('rocket-smoke');
+  if (!rocket) return;
+  const y = 180 - pct * 170;
+  const shake = Math.sin(Date.now() / 40) * 1.5;
+  rocket.setAttribute('transform', `translate(${200 + shake}, ${y})`);
+  if (smoke) {
+    smoke.setAttribute('opacity', pct > 0.05 ? '1' : '0');
+    const scaleY = 1 + Math.sin(Date.now() / 100) * 0.2;
+    smoke.setAttribute('transform', `scale(1, ${scaleY})`);
+  }
+  document.querySelectorAll('.star').forEach((s, i) => {
+    const twinkle = 0.5 + Math.sin(Date.now() / 500 + i) * 0.5;
+    s.setAttribute('opacity', twinkle);
+  });
+}
+
+function updatePlantAnim(pct) {
+  const stem = document.getElementById('plant-stem');
+  const leaves = document.getElementById('plant-leaves');
+  const bud = document.getElementById('plant-bud');
+  const flower = document.getElementById('plant-flower');
+  const butterfly = document.getElementById('butterfly');
+  if (!stem) return;
+  const stemHeight = pct * 80;
+  stem.setAttribute('d', `M 0,0 Q 0,${-stemHeight/2} 0,${-stemHeight}`);
+  if (leaves) leaves.setAttribute('opacity', pct > 0.3 ? Math.min(1, (pct - 0.3) * 3) : '0');
+  if (bud) {
+    bud.setAttribute('opacity', pct > 0.7 && pct < 0.9 ? 1 : 0);
+    bud.setAttribute('transform', `translate(0, ${-stemHeight})`);
+  }
+  if (flower) {
+    const fOp = pct > 0.9 ? Math.min(1, (pct - 0.9) * 10) : 0;
+    flower.setAttribute('opacity', fOp);
+    flower.setAttribute('transform', `translate(0, ${-stemHeight - 10}) scale(${fOp})`);
+  }
+  if (butterfly) {
+    const bOp = pct > 0.95 ? 1 : 0;
+    butterfly.setAttribute('opacity', bOp);
+    if (bOp) {
+      const bx = 100 + Math.sin(Date.now() / 300) * 30;
+      const by = 80 + Math.cos(Date.now() / 400) * 20;
+      butterfly.setAttribute('transform', `translate(${bx}, ${by})`);
+    }
+  }
+}
+
+function updateFishAnim(pct) {
+  const fish = document.getElementById('fish-group');
+  const tail = document.getElementById('fish-tail');
+  if (!fish) return;
+  const fishX = 50 + pct * (400 - 120);
+  const fishY = 110 + Math.sin(Date.now() / 400) * 15;
+  fish.setAttribute('transform', `translate(${fishX}, ${fishY})`);
+  if (tail) {
+    const tailOffset = Math.sin(Date.now() / 100) * 4;
+    tail.setAttribute('transform', `translate(${tailOffset}, 0)`);
+  }
+  const foods = document.querySelectorAll('.food-item');
+  const eatenCount = Math.floor(pct * foods.length);
+  foods.forEach((f, i) => {
+    if (i < eatenCount) {
+      f.style.opacity = '0';
+      if (!f.dataset.eaten) {
+        f.dataset.eaten = '1';
+        playSound('bite');
+      }
+    }
+  });
+}
+
+function animLoop() {
+  if (timerState.running && timerState.interval) updateAnimation();
+  requestAnimationFrame(animLoop);
+}
+requestAnimationFrame(animLoop);
+
+function openParentPanel() {
+  document.getElementById('parent-modal').classList.add('active');
+  switchTab('stats');
+}
+function closeParentPanel() {
+  document.getElementById('parent-modal').classList.remove('active');
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.parent-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'stats') renderParentStats();
+  if (tab === 'calendar') renderCalendar();
+  if (tab === 'library') renderLibrary();
+  if (tab === 'rewards') renderRewards();
+}
+
+function renderParentStats() {
+  ['julia','alex'].forEach(user => {
+    const det = document.getElementById(user + '-detail');
+    const data = state[user];
+    const todayData = data.days[today()] || { tasks: [], medals: [] };
+    const daysCount = Object.keys(data.days).length;
+    const totalTasksHist = Object.values(data.days).reduce((sum, d) => sum + d.tasks.length, 0);
+    const totalToday = state.tasks.morning.length + state.tasks.afternoon.length;
+    det.innerHTML = `
+      <div class="stat-row"><span>Puntos totales:</span><strong>⭐ ${data.totalPoints}</strong></div>
+      <div class="stat-row"><span>Tareas hoy:</span><strong>${todayData.tasks.length} / ${totalToday}</strong></div>
+      <div class="stat-row"><span>Medallas hoy:</span><strong>🏆 ${todayData.medals.length}</strong></div>
+      <div class="stat-row"><span>Racha actual:</span><strong>🔥 ${data.streak || 0} días</strong></div>
+      <div class="stat-row"><span>Días registrados:</span><strong>${daysCount}</strong></div>
+      <div class="stat-row"><span>Total histórico:</span><strong>${totalTasksHist} tareas</strong></div>
+    `;
+  });
+}
+
+function renderCalendar() {
+  const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const totalTasks = state.tasks.morning.length + state.tasks.afternoon.length;
+  ['julia', 'alex'].forEach(user => {
+    const container = document.getElementById(user + '-calendar');
+    container.innerHTML = '';
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(now.getDate() - i);
+      const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      const dayData = state[user].days[key];
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      if (i === 0) cell.classList.add('today');
+      let emoji = '·';
+      if (dayData && dayData.tasks.length > 0) {
+        if (totalTasks > 0 && dayData.tasks.length >= totalTasks) {
+          cell.classList.add('perfect'); emoji = '⭐';
+        } else {
+          cell.classList.add('partial'); emoji = dayData.tasks.length;
+        }
+      } else { cell.classList.add('empty'); }
+      cell.innerHTML = `<div class="day-label">${dayNames[d.getDay()]}</div><div class="day-progress">${emoji}</div><div class="day-label">${d.getDate()}</div>`;
+      container.appendChild(cell);
+    }
+  });
+}
+
+function resetDay() {
+  if (!confirm('¿Reiniciar las tareas de hoy?')) return;
+  const t = today();
+  state.julia.days[t] = { tasks: [], medals: [] };
+  state.alex.days[t] = { tasks: [], medals: [] };
+  saveState();
+  closeParentPanel();
+  renderAll();
+}
+
+function resetAll() {
+  if (!confirm('⚠️ ¿BORRAR TODO el progreso?')) return;
+  state.julia = { totalPoints: 0, days: {}, streak: 0, lastPerfectDay: null };
+  state.alex  = { totalPoints: 0, days: {}, streak: 0, lastPerfectDay: null };
+  saveState();
+  closeParentPanel();
+  renderAll();
+}
+
+function restoreDefaultTasks() {
+  if (!confirm('¿Restaurar tareas originales?')) return;
+  state.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+  saveState();
+  renderAll();
+  renderLibrary();
+}
+
+function exportData() {
+  const dataStr = JSON.stringify(state, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tareas_ninos_backup_' + today() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const imported = JSON.parse(ev.target.result);
+        if (!imported.julia || !imported.alex || !imported.tasks) { alert('Archivo no válido'); return; }
+        if (!confirm('¿Sobrescribir todo con este archivo?')) return;
+        state = imported;
+        if (!state.rewards) state.rewards = JSON.parse(JSON.stringify(DEFAULT_REWARDS));
+        saveState();
+        renderAll();
+        renderLibrary();
+        renderRewards();
+        alert('¡Importado!');
+      } catch (err) { alert('Error: ' + err.message); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function renderLibrary() {
+  ['morning', 'afternoon'].forEach(period => {
+    const container = document.getElementById('library-' + period);
+    container.innerHTML = '';
+    state.tasks[period].forEach(task => {
+      const item = document.createElement('div');
+      item.className = 'library-item';
+      item.innerHTML = `
+        <button class="library-delete" onclick="event.stopPropagation(); deleteTask('${task.id}')">✖</button>
+        <div class="emo">${task.emoji}</div>
+        <div class="nm">${task.name}</div>
+        <div class="pt">+${task.points} ⭐${task.timer ? ' · ⏰'+task.timer : ''}</div>`;
+      item.addEventListener('click', () => openTaskEditor(period, task.id));
+      container.appendChild(item);
+    });
+    if (state.tasks[period].length === 0) {
+      container.innerHTML = '<div class="empty-state">No hay tareas. Pulsa "+ Añadir"</div>';
+    }
+  });
+}
+
+let editingTask = null;
+
+function openTaskEditor(period, taskId) {
+  editingTask = { period, id: taskId || null };
+  const task = taskId ? findTaskById(taskId) : null;
+  document.getElementById('editor-title').textContent = task ? '✏️ Editar tarea' : '✨ Nueva tarea';
+  document.getElementById('task-name-input').value = task ? task.name : '';
+  document.getElementById('task-emoji-input').value = task ? task.emoji : '';
+  document.getElementById('task-points-input').value = task ? task.points : 10;
+  document.getElementById('task-timer-input').value = task ? (task.timer || 0) : 0;
+  document.getElementById('task-period-input').value = period;
+  document.getElementById('delete-task-btn').style.display = taskId ? 'inline-block' : 'none';
+  renderEmojiGrid(task ? task.emoji : '');
+  document.getElementById('task-editor-modal').classList.add('active');
+}
+
+function closeTaskEditor() {
+  document.getElementById('task-editor-modal').classList.remove('active');
+  editingTask = null;
+}
+
+function renderEmojiGrid(selected) {
+  const grid = document.getElementById('emoji-grid');
+  grid.innerHTML = '';
+  EMOJI_SUGGESTIONS.forEach(e => {
+    const btn = document.createElement('div');
+    btn.className = 'emoji-option' + (e === selected ? ' selected' : '');
+    btn.textContent = e;
+    btn.addEventListener('click', () => {
+      document.getElementById('task-emoji-input').value = e;
+      document.querySelectorAll('#emoji-grid .emoji-option').forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+    grid.appendChild(btn);
+  });
+}
+
+document.getElementById('task-emoji-input').addEventListener('input', (e) => {
+  const val = e.target.value;
+  document.querySelectorAll('#emoji-grid .emoji-option').forEach(o => {
+    o.classList.toggle('selected', o.textContent === val);
+  });
+});
+
+function saveTask() {
+  const name = document.getElementById('task-name-input').value.trim();
+  const emoji = document.getElementById('task-emoji-input').value.trim();
+  const points = parseInt(document.getElementById('task-points-input').value);
+  const timer = parseInt(document.getElementById('task-timer-input').value);
+  const period = document.getElementById('task-period-input').value;
+  if (!name) { alert('Pon un nombre'); return; }
+  if (!emoji) { alert('Elige un emoji'); return; }
+  if (editingTask && editingTask.id) {
+    const oldPeriod = editingTask.period;
+    const idx = state.tasks[oldPeriod].findIndex(t => t.id === editingTask.id);
+    if (idx >= 0) {
+      const existing = state.tasks[oldPeriod][idx];
+      const updated = { id: existing.id, name, emoji, points };
+      if (timer > 0) updated.timer = timer;
+      if (period === oldPeriod) state.tasks[oldPeriod][idx] = updated;
+      else { state.tasks[oldPeriod].splice(idx, 1); state.tasks[period].push(updated); }
+    }
+  } else {
+    const id = 'custom_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    const newTask = { id, name, emoji, points };
+    if (timer > 0) newTask.timer = timer;
+    state.tasks[period].push(newTask);
+  }
+  saveState();
+  closeTaskEditor();
+  renderLibrary();
+  renderAll();
+}
+
+function deleteTaskFromEditor() {
+  if (!editingTask || !editingTask.id) return;
+  deleteTask(editingTask.id);
+  closeTaskEditor();
+}
+
+function deleteTask(taskId) {
+  if (!confirm('¿Borrar esta tarea?')) return;
+  ['morning', 'afternoon'].forEach(period => {
+    const idx = state.tasks[period].findIndex(t => t.id === taskId);
+    if (idx >= 0) state.tasks[period].splice(idx, 1);
+  });
+  const t = today();
+  ['julia', 'alex'].forEach(user => {
+    if (state[user].days[t]) {
+      const tIdx = state[user].days[t].tasks.indexOf(taskId);
+      if (tIdx >= 0) state[user].days[t].tasks.splice(tIdx, 1);
+    }
+  });
+  saveState();
+  renderLibrary();
+  renderAll();
+}
+
+function renderRewards() {
+  const container = document.getElementById('rewards-list');
+  container.innerHTML = '';
+  state.rewards.forEach(reward => {
+    const item = document.createElement('div');
+    item.className = 'reward-item';
+    item.innerHTML = `
+      <button class="reward-delete" onclick="deleteReward('${reward.id}')">✖</button>
+      <div class="reward-emoji">${reward.emoji}</div>
+      <div class="reward-name">${reward.name}</div>
+      <div class="reward-cost">${reward.cost} ⭐</div>
+      <div class="claim-buttons">
+        <button class="claim-btn julia" ${state.julia.totalPoints < reward.cost ? 'disabled' : ''} onclick="claimReward('${reward.id}', 'julia')">Júlia</button>
+        <button class="claim-btn alex" ${state.alex.totalPoints < reward.cost ? 'disabled' : ''} onclick="claimReward('${reward.id}', 'alex')">Álex</button>
+      </div>`;
+    container.appendChild(item);
+  });
+  if (state.rewards.length === 0) {
+    container.innerHTML = '<div class="empty-state">No hay recompensas. Crea una con "+ Añadir premio"</div>';
+  }
+}
+
+function openRewardEditor() {
+  document.getElementById('reward-name-input').value = '';
+  document.getElementById('reward-emoji-input').value = '';
+  document.getElementById('reward-cost-input').value = 50;
+  document.getElementById('reward-editor-modal').classList.add('active');
+}
+
+function closeRewardEditor() {
+  document.getElementById('reward-editor-modal').classList.remove('active');
+}
+
+function saveReward() {
+  const name = document.getElementById('reward-name-input').value.trim();
+  const emoji = document.getElementById('reward-emoji-input').value.trim();
+  const cost = parseInt(document.getElementById('reward-cost-input').value);
+  if (!name) { alert('Pon un nombre'); return; }
+  if (!emoji) { alert('Pon un emoji'); return; }
+  if (!cost || cost < 5) { alert('Coste mínimo 5'); return; }
+  state.rewards.push({ id: 'r_' + Date.now(), name, emoji, cost });
+  saveState();
+  closeRewardEditor();
+  renderRewards();
+}
+
+function deleteReward(id) {
+  if (!confirm('¿Borrar este premio?')) return;
+  const idx = state.rewards.findIndex(r => r.id === id);
+  if (idx >= 0) state.rewards.splice(idx, 1);
+  saveState();
+  renderRewards();
+}
+
+function claimReward(rewardId, user) {
+  const reward = state.rewards.find(r => r.id === rewardId);
+  if (!reward || state[user].totalPoints < reward.cost) return;
+  const name = user === 'julia' ? 'Júlia' : 'Álex';
+  if (!confirm(`¿Canjear "${reward.name}" (${reward.cost} ⭐) para ${name}?`)) return;
+  state[user].totalPoints -= reward.cost;
+  saveState();
+  renderRewards();
+  renderAll();
+  spawnConfetti(100);
+  const msg = document.createElement('div');
+  msg.className = 'celebration-msg';
+  msg.innerHTML = `${reward.emoji}<br><span style="font-size:1.3rem">¡${name} ha canjeado<br>${reward.name}!</span>`;
+  document.body.appendChild(msg);
+  playSound('medal');
+  setTimeout(() => msg.remove(), 2500);
+}
+
+renderAll();
+
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (e) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) e.preventDefault();
+  lastTouchEnd = now;
+}, { passive: false });
+</script>
+</body>
+</html>
