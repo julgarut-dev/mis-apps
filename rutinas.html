@@ -414,27 +414,62 @@
 
   /* Sub-tareas editor */
   .subtasks-editor {
-    background: #f9f9f9; border-radius: 12px; padding: 10px;
+    background: linear-gradient(135deg, #f9f9ff, #f0f0fa);
+    border-radius: 14px; padding: 12px;
     margin-top: 5px;
+    border: 2px solid #e8e8f5;
   }
   .subtask-row {
-    display: flex; gap: 6px; align-items: center; margin-bottom: 6px;
-    background: white; padding: 6px; border-radius: 10px;
-    border: 1px solid #e0e0e0;
+    display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+    background: white; padding: 8px; border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
-  .subtask-row input { padding: 6px 10px; font-size: 0.9rem; }
-  .subtask-row .st-emoji { width: 50px; text-align: center; font-size: 1.2rem; }
-  .subtask-row .st-name { flex: 1; }
-  .subtask-row button {
-    background: #ff5252; color: white; border: none;
-    width: 28px; height: 28px; border-radius: 50%;
-    cursor: pointer; font-size: 0.85rem; flex-shrink: 0;
+  .subtask-row .st-icon-btn {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fff0f5, #ffe0ec);
+    border: 2px solid #ffcce0;
+    font-size: 30px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+    padding: 0;
+  }
+  .subtask-row .st-icon-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 10px rgba(255, 107, 157, 0.2);
+  }
+  .subtask-row .st-icon-btn.empty {
+    font-size: 20px; color: #999;
+    background: #f5f5f5; border: 2px dashed #ccc;
+  }
+  .subtask-row .st-name {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    border: 2px solid #eef2f7;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .subtask-row .st-name:focus { outline: none; border-color: #ff6b9d; }
+  .subtask-row .st-remove {
+    background: linear-gradient(135deg, #ff8a80, #ff5252);
+    color: white; border: none;
+    width: 36px; height: 36px; border-radius: 50%;
+    cursor: pointer; font-size: 0.95rem; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(255, 82, 82, 0.3);
   }
   .add-subtask-btn {
     background: linear-gradient(135deg, #c9a3f5, #a783e8); color: white;
-    border: none; padding: 8px 14px; border-radius: 10px;
+    border: none; padding: 10px 16px; border-radius: 12px;
     font-family: inherit; font-weight: 700; cursor: pointer;
-    font-size: 0.85rem; margin-top: 4px; width: 100%;
+    font-size: 0.9rem; margin-top: 8px; width: 100%;
+    box-shadow: 0 3px 8px rgba(167, 131, 232, 0.3);
+    text-transform: uppercase; letter-spacing: 0.5px;
   }
 
   /* MODAL */
@@ -735,16 +770,84 @@
     font-size: 1rem; font-family: inherit; background: #fafbfd;
   }
   .form-group input:focus, .form-group select:focus { outline: none; border-color: #ff6b9d; background: white; }
+  .emoji-picker-wrapper {
+    background: #fafbfd; border-radius: 14px; padding: 10px;
+    margin-top: 6px;
+    border: 2px solid #eef2f7;
+  }
+  .emoji-search {
+    width: 100%; padding: 10px 14px; margin-bottom: 10px;
+    border: 2px solid #eef2f7; border-radius: 10px;
+    font-size: 0.95rem; font-family: inherit;
+    background: white;
+  }
+  .emoji-search:focus { outline: none; border-color: #ff6b9d; }
+  .emoji-cat-tabs {
+    display: flex; gap: 4px; margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .emoji-cat-tab {
+    background: white; border: 2px solid transparent;
+    padding: 6px 10px; border-radius: 10px;
+    font-family: inherit; font-weight: 700; font-size: 0.78rem;
+    cursor: pointer; color: #555;
+    transition: all 0.15s;
+  }
+  .emoji-cat-tab:hover { background: #f5f7fa; }
+  .emoji-cat-tab.active {
+    background: linear-gradient(135deg, #ff6b9d, #ff4f7d);
+    color: white;
+    border-color: #c2185b;
+    box-shadow: 0 2px 6px rgba(255, 107, 157, 0.3);
+  }
   .emoji-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 5px;
-    max-height: 200px; overflow-y: auto; padding: 10px;
-    background: #fafbfd; border-radius: 12px; margin-top: 5px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+    gap: 6px; max-height: 240px; overflow-y: auto;
+    padding: 6px;
   }
   .emoji-option {
-    background: white; border: 2px solid transparent; border-radius: 10px;
-    padding: 6px; font-size: 24px; cursor: pointer; text-align: center;
+    background: white; border: 2px solid transparent; border-radius: 12px;
+    padding: 8px 4px; font-size: 30px; cursor: pointer; text-align: center;
+    transition: all 0.15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    min-height: 56px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .emoji-option.selected { border-color: #ff6b9d; background: #fff0f5; transform: scale(1.1); }
+  .emoji-option:hover {
+    background: #fff0f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  .emoji-option.selected {
+    border-color: #ff6b9d;
+    background: linear-gradient(135deg, #fff0f5, #ffe0ec);
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(255, 107, 157, 0.25);
+  }
+  .emoji-current-preview {
+    display: flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, #fff0f5, #ffe0ec);
+    padding: 10px 14px; border-radius: 14px;
+    margin-bottom: 10px;
+    border: 2px solid #ffcce0;
+  }
+  .emoji-current-preview .current-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+  .emoji-current-preview .current-label {
+    font-weight: 700; font-size: 0.95rem; color: #c2185b;
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .emoji-empty {
+    grid-column: 1/-1; text-align: center; padding: 20px; color: #999;
+    font-size: 0.9rem;
+  }
   .form-row { display: flex; gap: 10px; }
   .form-row .form-group { flex: 1; }
 
@@ -850,7 +953,7 @@
       <button class="btn btn-voice" id="voice-btn" onclick="toggleVoice()" title="Leer en voz alta">🔊</button>
       <button class="btn btn-timer" onclick="openTimer()">⏰ Timer</button>
       <button class="btn btn-shop" onclick="openShop()">🛍️ Tienda</button>
-      <button class="btn btn-parent" onclick="openParentPanel()">⚙️ Padres</button>
+      <button class="btn btn-parent" onclick="openParentPanel()">⚙️ Mamás</button>
     </div>
   </div>
 
@@ -1012,7 +1115,7 @@
 <!-- PARENT MODAL -->
 <div class="modal-overlay" id="parent-modal">
   <div class="modal">
-    <h2 class="modal-title">⚙️ Panel de padres</h2>
+    <h2 class="modal-title">⚙️ Panel de mamás</h2>
     <div class="parent-tabs">
       <button class="parent-tab active" data-tab="stats" onclick="switchTab('stats')">📊 Stats</button>
       <button class="parent-tab" data-tab="adventure" onclick="switchTab('adventure')">🗺️ Mapa</button>
@@ -1131,9 +1234,17 @@
       <input type="text" id="task-name-input" placeholder="Ej: Lavar la cara" maxlength="25">
     </div>
     <div class="form-group">
-      <label>Emoji</label>
-      <input type="text" id="task-emoji-input" placeholder="🦷" maxlength="4" style="font-size:1.5rem; text-align:center;">
-      <div class="emoji-grid" id="emoji-grid"></div>
+      <label>🎨 Icono</label>
+      <div class="emoji-current-preview">
+        <div class="current-icon" id="task-emoji-preview">❓</div>
+        <div class="current-label">Toca un icono abajo</div>
+      </div>
+      <input type="hidden" id="task-emoji-input">
+      <div class="emoji-picker-wrapper">
+        <input type="text" class="emoji-search" id="task-emoji-search" placeholder="🔍 Buscar (ej: dientes, cama, fruta)...">
+        <div class="emoji-cat-tabs" id="task-emoji-cat-tabs"></div>
+        <div class="emoji-grid" id="emoji-grid"></div>
+      </div>
     </div>
     <div class="form-row">
       <div class="form-group">
@@ -1183,6 +1294,26 @@
       <button class="modal-btn btn-save" onclick="saveTask()">💾 Guardar</button>
       <button class="modal-btn btn-delete" id="delete-task-btn" onclick="deleteTaskFromEditor()" style="display:none">🗑️ Borrar</button>
       <button class="modal-btn btn-close" onclick="closeTaskEditor()">✖️ Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUB-PICKER MODAL (para elegir icono de sub-tarea) -->
+<div class="modal-overlay" id="subicon-picker-modal">
+  <div class="modal" style="max-width: 560px;">
+    <h2 class="modal-title">🎨 Elige un icono</h2>
+    <div class="emoji-current-preview">
+      <div class="current-icon" id="subicon-preview">❓</div>
+      <div class="current-label" id="subicon-preview-label">Toca un icono abajo</div>
+    </div>
+    <div class="emoji-picker-wrapper">
+      <input type="text" class="emoji-search" id="subicon-search" placeholder="🔍 Buscar (ej: libro, fruta)...">
+      <div class="emoji-cat-tabs" id="subicon-cat-tabs"></div>
+      <div class="emoji-grid" id="subicon-grid"></div>
+    </div>
+    <div class="modal-buttons" style="margin-top:12px;">
+      <button class="modal-btn btn-save" onclick="confirmSubicon()">✅ Usar este</button>
+      <button class="modal-btn btn-close" onclick="closeSubiconPicker()">✖️ Cancelar</button>
     </div>
   </div>
 </div>
@@ -1299,16 +1430,180 @@ const WHEEL_PRIZES = [
   { emoji: '🎉', label: '+100', color: '#ff4f7d', value: 100, type: 'points' }
 ];
 
-const EMOJI_SUGGESTIONS = [
-  '🛏️','🥣','🪥','👚','👕','🎒','🏫','🍎','⚽','🧸','🍽️','😴','🦷','🧼','🚿','🛁','🧴','🧻','🚽','🧺',
-  '👗','🧦','👟','🧣','📚','✏️','🎨','🖍️','📖','🔢','🧮','🎭','🎪','🎯','🎲','🧩',
-  '🚴','🏊','🤸','⛹️','🏃','🧘','🏀','🏐','🏸','🎵','🎹','🎸','🥁','🎤','🎧',
-  '🥗','🥑','🥕','🍅','🍊','🍌','🍓','🥝','🍇','🍉','🍞','🥛','🥤','🧃','☕',
-  '🐶','🐱','🐰','🐹','🐻','🦁','🐯','🐨','🐼','🐸','🐙','🦄',
-  '🌳','🌸','🌻','🌺','🌷','🌼','🍀','🌈','☀️','🌙','⭐','✨',
-  '🎁','🎂','🎈','🎉','😊','😄','🥰','😎','🤗','👏','👍','💪',
-  '📱','💻','📺','🎮','🏠','🛋️','🧹','📦','🎀','🚗','🚲','✈️','🚀'
-];
+const EMOJI_CATEGORIES = {
+  'rutina': {
+    label: '🌅 Rutina',
+    icons: [
+      { e: '🛏️', n: 'cama' }, { e: '😴', n: 'dormir' }, { e: '🌙', n: 'noche' },
+      { e: '☀️', n: 'sol mañana' }, { e: '🥱', n: 'bostezo' }, { e: '⏰', n: 'despertador' },
+      { e: '🪥', n: 'cepillo dientes' }, { e: '🦷', n: 'diente' }, { e: '🧼', n: 'jabón' },
+      { e: '🚿', n: 'ducha' }, { e: '🛁', n: 'bañera' }, { e: '🧴', n: 'champú' },
+      { e: '🧻', n: 'papel' }, { e: '🚽', n: 'váter wc' }, { e: '💇', n: 'peinar' },
+      { e: '💧', n: 'agua' }, { e: '🧖', n: 'cara' }, { e: '🪞', n: 'espejo' }
+    ]
+  },
+  'comida': {
+    label: '🍎 Comida',
+    icons: [
+      { e: '🥣', n: 'cereales' }, { e: '🍎', n: 'manzana' }, { e: '🍌', n: 'plátano' },
+      { e: '🍊', n: 'naranja' }, { e: '🍓', n: 'fresa' }, { e: '🍇', n: 'uvas' },
+      { e: '🍉', n: 'sandía' }, { e: '🥝', n: 'kiwi' }, { e: '🥑', n: 'aguacate' },
+      { e: '🥕', n: 'zanahoria' }, { e: '🍅', n: 'tomate' }, { e: '🥗', n: 'ensalada' },
+      { e: '🍞', n: 'pan' }, { e: '🥐', n: 'croissant' }, { e: '🥞', n: 'tortitas' },
+      { e: '🧇', n: 'gofre' }, { e: '🍳', n: 'huevo' }, { e: '🥛', n: 'leche' },
+      { e: '🥤', n: 'bebida' }, { e: '🧃', n: 'zumo' }, { e: '☕', n: 'café chocolate' },
+      { e: '🍽️', n: 'plato cena' }, { e: '🍽', n: 'comida' }, { e: '🥘', n: 'guiso' },
+      { e: '🍝', n: 'pasta' }, { e: '🍕', n: 'pizza' }, { e: '🍔', n: 'hamburguesa' },
+      { e: '🌮', n: 'taco' }, { e: '🍦', n: 'helado' }, { e: '🍪', n: 'galleta' },
+      { e: '🍫', n: 'chocolate' }, { e: '🧈', n: 'mantequilla' }, { e: '🍯', n: 'miel' }
+    ]
+  },
+  'ropa': {
+    label: '👕 Ropa',
+    icons: [
+      { e: '👕', n: 'camiseta' }, { e: '👚', n: 'blusa ropa niña' }, { e: '👗', n: 'vestido' },
+      { e: '👖', n: 'pantalón' }, { e: '🩳', n: 'pantalón corto' }, { e: '🧦', n: 'calcetines' },
+      { e: '👟', n: 'zapatillas' }, { e: '👡', n: 'sandalias' }, { e: '👢', n: 'botas' },
+      { e: '🥾', n: 'botas montaña' }, { e: '🧢', n: 'gorra' }, { e: '🎩', n: 'sombrero' },
+      { e: '🧣', n: 'bufanda' }, { e: '🧤', n: 'guantes' }, { e: '🧥', n: 'abrigo' },
+      { e: '🦺', n: 'chaleco' }, { e: '👜', n: 'bolso' }, { e: '🎒', n: 'mochila' },
+      { e: '👙', n: 'bañador' }, { e: '🩲', n: 'ropa interior' }, { e: '🩱', n: 'bañador niña' },
+      { e: '🕶️', n: 'gafas sol' }, { e: '👓', n: 'gafas' }, { e: '👑', n: 'corona' }
+    ]
+  },
+  'cole': {
+    label: '📚 Cole',
+    icons: [
+      { e: '🏫', n: 'colegio escuela' }, { e: '📚', n: 'libros' }, { e: '📖', n: 'libro' },
+      { e: '✏️', n: 'lápiz' }, { e: '✒️', n: 'bolígrafo' }, { e: '🖍️', n: 'colores' },
+      { e: '🎨', n: 'pintar arte' }, { e: '📓', n: 'agenda cuaderno' }, { e: '📒', n: 'libreta' },
+      { e: '📔', n: 'diario' }, { e: '📏', n: 'regla' }, { e: '📐', n: 'escuadra' },
+      { e: '🖊️', n: 'bolígrafo pluma' }, { e: '🖌️', n: 'pincel' }, { e: '🎒', n: 'mochila' },
+      { e: '📝', n: 'escribir deberes' }, { e: '🔢', n: 'números' }, { e: '🧮', n: 'ábaco' },
+      { e: '🔤', n: 'letras abc' }, { e: '📅', n: 'calendario' }, { e: '📁', n: 'carpeta' },
+      { e: '✂️', n: 'tijeras' }, { e: '📎', n: 'clip' }, { e: '🖇️', n: 'clips' },
+      { e: '🏆', n: 'trofeo' }, { e: '🏅', n: 'medalla' }, { e: '🌍', n: 'mundo' }
+    ]
+  },
+  'juego': {
+    label: '🎮 Juego',
+    icons: [
+      { e: '🧸', n: 'osito peluche' }, { e: '🪀', n: 'yo-yo' }, { e: '🪁', n: 'cometa' },
+      { e: '🎮', n: 'videojuego' }, { e: '🕹️', n: 'joystick' }, { e: '🎲', n: 'dados' },
+      { e: '🧩', n: 'puzzle' }, { e: '🎨', n: 'pintar' }, { e: '🖍️', n: 'colores' },
+      { e: '🎭', n: 'teatro disfraz' }, { e: '🎪', n: 'circo' }, { e: '🎯', n: 'diana' },
+      { e: '🎳', n: 'bolos' }, { e: '🎰', n: 'juego azar' }, { e: '🧱', n: 'lego bloques' },
+      { e: '🎠', n: 'caballitos' }, { e: '🎡', n: 'noria' }, { e: '🎢', n: 'montaña rusa' },
+      { e: '🎵', n: 'música' }, { e: '🎶', n: 'canción' }, { e: '🎹', n: 'piano' },
+      { e: '🎸', n: 'guitarra' }, { e: '🥁', n: 'batería' }, { e: '🎺', n: 'trompeta' },
+      { e: '🎷', n: 'saxofón' }, { e: '🎻', n: 'violín' }, { e: '🎤', n: 'micrófono' },
+      { e: '🎧', n: 'auriculares' }, { e: '📺', n: 'televisión tele' }, { e: '📱', n: 'móvil' }
+    ]
+  },
+  'deporte': {
+    label: '⚽ Deporte',
+    icons: [
+      { e: '⚽', n: 'fútbol' }, { e: '🏀', n: 'baloncesto' }, { e: '🏐', n: 'voleibol' },
+      { e: '🎾', n: 'tenis' }, { e: '🏸', n: 'bádminton' }, { e: '🏓', n: 'ping pong' },
+      { e: '⛳', n: 'golf' }, { e: '🏏', n: 'cricket' }, { e: '🥏', n: 'frisbee' },
+      { e: '🏒', n: 'hockey' }, { e: '🏑', n: 'hockey hierba' }, { e: '🥊', n: 'boxeo' },
+      { e: '🥋', n: 'judo karate' }, { e: '🏊', n: 'natación' }, { e: '🏄', n: 'surf' },
+      { e: '🚴', n: 'bici' }, { e: '🚵', n: 'mountain bike' }, { e: '🤸', n: 'gimnasia' },
+      { e: '⛹️', n: 'baloncesto jugar' }, { e: '🏃', n: 'correr' }, { e: '🚶', n: 'caminar' },
+      { e: '🧘', n: 'yoga' }, { e: '🤾', n: 'balonmano' }, { e: '🏋️', n: 'pesas' },
+      { e: '⛸️', n: 'patinar' }, { e: '🛼', n: 'patines' }, { e: '🛹', n: 'skate' },
+      { e: '🏇', n: 'caballo' }, { e: '🎿', n: 'esquí' }
+    ]
+  },
+  'casa': {
+    label: '🏠 Casa',
+    icons: [
+      { e: '🏠', n: 'casa' }, { e: '🛋️', n: 'sofá' }, { e: '🪑', n: 'silla' },
+      { e: '🛏️', n: 'cama' }, { e: '🚪', n: 'puerta' }, { e: '🪟', n: 'ventana' },
+      { e: '💡', n: 'luz bombilla' }, { e: '🕯️', n: 'vela' }, { e: '🧹', n: 'escoba' },
+      { e: '🧽', n: 'esponja' }, { e: '🧺', n: 'ropa sucia' }, { e: '🗑️', n: 'basura' },
+      { e: '🧻', n: 'papel higiénico' }, { e: '🪣', n: 'cubo' }, { e: '🧴', n: 'bote gel' },
+      { e: '🛒', n: 'carrito compra' }, { e: '🛍️', n: 'bolsas' }, { e: '📦', n: 'caja' },
+      { e: '🎁', n: 'regalo' }, { e: '📞', n: 'teléfono' }, { e: '🔑', n: 'llave' },
+      { e: '🔒', n: 'cerrado' }, { e: '🛎️', n: 'timbre' }, { e: '🪴', n: 'planta maceta' },
+      { e: '🖼️', n: 'cuadro' }, { e: '🪞', n: 'espejo' }, { e: '🧸', n: 'peluche' }
+    ]
+  },
+  'animal': {
+    label: '🐶 Animales',
+    icons: [
+      { e: '🐶', n: 'perro' }, { e: '🐱', n: 'gato' }, { e: '🐰', n: 'conejo' },
+      { e: '🐹', n: 'hámster' }, { e: '🐻', n: 'oso' }, { e: '🐼', n: 'panda' },
+      { e: '🦁', n: 'león' }, { e: '🐯', n: 'tigre' }, { e: '🐨', n: 'koala' },
+      { e: '🐵', n: 'mono' }, { e: '🐷', n: 'cerdo' }, { e: '🐮', n: 'vaca' },
+      { e: '🐸', n: 'rana' }, { e: '🐤', n: 'pollito' }, { e: '🐔', n: 'gallina' },
+      { e: '🦆', n: 'pato' }, { e: '🦉', n: 'búho' }, { e: '🦄', n: 'unicornio' },
+      { e: '🐴', n: 'caballo' }, { e: '🦓', n: 'cebra' }, { e: '🦒', n: 'jirafa' },
+      { e: '🐘', n: 'elefante' }, { e: '🦘', n: 'canguro' }, { e: '🐢', n: 'tortuga' },
+      { e: '🐍', n: 'serpiente' }, { e: '🐙', n: 'pulpo' }, { e: '🐠', n: 'pez' },
+      { e: '🐳', n: 'ballena' }, { e: '🦋', n: 'mariposa' }, { e: '🐝', n: 'abeja' }
+    ]
+  },
+  'natura': {
+    label: '🌳 Natura',
+    icons: [
+      { e: '🌳', n: 'árbol' }, { e: '🌲', n: 'pino' }, { e: '🌴', n: 'palmera' },
+      { e: '🌱', n: 'brote' }, { e: '🌿', n: 'planta' }, { e: '☘️', n: 'trébol' },
+      { e: '🍀', n: 'trébol suerte' }, { e: '🌸', n: 'flor rosa' }, { e: '🌺', n: 'hibisco' },
+      { e: '🌻', n: 'girasol' }, { e: '🌷', n: 'tulipán' }, { e: '🌹', n: 'rosa' },
+      { e: '🌼', n: 'margarita' }, { e: '🪷', n: 'loto' }, { e: '🪻', n: 'flor' },
+      { e: '☀️', n: 'sol' }, { e: '🌙', n: 'luna' }, { e: '⭐', n: 'estrella' },
+      { e: '🌟', n: 'brillar' }, { e: '✨', n: 'chispas' }, { e: '☁️', n: 'nube' },
+      { e: '🌈', n: 'arcoíris' }, { e: '🌊', n: 'ola mar' }, { e: '🔥', n: 'fuego' },
+      { e: '❄️', n: 'nieve' }, { e: '⛄', n: 'muñeco nieve' }, { e: '☔', n: 'lluvia paraguas' }
+    ]
+  },
+  'sentim': {
+    label: '😊 Emociones',
+    icons: [
+      { e: '😊', n: 'sonrisa' }, { e: '😄', n: 'reír' }, { e: '😁', n: 'sonreír dientes' },
+      { e: '🥰', n: 'amor' }, { e: '😍', n: 'enamorado' }, { e: '🤗', n: 'abrazo' },
+      { e: '😎', n: 'molón' }, { e: '🤩', n: 'asombro' }, { e: '🥳', n: 'fiesta' },
+      { e: '😌', n: 'tranquilo' }, { e: '🤔', n: 'pensar' }, { e: '😋', n: 'rico' },
+      { e: '👏', n: 'aplausos' }, { e: '🙌', n: 'manos arriba' }, { e: '👍', n: 'pulgar arriba' },
+      { e: '✋', n: 'mano alto' }, { e: '🤝', n: 'saludo manos' }, { e: '💪', n: 'fuerza' },
+      { e: '❤️', n: 'corazón' }, { e: '💕', n: 'corazones' }, { e: '💖', n: 'corazón brillante' },
+      { e: '💯', n: 'cien' }, { e: '🏆', n: 'trofeo' }, { e: '🎉', n: 'fiesta celebración' },
+      { e: '🎊', n: 'confeti' }, { e: '🎁', n: 'regalo' }, { e: '🎂', n: 'tarta' },
+      { e: '🎈', n: 'globo' }
+    ]
+  },
+  'transporte': {
+    label: '🚗 Vehículos',
+    icons: [
+      { e: '🚗', n: 'coche' }, { e: '🚙', n: 'todoterreno' }, { e: '🚕', n: 'taxi' },
+      { e: '🚌', n: 'autobús' }, { e: '🚎', n: 'trolebús' }, { e: '🏎️', n: 'coche carreras' },
+      { e: '🚓', n: 'policía' }, { e: '🚑', n: 'ambulancia' }, { e: '🚒', n: 'bomberos' },
+      { e: '🚚', n: 'camión' }, { e: '🚛', n: 'trailer' }, { e: '🚜', n: 'tractor' },
+      { e: '🛵', n: 'scooter' }, { e: '🏍️', n: 'moto' }, { e: '🚲', n: 'bicicleta' },
+      { e: '🛴', n: 'patinete' }, { e: '🛹', n: 'monopatín' }, { e: '🛼', n: 'patines' },
+      { e: '🚂', n: 'tren' }, { e: '🚆', n: 'tren rápido' }, { e: '🚇', n: 'metro' },
+      { e: '✈️', n: 'avión' }, { e: '🚀', n: 'cohete' }, { e: '🛸', n: 'ovni' },
+      { e: '⛵', n: 'velero' }, { e: '🚢', n: 'barco' }, { e: '⚓', n: 'ancla' }
+    ]
+  }
+};
+
+// Lista plana para compatibilidad (búsqueda, fallback)
+const EMOJI_SUGGESTIONS = Object.values(EMOJI_CATEGORIES).flatMap(c => c.icons.map(i => i.e));
+
+// Búsqueda por nombre
+function searchEmojis(query) {
+  query = (query || '').toLowerCase().trim();
+  if (!query) return null;
+  const results = [];
+  Object.values(EMOJI_CATEGORIES).forEach(cat => {
+    cat.icons.forEach(i => {
+      if (i.n.toLowerCase().includes(query)) results.push(i);
+    });
+  });
+  return results;
+}
 
 const MEDALS = [
   { id: 'first', name: 'Primera tarea', emoji: '🌟', condition: (d) => d.tasks.length >= 1 },
@@ -1960,23 +2255,23 @@ function renderSubtasksEditor() {
   editingSubtasks.forEach((sub, i) => {
     const row = document.createElement('div');
     row.className = 'subtask-row';
+    const hasEmoji = sub.emoji && sub.emoji !== '📌';
     row.innerHTML = `
-      <input type="text" class="st-emoji" value="${sub.emoji}" maxlength="4" data-idx="${i}" data-field="emoji" placeholder="📚">
-      <input type="text" class="st-name" value="${sub.name}" maxlength="25" data-idx="${i}" data-field="name" placeholder="Nombre">
-      <button onclick="removeSubtaskRow(${i})">✖</button>
+      <button type="button" class="st-icon-btn ${hasEmoji ? '' : 'empty'}" onclick="openSubiconPicker(${i})" title="Cambiar icono">${hasEmoji ? sub.emoji : '➕'}</button>
+      <input type="text" class="st-name" value="${sub.name}" maxlength="25" data-idx="${i}" placeholder="Nombre">
+      <button type="button" class="st-remove" onclick="removeSubtaskRow(${i})" title="Borrar">✖</button>
     `;
     container.appendChild(row);
   });
-  // Listeners
-  container.querySelectorAll('input').forEach(inp => {
+  // Listeners del nombre
+  container.querySelectorAll('input.st-name').forEach(inp => {
     inp.addEventListener('input', (e) => {
       const i = parseInt(e.target.dataset.idx);
-      const field = e.target.dataset.field;
-      editingSubtasks[i][field] = e.target.value;
+      editingSubtasks[i].name = e.target.value;
     });
   });
   if (editingSubtasks.length === 0) {
-    container.innerHTML = '<div style="text-align:center; color:#999; font-size:0.85rem; padding:8px;">Sin sub-tareas</div>';
+    container.innerHTML = '<div style="text-align:center; color:#999; font-size:0.9rem; padding:12px;">📝 Sin sub-tareas todavía</div>';
   }
 }
 
@@ -1987,10 +2282,130 @@ function addSubtaskRow() {
     name: ''
   });
   renderSubtasksEditor();
+  // Abrir automáticamente el picker para la nueva sub-tarea
+  setTimeout(() => openSubiconPicker(editingSubtasks.length - 1), 200);
 }
 
 function removeSubtaskRow(i) {
   editingSubtasks.splice(i, 1);
+  renderSubtasksEditor();
+}
+
+/* ==========================================
+   SUB-PICKER para icono de sub-tarea
+   ========================================== */
+let subPickerIndex = -1;
+let subPickerCategory = 'rutina';
+let subPickerSelected = '';
+
+function openSubiconPicker(idx) {
+  subPickerIndex = idx;
+  subPickerSelected = editingSubtasks[idx]?.emoji && editingSubtasks[idx].emoji !== '📌' ? editingSubtasks[idx].emoji : '';
+  subPickerCategory = 'rutina';
+  document.getElementById('subicon-search').value = '';
+  // Init tabs (una vez)
+  const tabs = document.getElementById('subicon-cat-tabs');
+  if (!tabs.dataset.init) {
+    Object.entries(EMOJI_CATEGORIES).forEach(([key, cat]) => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-cat-tab';
+      btn.dataset.cat = key;
+      btn.textContent = cat.label;
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        subPickerCategory = key;
+        document.querySelectorAll('#subicon-cat-tabs .emoji-cat-tab').forEach(t => {
+          t.classList.toggle('active', t.dataset.cat === key);
+        });
+        document.getElementById('subicon-search').value = '';
+        renderSubiconGrid();
+      });
+      tabs.appendChild(btn);
+    });
+    document.getElementById('subicon-search').addEventListener('input', renderSubiconGrid);
+    tabs.dataset.init = '1';
+  }
+  // Activar la primera categoría
+  document.querySelectorAll('#subicon-cat-tabs .emoji-cat-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.cat === subPickerCategory);
+  });
+  updateSubiconPreview();
+  renderSubiconGrid();
+  document.getElementById('subicon-picker-modal').classList.add('active');
+}
+
+function closeSubiconPicker() {
+  document.getElementById('subicon-picker-modal').classList.remove('active');
+  subPickerIndex = -1;
+}
+
+function updateSubiconPreview() {
+  const preview = document.getElementById('subicon-preview');
+  const label = document.getElementById('subicon-preview-label');
+  if (subPickerSelected) {
+    preview.textContent = subPickerSelected;
+    let name = '';
+    Object.values(EMOJI_CATEGORIES).forEach(cat => {
+      cat.icons.forEach(i => { if (i.e === subPickerSelected) name = i.n; });
+    });
+    label.textContent = name || 'Icono elegido';
+  } else {
+    preview.textContent = '❓';
+    label.textContent = 'Toca un icono abajo';
+  }
+}
+
+function renderSubiconGrid() {
+  const grid = document.getElementById('subicon-grid');
+  const query = document.getElementById('subicon-search').value.trim().toLowerCase();
+  grid.innerHTML = '';
+  let iconsToShow = [];
+  if (query) {
+    Object.values(EMOJI_CATEGORIES).forEach(cat => {
+      cat.icons.forEach(i => {
+        if (i.n.toLowerCase().includes(query)) iconsToShow.push(i);
+      });
+    });
+  } else {
+    iconsToShow = EMOJI_CATEGORIES[subPickerCategory].icons;
+  }
+  if (iconsToShow.length === 0) {
+    grid.innerHTML = '<div class="emoji-empty">🤔 No hay iconos. Prueba otra palabra.</div>';
+    return;
+  }
+  iconsToShow.forEach(i => {
+    const btn = document.createElement('div');
+    btn.className = 'emoji-option' + (i.e === subPickerSelected ? ' selected' : '');
+    btn.textContent = i.e;
+    btn.title = i.n;
+    btn.addEventListener('click', () => {
+      subPickerSelected = i.e;
+      document.querySelectorAll('#subicon-grid .emoji-option').forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+      updateSubiconPreview();
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function confirmSubicon() {
+  if (subPickerIndex < 0 || !subPickerSelected) {
+    alert('Elige un icono primero');
+    return;
+  }
+  editingSubtasks[subPickerIndex].emoji = subPickerSelected;
+  // Sugerir nombre si está vacío
+  if (!editingSubtasks[subPickerIndex].name) {
+    let name = '';
+    Object.values(EMOJI_CATEGORIES).forEach(cat => {
+      cat.icons.forEach(i => { if (i.e === subPickerSelected) name = i.n; });
+    });
+    if (name) {
+      // Capitalizar
+      editingSubtasks[subPickerIndex].name = name.charAt(0).toUpperCase() + name.slice(1);
+    }
+  }
+  closeSubiconPicker();
   renderSubtasksEditor();
 }
 
@@ -2933,7 +3348,22 @@ function openTaskEditor(period, taskId) {
   // Sub-tareas (copia profunda)
   editingSubtasks = task?.subtasks ? JSON.parse(JSON.stringify(task.subtasks)) : [];
   renderSubtasksEditor();
+  // Reset picker
+  taskPickerCategory = 'rutina';
+  document.getElementById('task-emoji-search') && (document.getElementById('task-emoji-search').value = '');
+  if (task) {
+    // Encontrar en qué categoría está el icono de la tarea para auto-seleccionarla
+    Object.entries(EMOJI_CATEGORIES).forEach(([key, cat]) => {
+      if (cat.icons.some(i => i.e === task.emoji)) taskPickerCategory = key;
+    });
+  }
   renderEmojiGrid(task ? task.emoji : '');
+  // Actualizar tabs activos
+  setTimeout(() => {
+    document.querySelectorAll('#task-emoji-cat-tabs .emoji-cat-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.cat === taskPickerCategory);
+    });
+  }, 0);
   document.getElementById('task-editor-modal').classList.add('active');
 }
 
@@ -2947,25 +3377,98 @@ document.querySelectorAll('#days-selector .day-checkbox').forEach(cb => {
   cb.addEventListener('click', () => cb.classList.toggle('selected'));
 });
 
+/* ==========================================
+   SELECTOR DE ICONOS MEJORADO
+   Picker reusable para tareas y sub-tareas
+   ========================================== */
+let taskPickerCategory = 'rutina';
+let taskPickerSelected = '';
+
+function initTaskEmojiPicker() {
+  // Renderizar tabs de categorías (una sola vez)
+  const tabs = document.getElementById('task-emoji-cat-tabs');
+  if (!tabs.dataset.init) {
+    tabs.innerHTML = '';
+    Object.entries(EMOJI_CATEGORIES).forEach(([key, cat]) => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-cat-tab' + (key === taskPickerCategory ? ' active' : '');
+      btn.dataset.cat = key;
+      btn.textContent = cat.label;
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        taskPickerCategory = key;
+        document.querySelectorAll('#task-emoji-cat-tabs .emoji-cat-tab').forEach(t => {
+          t.classList.toggle('active', t.dataset.cat === key);
+        });
+        document.getElementById('task-emoji-search').value = '';
+        renderEmojiGrid(taskPickerSelected);
+      });
+      tabs.appendChild(btn);
+    });
+    // Input de búsqueda
+    const search = document.getElementById('task-emoji-search');
+    search.addEventListener('input', () => renderEmojiGrid(taskPickerSelected));
+    tabs.dataset.init = '1';
+  }
+}
+
 function renderEmojiGrid(selected) {
+  initTaskEmojiPicker();
+  taskPickerSelected = selected || '';
+  // Actualizar preview
+  const preview = document.getElementById('task-emoji-preview');
+  const previewLabel = preview.parentElement.querySelector('.current-label');
+  if (taskPickerSelected) {
+    preview.textContent = taskPickerSelected;
+    // Buscar nombre
+    let name = '';
+    Object.values(EMOJI_CATEGORIES).forEach(cat => {
+      cat.icons.forEach(i => { if (i.e === taskPickerSelected) name = i.n; });
+    });
+    previewLabel.textContent = name || 'Icono personalizado';
+  } else {
+    preview.textContent = '❓';
+    previewLabel.textContent = 'Toca un icono abajo';
+  }
+
   const grid = document.getElementById('emoji-grid');
+  const query = document.getElementById('task-emoji-search').value.trim().toLowerCase();
   grid.innerHTML = '';
-  EMOJI_SUGGESTIONS.forEach(e => {
+
+  let iconsToShow = [];
+  if (query) {
+    // Búsqueda por todas las categorías
+    Object.values(EMOJI_CATEGORIES).forEach(cat => {
+      cat.icons.forEach(i => {
+        if (i.n.toLowerCase().includes(query)) iconsToShow.push(i);
+      });
+    });
+  } else {
+    iconsToShow = EMOJI_CATEGORIES[taskPickerCategory].icons;
+  }
+
+  if (iconsToShow.length === 0) {
+    grid.innerHTML = '<div class="emoji-empty">🤔 No hay iconos que coincidan. Prueba otra palabra.</div>';
+    return;
+  }
+
+  iconsToShow.forEach(i => {
     const btn = document.createElement('div');
-    btn.className = 'emoji-option' + (e === selected ? ' selected' : '');
-    btn.textContent = e;
+    btn.className = 'emoji-option' + (i.e === taskPickerSelected ? ' selected' : '');
+    btn.textContent = i.e;
+    btn.title = i.n;
     btn.addEventListener('click', () => {
-      document.getElementById('task-emoji-input').value = e;
+      taskPickerSelected = i.e;
+      document.getElementById('task-emoji-input').value = i.e;
       document.querySelectorAll('#emoji-grid .emoji-option').forEach(o => o.classList.remove('selected'));
       btn.classList.add('selected');
+      // Actualizar preview
+      document.getElementById('task-emoji-preview').textContent = i.e;
+      preview.parentElement.querySelector('.current-label').textContent = i.n;
     });
     grid.appendChild(btn);
   });
 }
-document.getElementById('task-emoji-input').addEventListener('input', (e) => {
-  const val = e.target.value;
-  document.querySelectorAll('#emoji-grid .emoji-option').forEach(o => o.classList.toggle('selected', o.textContent === val));
-});
 
 function saveTask() {
   const name = document.getElementById('task-name-input').value.trim();
